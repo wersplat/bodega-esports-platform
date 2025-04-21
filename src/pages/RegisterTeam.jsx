@@ -13,19 +13,16 @@ function RegisterTeam() {
   useEffect(() => {
     const getUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      setUserId(session?.user?.id || null);
+      if (session?.user) {
+        setUserId(session.user.id);
+        fetchTeams(session.user.id);
+        fetchLeagues();
+      }
     };
     getUser();
   }, []);
 
-  useEffect(() => {
-    if (userId) {
-      fetchTeams();
-      fetchLeagues();
-    }
-  }, [userId]);
-
-  const fetchTeams = async () => {
+  const fetchTeams = async (userId) => {
     const { data, error } = await supabase.from('teams').select('*').eq('owner_id', userId);
     if (error) console.error('Error fetching teams:', error.message);
     else setTeams(data);
@@ -47,6 +44,14 @@ function RegisterTeam() {
       return;
     }
 
+    const leagueData = leagues.find((l) => l.id === selectedLeague);
+
+    // Check if league is locked
+    if (leagueData?.is_locked) {
+      setError('League is locked. No more registrations allowed.');
+      return;
+    }
+
     // Check if already registered
     const { data: existing } = await supabase
       .from('registrations')
@@ -59,16 +64,30 @@ function RegisterTeam() {
       return;
     }
 
-    const { error } = await supabase.from('registrations').insert([
+    // Check current number of teams registered
+    const { count } = await supabase
+      .from('registrations')
+      .select('*', { count: 'exact', head: true })
+      .eq('league_id', selectedLeague);
+
+    if (count >= leagueData.max_teams) {
+      // Lock the league
+      await supabase.from('leagues').update({ is_locked: true }).eq('id', selectedLeague);
+      setError('League is now full and locked.');
+      return;
+    }
+
+    const { error: insertError } = await supabase.from('registrations').insert([
       { team_id: selectedTeam, league_id: selectedLeague }
     ]);
 
-    if (error) {
-      setError(error.message);
+    if (insertError) {
+      setError(insertError.message);
     } else {
       setSuccess('Team successfully registered!');
       setSelectedTeam('');
       setSelectedLeague('');
+      fetchLeagues(); // Refresh league list in case it's now full
     }
   };
 
@@ -98,7 +117,7 @@ function RegisterTeam() {
           <option value="">Select League</option>
           {leagues.map((league) => (
             <option key={league.id} value={league.id}>
-              {league.name}
+              {league.name} {league.is_locked ? '(Locked)' : `(Max: ${league.max_teams})`}
             </option>
           ))}
         </select>
