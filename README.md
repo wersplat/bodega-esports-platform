@@ -1,3 +1,4 @@
+
 # 🏆 Bodega Esports Platform
 
 A full-stack esports tournament management platform built with React, Supabase, and Vite.
@@ -9,8 +10,8 @@ Manage leagues, teams, players, brackets, and championships — fully self-hoste
 ## 🚀 Tech Stack
 
 - **Frontend:** React + Vite
-- **Auth & DB:** Supabase
-- **Styling:** Vanilla CSS (responsive, mobile-friendly)
+- **Auth & Database:** Supabase
+- **Styling:** Vanilla CSS (responsive, mobile-first)
 - **State Management:** Lightweight React hooks
 
 ---
@@ -32,6 +33,8 @@ Manage leagues, teams, players, brackets, and championships — fully self-hoste
     - Matches.jsx
     - Login.jsx
     - Register.jsx
+    - AdminCreateLeague.jsx
+    - AdminAddTeam.jsx
   - App.jsx
   - main.jsx
   - index.css
@@ -59,7 +62,7 @@ cd bodega-esports-platform
 npm install
 ```
 
-### 3. Environment Variables
+### 3. Configure Environment Variables
 
 Create a `.env` file based on the provided `.env.example`:
 
@@ -68,7 +71,7 @@ VITE_SUPABASE_URL=your-supabase-url
 VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
-You can find these in your [Supabase Project Settings](https://app.supabase.com/).
+Your Supabase project URL and anon key can be found under [Supabase Project Settings](https://app.supabase.com/).
 
 ### 4. Run Locally
 
@@ -76,8 +79,7 @@ You can find these in your [Supabase Project Settings](https://app.supabase.com/
 npm run dev
 ```
 
-The platform will start on:
-
+Default server:  
 ```
 http://localhost:5173
 ```
@@ -88,44 +90,48 @@ http://localhost:5173
 
 | Feature | Status |
 |---|---|
-| Player Registration/Login | ✅ |
+| Player Registration & Login | ✅ |
 | Team Creation & Management | ✅ |
-| League Creation & Admin Control | ✅ |
-| Randomized Bracket Generation | ✅ |
-| Winner Selection and Match Advancement | ✅ |
+| League Creation & Admin Panel | ✅ |
+| Team Registration into Leagues | ✅ |
+| Randomized Bracket Generator | ✅ |
+| Match Winner Selection & Advancement | ✅ |
 | Auto-Advance Tournament Rounds | ✅ |
-| Public Bracket Viewing | ✅ |
-| Champion Detection and Display | ✅ |
-| Admin Panel with Inline Controls | ✅ |
-| Responsive Mobile-First Design | ✅ |
+| Public Bracket Viewer | ✅ |
+| Champion Detection | ✅ |
+| Dynamic Theme Switching (`/` and `/alt`) | ✅ |
+| Admin Dynamic Button Routing | ✅ |
+| Full Mobile-First Responsive UI | ✅ |
 
 ---
 
 ## 📜 Notes
 
-- Requires a live Supabase project (free tier works)
-- Assumes `teams`, `players`, `matches`, and `leagues` tables are configured
-- Supabase `auth` module is used for secure login/logout/session management
-- Match winner and tournament advancement are managed manually through admin actions
+- Requires an active [Supabase](https://supabase.com/) project (free tier works)
+- Database tables needed: `teams`, `players`, `matches`, `leagues`, `registrations`, `profiles`
+- Supabase `auth` module handles user login/session management securely
+- Manual winner selection and tournament advancement are controlled via Admin dashboard
+- Supports clean deployment on free platforms or self-hosting
 
 ---
 
 ## 🌐 Deployment
 
-The platform can be deployed easily on:
+Ready for easy deployment to:
 
 - [Vercel](https://vercel.com/)
 - [Netlify](https://www.netlify.com/)
 - [Render](https://render.com/)
-- Your own server (Docker, Nginx, Apache, etc.)
+- Any custom server (Docker, Nginx, Apache)
 
 ---
 
 ## 🧐 Credits
 
-Developed by **Cager** with systems design, testing, and real TO-level optimization 🔥
+Developed by **Cager**  
+With systems design, live QA testing, and real TO-level optimization 🔥
 
 ---
 
-# 🏋️ Road to $25K Ready. Let's GO.
-
+# 🏋️‍♂️ Road to $25K Ready.  
+# 🏆 Let's GO.
