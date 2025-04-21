@@ -4,7 +4,10 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import LeagueBrowser from './pages/LeagueBrowser';
+import LeagueDetails from './pages/LeagueDetails';
 import Admin from './pages/Admin';
+import TeamCreation from './pages/TeamCreation';
+import RegisterTeam from './pages/RegisterTeam';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -32,6 +35,23 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/teams"
+            element={
+              <PrivateRoute>
+                <TeamCreation />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/register-team"
+            element={
+              <PrivateRoute>
+                <RegisterTeam />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/league/:id" element={<LeagueDetails />} />
         </Routes>
       </div>
     </Router>

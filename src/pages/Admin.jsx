@@ -29,13 +29,23 @@ function Admin() {
       return;
     }
 
-    const { data, error } = await supabase.from('leagues').insert([{ name, description }]);
+    const { error } = await supabase.from('leagues').insert([{ name, description }]);
 
     if (error) {
       setError(error.message);
     } else {
       setName('');
       setDescription('');
+      fetchLeagues(); // Refresh list
+    }
+  };
+
+  const handleDeleteLeague = async (id) => {
+    const { error } = await supabase.from('leagues').delete().eq('id', id);
+
+    if (error) {
+      alert('Failed to delete league.');
+    } else {
       fetchLeagues(); // Refresh list
     }
   };
@@ -72,6 +82,20 @@ function Admin() {
             <li key={league.id} style={{ marginBottom: '20px', background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.1)' }}>
               <h3>{league.name}</h3>
               <p>{league.description}</p>
+              <button
+                onClick={() => handleDeleteLeague(league.id)}
+                style={{
+                  marginTop: '10px',
+                  padding: '8px 16px',
+                  backgroundColor: '#ef4444',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                }}
+              >
+                Delete
+              </button>
             </li>
           ))}
         </ul>
