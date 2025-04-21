@@ -1,0 +1,104 @@
+/* 📄 /public/styles-alt.css — Road to $25K Theme */
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff; /* White background */
+  color: #111111; /* Dark text */
+}
+
+h1, h2, h3 {
+  color: #b22234; /* Deep red headers (Road to $25K Red) */
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #b22234;
+}
+
+nav {
+  background-color: #b22234; /* Red navbar */
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+.form-input {
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #b22234;
+  border-radius: 8px;
+}
+
+.form-button {
+  padding: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background-color: #3b82f6; /* Blue esports buttons */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.form-button:hover {
+  background-color: #2563eb;
+}
+
+.card {
+  background-color: #f8f8f8;
+  border: 2px solid #b22234;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.button-primary {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.button-primary:hover {
+  background-color: #2563eb;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 2px solid #b22234;
+}
+
+th {
+  background-color: #b22234;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}

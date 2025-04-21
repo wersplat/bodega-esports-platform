@@ -46,7 +46,7 @@ function RegisterTeam() {
 
     const leagueData = leagues.find((l) => l.id === selectedLeague);
 
-    // Check if league is locked
+    // Check if league is locked already
     if (leagueData?.is_locked) {
       setError('League is locked. No more registrations allowed.');
       return;
@@ -59,24 +59,40 @@ function RegisterTeam() {
       .eq('team_id', selectedTeam)
       .eq('league_id', selectedLeague);
 
-    if (existing.length > 0) {
+    if (existing?.length > 0) {
       setError('Team already registered in this league.');
       return;
     }
 
     // Check current number of teams registered
-    const { count } = await supabase
+    const { count, error: countError } = await supabase
       .from('registrations')
       .select('*', { count: 'exact', head: true })
       .eq('league_id', selectedLeague);
 
-    if (count >= leagueData.max_teams) {
-      // Lock the league
-      await supabase.from('leagues').update({ is_locked: true }).eq('id', selectedLeague);
-      setError('League is now full and locked.');
+    if (countError) {
+      console.error('Error counting registrations:', countError.message);
+      setError('Error checking league status. Please try again.');
       return;
     }
 
+    if (count >= leagueData.max_teams) {
+      // Lock the league
+      const { error: lockError } = await supabase
+        .from('leagues')
+        .update({ is_locked: true })
+        .eq('id', selectedLeague);
+
+      if (lockError) {
+        console.error('Error locking league:', lockError.message);
+      }
+
+      setError('League is now full and locked.');
+      fetchLeagues(); // Refresh leagues to show locked status
+      return;
+    }
+
+    // Safe to register
     const { error: insertError } = await supabase.from('registrations').insert([
       { team_id: selectedTeam, league_id: selectedLeague }
     ]);
@@ -87,12 +103,12 @@ function RegisterTeam() {
       setSuccess('Team successfully registered!');
       setSelectedTeam('');
       setSelectedLeague('');
-      fetchLeagues(); // Refresh league list in case it's now full
+      fetchLeagues(); // Refresh to reflect possible lock
     }
   };
 
   return (
-    <div style={{ paddingTop: '80px' }}> 
+    <div style={{ paddingTop: '80px' }}>
       <h1 className="page-title">Register Team to a League</h1>
 
       <form onSubmit={handleRegister} className="form" style={{ marginTop: '30px' }}>
