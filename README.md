@@ -1,101 +1,12 @@
-# 📚 Quick Start Guide for Bodega Esports Platform
+# React + Vite
 
-## 🛠 Prerequisites
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-- Visual Studio Code installed
+Currently, two official plugins are available:
 
-- Node.js v18+ installed
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-- GitHub account
+## Expanding the ESLint configuration
 
-- Supabase project created (or ready)
-
-- Stripe developer account created (or ready)
-
----
-
-## 📥 1. Clone the Repo
-
-In VS Code terminal (or Git Bash, or Terminal):
-
-```bash
-git clone https://github.com/your-username/bodega-esports-platform.git
-cd bodega-esports-platform
-```
-
----
-
-## 📦 2. Install Project Dependencies
-
-Inside the project folder:
-
-```bash
-npm install
-```
-
-This installs:
-
-- React
-
-- Vite
-
-- TailwindCSS
-
-- Supabase client
-
-- Stripe client
-
-- React Router
-
----
-
-## 🔐 3. Set Up Your Environment Variables
-
-Create a `.env` file at the root of the project:
-
-```bash
-touch .env
-```
-
-Paste this into `.env`:
-
-```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
-VITE_STRIPE_PUBLIC_KEY=your-publishable-stripe-key
-```
-
-(Fill with your actual Supabase and Stripe keys.)
-
----
-
-## 🚀 4. Run the App Locally
-
-Start the Vite development server:
-
-```bash
-npm run dev
-```
-
-Then visit:
-
-```text
-http://localhost:5173/
-```
-
-You should see the starter platform!
-
----
-
-## 🛠 Project Structure
-
-```text
-/src
-  /components
-  /pages
-  /utils
-App.jsx
-vite.config.js
-.env
-package.json
-```
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
