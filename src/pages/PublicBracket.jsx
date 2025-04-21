@@ -61,7 +61,7 @@ function PublicBracket() {
   const rounds = groupMatchesByRound();
 
   return (
-    <div>
+    <div style={{ paddingTop: '80px' }}> {/* Add padding so navbar doesn't overlap */}
       <h1 className="page-title">🏆 Public Tournament Bracket</h1>
 
       <select
@@ -104,7 +104,11 @@ function PublicBracket() {
             .sort((a, b) => a - b)
             .map((roundNumber) => (
               <div key={roundNumber} style={{ minWidth: '250px' }}>
-                <h2 style={{ marginBottom: '10px' }}>Round {roundNumber}</h2>
+                <h2 style={{ marginBottom: '10px' }}>
+                  {rounds[roundNumber].length === 1
+                    ? '🏆 Championship Match'
+                    : `Round ${roundNumber}`}
+                </h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {rounds[roundNumber].map((match) => (
                     <div

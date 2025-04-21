@@ -92,7 +92,7 @@ function RegisterTeam() {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: '80px' }}> 
       <h1 className="page-title">Register Team to a League</h1>
 
       <form onSubmit={handleRegister} className="form" style={{ marginTop: '30px' }}>

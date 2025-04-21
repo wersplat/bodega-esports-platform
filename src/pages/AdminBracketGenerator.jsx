@@ -79,7 +79,7 @@ function AdminBracketGenerator() {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: '80px' }}> 
       <h1 className="page-title">Admin: Bracket Generator</h1>
 
       <select

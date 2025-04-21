@@ -37,7 +37,7 @@ function LeagueDetails() {
   if (!league) return <div>Loading league...</div>;
 
   return (
-    <div>
+    <div style={{ paddingTop: '80px' }}> 
       <h1 className="page-title">{league.name}</h1>
       <p>{league.description}</p>
 

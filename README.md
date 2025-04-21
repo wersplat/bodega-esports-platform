@@ -1,12 +1,131 @@
-# React + Vite
+# 🏆 Bodega Esports Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack esports tournament management platform built with React, Supabase, and Vite.
 
-Currently, two official plugins are available:
+Manage leagues, teams, players, brackets, and championships — fully self-hosted and tournament-organizer ready.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🚀 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Frontend:** React + Vite
+- **Auth & DB:** Supabase
+- **Styling:** Vanilla CSS (responsive, mobile-friendly)
+- **State Management:** Lightweight React hooks
+
+---
+
+## 📂 Project Structure
+
+```
+/public
+  - index.html
+
+/src
+  /components
+    - Navbar.jsx
+  /pages
+    - Dashboard.jsx
+    - Admin.jsx
+    - PublicBracket.jsx
+    - Champion.jsx
+    - Matches.jsx
+    - Login.jsx
+    - Register.jsx
+  - App.jsx
+  - main.jsx
+  - index.css
+
+package.json
+vite.config.js
+README.md
+.env.example
+```
+
+---
+
+## 🛠️ Setup Instructions
+
+### 1. Clone the Project
+
+```bash
+git clone https://github.com/YOUR_USERNAME/bodega-esports-platform.git
+cd bodega-esports-platform
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Environment Variables
+
+Create a `.env` file based on the provided `.env.example`:
+
+```bash
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+You can find these in your [Supabase Project Settings](https://app.supabase.com/).
+
+### 4. Run Locally
+
+```bash
+npm run dev
+```
+
+The platform will start on:
+
+```
+http://localhost:5173
+```
+
+---
+
+## 🔑 Core Features
+
+| Feature | Status |
+|---|---|
+| Player Registration/Login | ✅ |
+| Team Creation & Management | ✅ |
+| League Creation & Admin Control | ✅ |
+| Randomized Bracket Generation | ✅ |
+| Winner Selection and Match Advancement | ✅ |
+| Auto-Advance Tournament Rounds | ✅ |
+| Public Bracket Viewing | ✅ |
+| Champion Detection and Display | ✅ |
+| Admin Panel with Inline Controls | ✅ |
+| Responsive Mobile-First Design | ✅ |
+
+---
+
+## 📜 Notes
+
+- Requires a live Supabase project (free tier works)
+- Assumes `teams`, `players`, `matches`, and `leagues` tables are configured
+- Supabase `auth` module is used for secure login/logout/session management
+- Match winner and tournament advancement are managed manually through admin actions
+
+---
+
+## 🌐 Deployment
+
+The platform can be deployed easily on:
+
+- [Vercel](https://vercel.com/)
+- [Netlify](https://www.netlify.com/)
+- [Render](https://render.com/)
+- Your own server (Docker, Nginx, Apache, etc.)
+
+---
+
+## 🧐 Credits
+
+Developed by **Cager** with systems design, testing, and real TO-level optimization 🔥
+
+---
+
+# 🏋️ Road to $25K Ready. Let's GO.
+

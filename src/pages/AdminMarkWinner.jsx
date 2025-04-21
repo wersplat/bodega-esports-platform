@@ -58,7 +58,7 @@ function AdminMarkWinner() {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: '80px' }}> 
       <h1 className="page-title">🏆 Admin: Mark Match Winners</h1>
 
       {message && <p style={{ marginTop: '10px', color: 'green' }}>{message}</p>}

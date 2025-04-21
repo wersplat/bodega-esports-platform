@@ -42,7 +42,7 @@ function Matches() {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: '80px' }}> 
       <h1 className="page-title">🏆 Current Matches</h1>
 
       {matches.length === 0 ? (

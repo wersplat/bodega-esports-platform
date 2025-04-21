@@ -19,7 +19,7 @@ function LeagueBrowser() {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: '80px' }}> 
       <h1 className="page-title">Available Leagues</h1>
 
       <ul style={{ listStyle: 'none', padding: 0 }}>

@@ -93,7 +93,7 @@ function AdminAdvanceRound() {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: '80px' }}> 
       <h1 className="page-title">🏆 Admin: Advance Tournament Round</h1>
 
       {message && <p style={{ marginTop: '10px', color: 'green' }}>{message}</p>}

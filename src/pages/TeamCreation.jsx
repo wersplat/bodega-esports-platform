@@ -119,7 +119,7 @@ function TeamCreation() {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: '80px' }}> 
       <h1 className="page-title">Manage Your Teams</h1>
 
       <form onSubmit={handleCreateTeam} className="form" style={{ marginTop: '30px' }}>

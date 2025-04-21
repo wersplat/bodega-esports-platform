@@ -10,44 +10,61 @@ function Navbar() {
     if (error) {
       console.error('Logout error:', error.message);
     } else {
-      navigate('/'); // Redirect to Login
+      navigate('/');
     }
   };
 
   return (
-    <nav style={{ backgroundColor: '#1f2937', padding: '10px', display: 'flex', gap: '20px', alignItems: 'center' }}>
-      <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>
-        Home
-      </Link>
-      <Link to="/dashboard" style={{ color: 'white', textDecoration: 'none' }}>
-        Dashboard
-      </Link>
-      <Link to="/leagues" style={{ color: 'white', textDecoration: 'none' }}>
-        Leagues
-      </Link>
-      <Link to="/teams" style={{ color: 'white', textDecoration: 'none' }}>
-        Teams
-      </Link>
-      <Link to="/register-team" style={{ color: 'white', textDecoration: 'none' }}>
-        Register Team
-      </Link>
-      <Link to="/admin" style={{ color: 'white', textDecoration: 'none' }}>
-        Admin
-      </Link>
-      <button
-        onClick={handleLogout}
-        style={{
-          marginLeft: 'auto',
-          padding: '8px 16px',
-          backgroundColor: '#ef4444',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-        }}
-      >
-        Logout
-      </button>
+    <nav
+      style={{
+        backgroundColor: '#1f2937',
+        padding: '12px 24px',
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        position: 'fixed',
+        width: '100%',
+        top: 0,
+        zIndex: 50,
+        boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+      }}
+    >
+      {/* Left side links */}
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '16px',
+        flexGrow: 1,
+        minWidth: '0', // allow shrinking
+      }}>
+        <Link to="/dashboard" style={{ color: 'white', textDecoration: 'none' }}>Dashboard</Link>
+        <Link to="/leagues" style={{ color: 'white', textDecoration: 'none' }}>Leagues</Link>
+        <Link to="/public-bracket" style={{ color: 'white', textDecoration: 'none' }}>Bracket</Link>
+        <Link to="/champion" style={{ color: 'white', textDecoration: 'none' }}>Champion</Link>
+        <Link to="/matches" style={{ color: 'white', textDecoration: 'none' }}>Matches</Link>
+        <Link to="/admin" style={{ color: 'white', textDecoration: 'none' }}>Admin</Link>
+      </div>
+
+      {/* Right side logout */}
+      <div style={{
+        marginTop: '8px',
+        flexShrink: 0,
+      }}>
+        <button
+          onClick={handleLogout}
+          style={{
+            backgroundColor: '#ef4444',
+            color: 'white',
+            border: 'none',
+            padding: '8px 16px',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          Logout
+        </button>
+      </div>
     </nav>
   );
 }

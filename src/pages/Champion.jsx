@@ -58,7 +58,7 @@ function Champion() {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: '80px' }}> 
       <h1 className="page-title">🏆 Tournament Champion</h1>
 
       <select
