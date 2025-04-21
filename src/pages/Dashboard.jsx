@@ -1,9 +1,33 @@
-function Login() {
+import { supabase } from '../supabaseClient';
+import { useNavigate } from 'react-router-dom';
+
+function Dashboard() {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Dashboard Page</h1>
+    <div>
+      <h1 className="page-title">Dashboard</h1>
+      <button
+        onClick={handleLogout}
+        style={{
+          marginTop: '20px',
+          padding: '10px 20px',
+          backgroundColor: '#ef4444',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+        }}
+      >
+        Logout
+      </button>
     </div>
   );
 }
 
-export default Login;
+export default Dashboard;

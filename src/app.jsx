@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import LeagueBrowser from './pages/LeagueBrowser';
 import Admin from './pages/Admin';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
@@ -14,9 +15,23 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
           <Route path="/leagues" element={<LeagueBrowser />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute requireAdmin={true}>
+                <Admin />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </div>
     </Router>
