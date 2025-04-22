@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import NotificationsBell from './NotificationsBell';
 
 function Navbar() {
   const location = useLocation();
@@ -41,6 +42,10 @@ function Navbar() {
       <Link to={isAlt ? "/alt/public-bracket" : "/public-bracket"} className={linkClass(isAlt ? "/alt/public-bracket" : "/public-bracket")}>Bracket</Link>
       <Link to={isAlt ? "/alt/champion" : "/champion"} className={linkClass(isAlt ? "/alt/champion" : "/champion")}>Champion</Link>
       <Link to={isAlt ? "/alt/public-matches" : "/public-matches"} className={linkClass(isAlt ? "/alt/public-matches" : "/public-matches")}>Public Matches</Link>
+      <Link to="/submit-stats">Submit My Stats</Link>
+      <Link to="/contracts">Contracts</Link>
+      
+
 
       {/* Divider */}
       <span className="nav-divider">|</span>
@@ -50,6 +55,7 @@ function Navbar() {
       <Link to={isAlt ? "/alt/admin" : "/admin"} className={linkClass(isAlt ? "/alt/admin" : "/admin")}>Admin</Link>
       <Link to={isAlt ? "/alt/leaderboard" : "/leaderboard"} className={linkClass(isAlt ? "/alt/leaderboard" : "/leaderboard")}>Leaderboard</Link>
       <Link to={isAlt ? "/alt/standings" : "/standings"} className={linkClass(isAlt ? "/alt/standings" : "/standings")}>Standings</Link>
+      
 
       {/* Divider */}
       <span className="nav-divider">|</span>
@@ -63,6 +69,8 @@ function Navbar() {
       ) : (
         <Link to={isAlt ? "/alt/login" : "/login"} className={linkClass(isAlt ? "/alt/login" : "/login")}>Login</Link>
       )}
+      
+  <NotificationsBell />
     </nav>
   );
 }

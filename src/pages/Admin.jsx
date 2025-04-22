@@ -69,6 +69,24 @@ function Admin() {
         <button onClick={() => navigate('/leagues')} className="form-button">
           📋 View Registered Teams
         </button>
+        <button onClick={() => navigate('/admin-review-matches')} className="form-button">
+          📝 Review Matches
+        </button>
+        <button onClick={() => navigate('/admin-review-stats')} className="form-button">
+          📊 Review Player Stats
+        </button>
+        <button onClick={() => navigate('/admin-roster-lock')} className="form-button">
+          🔒 Roster-Lock
+        </button>
+        <button onClick={() => navigate('/admin-discord-announce')} className="form-button">
+          📢 Discord Announcement
+        </button>
+        <button onClick={() => navigate('/admin-manage-webhooks')} className="form-button">
+  🛠️ Manage Webhooks
+</button>
+
+
+        
       </div>
     </div>
   );
