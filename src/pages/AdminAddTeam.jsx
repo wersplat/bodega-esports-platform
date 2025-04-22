@@ -12,7 +12,10 @@ function AdminAddTeam() {
 
   useEffect(() => {
     const fetchLeagues = async () => {
-      const { data, error } = await supabase.from('leagues').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from('leagues')
+        .select('*')
+        .order('created_at', { ascending: false });
       if (error) console.error('Error fetching leagues:', error.message);
       else setLeagues(data);
     };
@@ -29,18 +32,40 @@ function AdminAddTeam() {
       return;
     }
 
-    const { error: insertError } = await supabase.from('teams').insert([
-      {
-        name: teamName,
-        league_id: selectedLeague,
-        owner_id: null // Admin-created teams have no owner initially
-      }
-    ]);
+    // Insert the new team first
+    const { data: teamInsertData, error: teamInsertError } = await supabase
+      .from('teams')
+      .insert([
+        {
+          name: teamName,
+          league_id: selectedLeague,
+          owner_id: null, // Admin-created teams have no owner initially
+        }
+      ])
+      .select()
+      .single(); // Force returning the inserted team
 
-    if (insertError) {
-      setError(insertError.message);
+    if (teamInsertError) {
+      setError(teamInsertError.message);
+      return;
+    }
+
+    // Register the team into registrations
+    const { data: registrationData, error: registrationError } = await supabase
+      .from('registrations')
+      .insert([
+        {
+          team_id: teamInsertData.id,
+          league_id: selectedLeague,
+        }
+      ])
+      .select()
+      .single(); // Force returning the inserted registration
+
+    if (registrationError) {
+      setError(registrationError.message);
     } else {
-      setSuccess('Team successfully added!');
+      setSuccess('Team successfully added and registered!');
       setTeamName('');
       setSelectedLeague('');
     }
@@ -50,7 +75,15 @@ function AdminAddTeam() {
     <div style={{ paddingTop: '100px', paddingLeft: '24px', paddingRight: '24px' }}>
       <h1 className="page-title">Admin: Add New Team</h1>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '40px' }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          marginTop: '40px'
+        }}
+      >
         <input
           type="text"
           placeholder="Team Name"
@@ -74,7 +107,11 @@ function AdminAddTeam() {
           ))}
         </select>
 
-        <button type="submit" className="form-button" style={{ backgroundColor: '#3b82f6' }}>
+        <button
+          type="submit"
+          className="form-button"
+          style={{ backgroundColor: '#3b82f6' }}
+        >
           Add Team
         </button>
 

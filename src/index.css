@@ -4,6 +4,7 @@ body {
   padding: 0;
   font-family: Arial, Helvetica, sans-serif;
   background-color: #f8fafc;
+  color: #1f2937;
 }
 
 /* Navbar styles */
@@ -12,57 +13,95 @@ nav {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #1f2937; /* dark gray */
-  padding: 15px;
+  background-color: #1f2937; /* dark navy */
+  padding: 16px 30px;
   display: flex;
   justify-content: center;
-  gap: 30px;
-  color: white;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  align-items: center;
+  gap: 32px;
   z-index: 1000;
 }
 
-nav a {
-  color: white;
+/* Force all clickable items inside nav to white */
+nav a,
+nav button,
+nav .nav-link {
+  color: #e5e7eb; /* light gray/white */
+  font-weight: 700;
+  font-size: 18px;
   text-decoration: none;
-  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: color 0.3s ease;
 }
 
-nav a:hover {
-  text-decoration: underline;
+/* Hover effects */
+nav a:hover,
+nav button:hover,
+nav .nav-link:hover {
+  color: #60a5fa; /* esports blue */
 }
 
-/* Main content area padding to avoid overlap with Navbar */
+/* Optional underline on hover */
+nav a::after,
+nav button::after,
+nav .nav-link::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 2px;
+  background: #60a5fa;
+  transition: width 0.3s;
+  margin-top: 4px;
+}
+
+nav a:hover::after,
+nav button:hover::after,
+nav .nav-link:hover::after {
+  width: 100%;
+}
+
+/* Logout button specific */
+.nav-link {
+  color: #f87171; /* soft red */
+}
+
+.nav-link:hover {
+  color: #ef4444; /* stronger red */
+}
+
+/* Main content area */
 .main-content {
-  padding-top: 80px; /* leave room for fixed Navbar */
+  padding-top: 80px;
   padding-left: 20px;
   padding-right: 20px;
 }
 
-/* Form container for Login and Register */
+/* Form container */
 .form-container {
   background: white;
   padding: 30px;
-  margin: 100px auto 40px; /* Top padding bigger to account for Navbar */
+  margin: 100px auto 40px;
   max-width: 400px;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Page title styling */
+/* Page title */
 .page-title {
   text-align: center;
   margin-bottom: 20px;
 }
 
-/* Form layout styling */
+/* Form styles */
 .form {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-/* Form inputs */
 .form-input {
   padding: 10px;
   font-size: 16px;
@@ -70,7 +109,6 @@ nav a:hover {
   border-radius: 5px;
 }
 
-/* Form submit button */
 .form-button {
   padding: 12px;
   font-size: 16px;
