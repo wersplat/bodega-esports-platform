@@ -38,6 +38,7 @@ import Notifications from './pages/Notifications';
 import AdminRosterLock from './pages/AdminRosterLock';
 import SendAnnouncement from './pages/SendAnnouncement';
 import AdminManageWebhooks from './pages/AdminManageWebhooks';
+import AdminReviewBoard from './pages/AdminReviewBoard';
 
 function App() {
   const location = useLocation();
@@ -98,6 +99,7 @@ function App() {
         <Route path="/admin-roster-lock"      element={<AdminRosterLock />} />
         <Route path="/admin-discord-announce" element={<SendAnnouncement />} />
         <Route path="/admin-manage-webhooks" element={<AdminManageWebhooks />} />
+        <Route path="/admin-review-board"     element={<AdminReviewBoard />} />
 
       
         {/* Alt Theme */}
@@ -125,7 +127,6 @@ function App() {
         <Route path="/alt/contracts"      element={<MyContracts />} />
         <Route path="/alt/notifications" element={<Notifications />} />
 
-
         <Route path="/alt/admin"                   element={<Admin />} />
         <Route path="/alt/admin-review-matches"    element={<AdminReviewMatches />} />
         <Route path="/alt/admin-submit-result"     element={<AdminSubmitResult />} />
@@ -135,6 +136,7 @@ function App() {
         <Route path="/alt/admin-roster-lock"     element={<AdminRosterLock />} />
         <Route path="/alt/admin-send-announcement" element={<SendAnnouncement />} />
         <Route path="/alt/admin-manage-webhooks"  element={<AdminManageWebhooks />} />
+        <Route path="/alt/admin-review-board"     element={<AdminReviewBoard />} />
 
       </Routes>
     </>

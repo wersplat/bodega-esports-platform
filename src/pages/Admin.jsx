@@ -75,6 +75,9 @@ function Admin() {
         <button onClick={() => navigate('/admin-review-stats')} className="form-button">
           📊 Review Player Stats
         </button>
+        <button onClick={() => navigate('/admin-review-board')} className="form-button">
+          📝 Review Submissions
+        </button>
         <button onClick={() => navigate('/admin-roster-lock')} className="form-button">
           🔒 Roster-Lock
         </button>
