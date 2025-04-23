@@ -157,6 +157,26 @@ Backend: http://localhost:8000
 | Dynamic Theme Switching (`/` and `/alt`) | ✅ |
 | Admin Dynamic Button Routing | ✅ |
 | Full Mobile-First Responsive UI | ✅ |
+| Notifications System | ✅ |
+| Player Profiles | ✅ |
+| Stats Tracking System | 🚧 In Progress |
+| Public Pages Expansion | 🚧 In Progress |
+
+---
+
+## 🛠 Planned Features
+
+| Feature | Description |
+|---|---|
+| Tournament Bracket System | Dynamic bracket generation, live updates, and match scheduling |
+| Advanced Analytics | Player and team performance insights, heatmaps, and trends |
+| Anti-Cheat System | Integration with third-party anti-cheat tools |
+| Multi-Language Support | Localization for global audiences |
+| Marketplace | In-app purchases for team branding, player perks, and more |
+| Mobile App | Companion app for match updates, notifications, and stats |
+| Google Sheets Auto-Sync | Automate export of stats and standings to Google Sheets |
+| Player Profile Stats Endpoint | Provide players access to individual statistics |
+| Full Table Exports | Enable comprehensive backups of player stats and match submissions |
 
 ---
 

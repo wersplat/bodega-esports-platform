@@ -18,6 +18,9 @@ Enhance the platform with advanced features to support large-scale tournaments, 
 | 📱 Mobile App | Companion app for match updates, notifications, and stats | 🚀 Medium | ❌ Not Started |
 | 🎨 UI/UX Overhaul | Modernize the interface for better usability and aesthetics | 🧹 Bonus | ❌ Not Started |
 | 🤝 Sponsorship Integration | Tools for teams to manage and display sponsors | 🧹 Bonus | ❌ Not Started |
+| 📤 Google Sheets Auto-Sync | Automate export of stats and standings to Google Sheets | 🔥 High | ❌ Not Started |
+| 📈 Player Profile Stats Endpoint | Provide players access to individual statistics | 🔥 High | ❌ Not Started |
+| 💾 Full Table Exports | Enable comprehensive backups of player stats and match submissions | 🔥 High | ❌ Not Started |
 
 ---
 
@@ -47,27 +50,27 @@ Enhance the platform with advanced features to support large-scale tournaments, 
 
 **Status:** ❌ Not Started
 
-### 4. Multi-Language Support
+### 4. Google Sheets Auto-Sync
 
-- Localization for key regions
-- Language selection in user settings
-- Support for RTL languages
-
-**Status:** ❌ Not Started
-
-### 5. Marketplace (Bonus)
-
-- In-app purchases for team branding
-- Player perks and cosmetic items
-- Secure payment integration
+- Scheduled exports of stats and standings
+- Organized by season and week
+- Cron job integration
 
 **Status:** ❌ Not Started
 
-### 6. Mobile App (Bonus)
+### 5. Player Profile Stats Endpoint
 
-- Real-time match updates
-- Push notifications for events
-- Player and team stats on the go
+- Personal performance metrics
+- Filters for season and team
+- Secure authentication
+
+**Status:** ❌ Not Started
+
+### 6. Full Table Exports
+
+- Endpoints for player stats and match submissions
+- Clear naming conventions for backups
+- Secure storage
 
 **Status:** ❌ Not Started
 
