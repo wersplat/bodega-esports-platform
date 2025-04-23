@@ -142,6 +142,13 @@ class MatchSubmission(Base):
     id = Column(Integer, primary_key=True)
     match_id = Column(Integer, ForeignKey("matches.id"))
     submitted_by = Column(Integer, ForeignKey("profiles.id"))
+    comment = Column(Text, nullable=True)
+    submitted_at = Column(DateTime, default=datetime.datetime.utcnow)
+    submission_hash = Column(String, unique=True, nullable=False)
+
+    __table_args__ = (
+        Index("ix_match_submission_hash", "submission_hash"),
+    )
 
 
 class MatchResult(Base):
@@ -202,16 +209,3 @@ class LeagueSettings(Base):
     league_id = Column(Integer, ForeignKey("leagues.id"))
 
     league = relationship("League", back_populates="settings")
-
-class MatchSubmission(Base):
-    __tablename__ = "match_submissions"
-    id = Column(Integer, primary_key=True)
-    match_id = Column(Integer, ForeignKey("matches.id"))
-    submitted_by = Column(Integer, ForeignKey("profiles.id"))
-    comment = Column(Text, nullable=True)
-    submitted_at = Column(DateTime, default=datetime.datetime.utcnow)
-    submission_hash = Column(String, unique=True, nullable=False)
-
-    __table_args__ = (
-        Index("ix_match_submission_hash", "submission_hash"),
-    )
