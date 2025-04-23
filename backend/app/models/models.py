@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.orm import relationship
-from backend.database import Base
+from ..database import Base
 import datetime
 
 # ─────────── League, Season, Conference, Division ───────────
+
 
 class League(Base):
     __tablename__ = "leagues"
@@ -12,7 +13,9 @@ class League(Base):
     season_id = Column(Integer, ForeignKey("seasons.id"))
 
     season = relationship("Season", back_populates="leagues")
-    settings = relationship("LeagueSettings", uselist=False, back_populates="league")
+    settings = relationship(
+        "LeagueSettings", uselist=False, back_populates="league"
+    )
     conferences = relationship("Conference", back_populates="league")
     teams = relationship("Team", back_populates="league")
 
@@ -52,6 +55,7 @@ class Conference(Base):
 
 # ─────────── Team, Player, Roster, Contract ───────────
 
+
 class Team(Base):
     __tablename__ = "teams"
     id = Column(Integer, primary_key=True)
@@ -87,6 +91,7 @@ class Contract(Base):
 
 # ─────────── Profile, Notification, Webhook, Workflow ───────────
 
+
 class Profile(Base):
     __tablename__ = "profiles"
     id = Column(Integer, primary_key=True)
@@ -121,6 +126,7 @@ class Workflow(Base):
     profile = relationship("Profile", back_populates="workflows")
 
 # ─────────── Matches, Submissions, Results, Stats ───────────
+
 
 class Match(Base):
     __tablename__ = "matches"
@@ -162,6 +168,7 @@ class PlayerStat(Base):
     match = relationship("Match", back_populates="player_stats")
 
 # ─────────── Misc Tables ───────────
+
 
 class Registration(Base):
     __tablename__ = "registrations"
