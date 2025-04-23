@@ -1,0 +1,24 @@
+from pydantic import BaseModel
+from typing import Optional
+
+class PlayerStatBase(BaseModel):
+    match_id: int
+    player_id: int
+    team_id: int
+    season_id: int
+    points: int
+    assists: int
+    rebounds: int
+    steals: int
+    blocks: int
+    turnovers: int
+    fouls: int
+
+class PlayerStatCreate(PlayerStatBase):
+    pass
+
+class PlayerStatRead(PlayerStatBase):
+    id: int
+
+    class Config:
+        orm_mode = True
