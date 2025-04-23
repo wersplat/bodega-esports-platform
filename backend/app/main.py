@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.routers import teams, players, matches  # ✅ must match filenames
 from app.routers import player_stats
 from app.routers import match_submissions
-
+from app.routers import auth  # ✅ must match filename
 # Add the workspace root to the Python path
 import sys
 from pathlib import Path
@@ -20,7 +20,7 @@ app.include_router(players.router)
 app.include_router(matches.router)
 app.include_router(player_stats.router)
 app.include_router(match_submissions.router)
-
+app.include_router(auth.router)
 
 @app.get("/")
 def root():
