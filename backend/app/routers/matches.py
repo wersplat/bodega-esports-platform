@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from models.models import Match
-from database import get_db
-from schemas.match import MatchCreate, MatchRead
+from app.models.models import Match
+from app.database import get_db
+from app.schemas.match import MatchCreate, MatchRead
 
 router = APIRouter(prefix="/matches", tags=["Matches"])
 

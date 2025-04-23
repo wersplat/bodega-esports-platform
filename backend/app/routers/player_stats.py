@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from models.models import PlayerStat
-from database import get_db
-from schemas.player_stat import PlayerStatCreate, PlayerStatRead
+from app.models.models import PlayerStat
+from app.database import get_db
+from app.schemas.player_stat import PlayerStatCreate, PlayerStatRead
 
 router = APIRouter(prefix="/player-stats", tags=["Player Stats"])
 
