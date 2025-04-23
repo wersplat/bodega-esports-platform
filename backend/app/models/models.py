@@ -1,10 +1,10 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Index
 from sqlalchemy.orm import relationship
 from ..database import Base
 import datetime
+import hashlib
 
 # ─────────── League, Season, Conference, Division ───────────
-
 
 class League(Base):
     __tablename__ = "leagues"
@@ -13,9 +13,7 @@ class League(Base):
     season_id = Column(Integer, ForeignKey("seasons.id"))
 
     season = relationship("Season", back_populates="leagues")
-    settings = relationship(
-        "LeagueSettings", uselist=False, back_populates="league"
-    )
+    settings = relationship("LeagueSettings", uselist=False, back_populates="league")
     conferences = relationship("Conference", back_populates="league")
     teams = relationship("Team", back_populates="league")
 
@@ -55,7 +53,6 @@ class Conference(Base):
 
 # ─────────── Team, Player, Roster, Contract ───────────
 
-
 class Team(Base):
     __tablename__ = "teams"
     id = Column(Integer, primary_key=True)
@@ -91,7 +88,6 @@ class Contract(Base):
 
 # ─────────── Profile, Notification, Webhook, Workflow ───────────
 
-
 class Profile(Base):
     __tablename__ = "profiles"
     id = Column(Integer, primary_key=True)
@@ -99,7 +95,7 @@ class Profile(Base):
     notifications = relationship("Notification", back_populates="recipient")
     webhooks = relationship("Webhook", back_populates="creator")
     workflows = relationship("Workflow", back_populates="profile")
-
+    player_stats = relationship("PlayerStat", backref="profile")  # optional reverse
 
 class Notification(Base):
     __tablename__ = "notifications"
@@ -126,7 +122,6 @@ class Workflow(Base):
     profile = relationship("Profile", back_populates="workflows")
 
 # ─────────── Matches, Submissions, Results, Stats ───────────
-
 
 class Match(Base):
     __tablename__ = "matches"
@@ -158,17 +153,31 @@ class MatchResult(Base):
 
 class PlayerStat(Base):
     __tablename__ = "player_stats"
+
     id = Column(Integer, primary_key=True)
     match_id = Column(Integer, ForeignKey("matches.id"))
     player_id = Column(Integer, ForeignKey("profiles.id"))
     team_id = Column(Integer, ForeignKey("teams.id"))
     season_id = Column(Integer, ForeignKey("seasons.id"))
 
+    points = Column(Integer, nullable=False)
+    assists = Column(Integer, nullable=False)
+    rebounds = Column(Integer, nullable=False)
+    steals = Column(Integer, nullable=False)
+    blocks = Column(Integer, nullable=False)
+    turnovers = Column(Integer, nullable=False)
+    fouls = Column(Integer, nullable=False)
+
+    stat_hash = Column(String, unique=True, nullable=False)
+
+    __table_args__ = (
+        Index("ix_player_stat_hash", "stat_hash"),
+    )
+
     season = relationship("Season", back_populates="player_stats")
     match = relationship("Match", back_populates="player_stats")
 
 # ─────────── Misc Tables ───────────
-
 
 class Registration(Base):
     __tablename__ = "registrations"
@@ -193,3 +202,16 @@ class LeagueSettings(Base):
     league_id = Column(Integer, ForeignKey("leagues.id"))
 
     league = relationship("League", back_populates="settings")
+
+class MatchSubmission(Base):
+    __tablename__ = "match_submissions"
+    id = Column(Integer, primary_key=True)
+    match_id = Column(Integer, ForeignKey("matches.id"))
+    submitted_by = Column(Integer, ForeignKey("profiles.id"))
+    comment = Column(Text, nullable=True)
+    submitted_at = Column(DateTime, default=datetime.datetime.utcnow)
+    submission_hash = Column(String, unique=True, nullable=False)
+
+    __table_args__ = (
+        Index("ix_match_submission_hash", "submission_hash"),
+    )
