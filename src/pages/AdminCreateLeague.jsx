@@ -1,14 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
 function AdminCreateLeague() {
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
   const [maxTeams, setMaxTeams] = useState(16);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [seasons, setSeasons] = useState([]);
+  const [selectedSeason, setSelectedSeason] = useState('');
+  const [newSeasonName, setNewSeasonName] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSeasons = async () => {
+      const { data, error } = await supabase.from('seasons').select('id, name');
+      if (error) {
+        console.error('Error fetching seasons:', error);
+      } else {
+        setSeasons(data);
+      }
+    };
+
+    fetchSeasons();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,10 +31,10 @@ function AdminCreateLeague() {
     const { error } = await supabase.from('leagues').insert([
       {
         name,
-        description,
         max_teams: maxTeams,
         start_date: startDate,
-        end_date: endDate
+        end_date: endDate,
+        season_id: selectedSeason
       }
     ]);
 
@@ -29,6 +44,24 @@ function AdminCreateLeague() {
     } else {
       alert('League created successfully!');
       navigate('/admin');
+    }
+  };
+
+  const handleCreateSeason = async () => {
+    if (!newSeasonName.trim()) {
+      alert('Season name cannot be empty.');
+      return;
+    }
+
+    const { data, error } = await supabase.from('seasons').insert([{ name: newSeasonName }]).select();
+
+    if (error) {
+      alert('Failed to create season.');
+      console.error(error);
+    } else {
+      alert('Season created successfully!');
+      setSeasons((prevSeasons) => [...prevSeasons, ...data]);
+      setNewSeasonName('');
     }
   };
 
@@ -42,13 +75,6 @@ function AdminCreateLeague() {
           placeholder="League Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="form-input"
-          required
-        />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
           className="form-input"
           required
         />
@@ -76,6 +102,30 @@ function AdminCreateLeague() {
           className="form-input"
           required
         />
+        <select
+          value={selectedSeason}
+          onChange={(e) => setSelectedSeason(e.target.value)}
+          className="form-input"
+          required
+        >
+          <option value="">Select Season</option>
+          {seasons.map((season) => (
+            <option key={season.id} value={season.id}>{season.name}</option>
+          ))}
+        </select>
+
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <input
+            type="text"
+            placeholder="New Season Name"
+            value={newSeasonName}
+            onChange={(e) => setNewSeasonName(e.target.value)}
+            className="form-input"
+          />
+          <button type="button" onClick={handleCreateSeason} className="form-button" style={{ backgroundColor: '#3b82f6', color: '#fff' }}>
+            Add Season
+          </button>
+        </div>
 
         <button type="submit" className="form-button">Create League</button>
       </form>

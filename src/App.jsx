@@ -25,6 +25,7 @@ import Leaderboard from './pages/Leaderboard';
 import Standings from './pages/Standings';
 import Profile from './pages/Profile';
 import LeagueTeams from './pages/LeagueTeams';
+import PlayerProfile from './pages/PlayerProfile'; // Import the PlayerProfile component
 
 import Admin from './pages/Admin';
 import AdminReviewMatches from './pages/AdminReviewMatches';
@@ -84,7 +85,7 @@ function App() {
           <Route path="/champion" element={<Champion />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/standings" element={<Standings />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<PlayerProfile />} /> {/* Add route for Player Profile */}
           <Route path="/league/:id" element={<LeagueTeams />} />
           <Route path="/contracts/send" element={<OwnerSendContract />} />
           <Route path="/contracts" element={<MyContracts />} />

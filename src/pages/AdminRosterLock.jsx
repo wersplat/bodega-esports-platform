@@ -3,6 +3,8 @@ import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
 export default function AdminRosterLock() {
+  const [leagues, setLeagues] = useState([]); // State for leagues
+  const [selectedLeagueId, setSelectedLeagueId] = useState(''); // State for selected league
   const [seasons, setSeasons] = useState([]);
   const [selected, setSelected] = useState('');
   const [lockDate, setLockDate] = useState('');
@@ -10,37 +12,113 @@ export default function AdminRosterLock() {
   const nav = useNavigate();
 
   useEffect(() => {
-    (async () => {
-      const { data } = await supabase
+    const loadLeagues = async () => {
+      const { data, error } = await supabase
+        .from('leagues')
+        .select('id, name')
+        .order('created_at', { ascending: false });
+
+      if (!error) setLeagues(data);
+    };
+
+    loadLeagues();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedLeagueId) {
+      setSelected(''); // Clear selected season if no league is selected
+      setSeasons([]); // Clear seasons list
+      return;
+    }
+
+    const loadSeasons = async () => {
+      const { data, error } = await supabase
         .from('seasons')
         .select('id, name, roster_lock_date')
+        .eq('league_id', selectedLeagueId) // Filter seasons by selected league
         .order('created_at', { ascending: false });
-      setSeasons(data);
-    })();
-  }, []);
+
+      if (!error) setSeasons(data);
+    };
+
+    loadSeasons();
+  }, [selectedLeagueId]);
+
+  useEffect(() => {
+    if (selected) {
+      supabase
+        .from('seasons')
+        .select('roster_lock_date')
+        .eq('id', selected)
+        .single()
+        .then(({ data }) => {
+          if (data?.roster_lock_date) {
+            setLockDate(data.roster_lock_date); // Ensure lockDate reflects the current state
+          }
+        });
+    }
+  }, [selected]);
 
   const applyLock = async () => {
     if (!selected || !lockDate) {
       setMsg('Select season and date');
       return;
     }
+
+    const confirmApply = window.confirm(
+      `Are you sure you want to set the roster lock date to ${lockDate} for the selected season?`
+    );
+    if (!confirmApply) return;
+
     const { error } = await supabase
       .from('seasons')
       .update({ roster_lock_date: lockDate })
       .eq('id', selected);
-    setMsg(error ? error.message : 'Lock date saved ✅');
+
+    if (error) {
+      setMsg('Failed to save lock date.');
+    } else {
+      setMsg('Lock date saved ✅');
+      setLockDate(lockDate); // Update local lockDate state
+
+      // Refetch seasons to ensure UI reflects the latest state
+      const { data, error: fetchError } = await supabase
+        .from('seasons')
+        .select('id, name, roster_lock_date')
+        .eq('league_id', selectedLeagueId)
+        .order('created_at', { ascending: false });
+
+      if (!fetchError) setSeasons(data);
+    }
   };
 
   const clearLock = async () => {
+    const confirmClear = window.confirm(
+      'Are you sure you want to clear the roster lock date for the selected season?'
+    );
+    if (!confirmClear) return;
+
     const { error } = await supabase
       .from('seasons')
       .update({ roster_lock_date: null })
       .eq('id', selected);
-    setLockDate('');
-    setMsg(error ? error.message : 'Lock cleared');
-  };
 
-  const selectedSeason = seasons.find((s) => s.id === selected);
+    if (error) {
+      setMsg('Failed to clear lock date.');
+    } else {
+      setMsg('Lock cleared');
+      setLockDate(''); // Clear local lockDate state
+
+      // Refetch seasons to ensure UI reflects the latest state
+      const { data, error: fetchError } = await supabase
+        .from('seasons')
+        .select('id, name, roster_lock_date')
+        .eq('league_id', selectedLeagueId)
+        .order('created_at', { ascending: false });
+
+      if (!fetchError) setSeasons(data);
+    }
+  };
 
   return (
     <div className="main-content">
@@ -50,46 +128,66 @@ export default function AdminRosterLock() {
         ← Back
       </button>
 
-      <div style={{ background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)', maxWidth: 500, margin: '0 auto' }}>
+      <div className="form-container">
+        <label htmlFor="league" className="block font-bold mb-2">Select League</label>
         <select
+          id="league"
+          value={selectedLeagueId}
+          onChange={(e) => setSelectedLeagueId(e.target.value)}
           className="form-input"
-          value={selected}
-          onChange={(e) => {
-            setSelected(e.target.value);
-            const sd = seasons.find((s) => s.id === e.target.value);
-            setLockDate(sd?.roster_lock_date ?? '');
-          }}
         >
-          <option value="">Select Season</option>
-          {seasons.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
+          <option value="">-- Select a League --</option>
+          {leagues.map((league) => (
+            <option key={league.id} value={league.id}>
+              {league.name}
             </option>
           ))}
         </select>
 
+        {selectedLeagueId && (
+          <>
+            <label htmlFor="season" className="block font-bold mb-2 mt-4">Select Season</label>
+            <select
+              id="season"
+              value={selected}
+              onChange={(e) => setSelected(e.target.value)}
+              className="form-input"
+            >
+              <option value="">-- Select a Season --</option>
+              {seasons.map((season) => (
+                <option key={season.id} value={season.id}>
+                  {season.name} (Lock Date: {season.roster_lock_date || 'None'})
+                </option>
+              ))}
+            </select>
+          </>
+        )}
+
         {selected && (
           <>
-            <label style={{ marginTop: 16, fontSize: 14, color: '#f8fafc' }}>Roster Lock Date</label>
-            <input
-              type="date"
-              className="form-input"
-              value={lockDate ?? ''}
-              onChange={(e) => setLockDate(e.target.value)}
-            />
+            <div className="mt-4">
+              <label htmlFor="lock-date" className="block font-bold mb-2">Set Roster Lock Date</label>
+              <input
+                id="lock-date"
+                type="date"
+                value={lockDate}
+                onChange={(e) => setLockDate(e.target.value)}
+                className="form-input"
+              />
+            </div>
 
-            <div style={{ marginTop: 16 }}>
-              <button onClick={applyLock} className="form-button">Save</button>
-              {selectedSeason?.roster_lock_date && (
-                <button onClick={clearLock} style={{ marginLeft: 12 }} className="form-button">
-                  Clear
-                </button>
-              )}
+            <div className="mt-6">
+              <button onClick={applyLock} className="form-button">
+                Apply Lock Date
+              </button>
+              <button onClick={clearLock} className="form-button">
+                Clear Lock Date
+              </button>
             </div>
           </>
         )}
 
-        {msg && <p style={{ marginTop: 16, color: msg.includes('saved') ? '#34d399' : '#f87171' }}>{msg}</p>}
+        {msg && <p className="message">{msg}</p>}
       </div>
     </div>
   );
