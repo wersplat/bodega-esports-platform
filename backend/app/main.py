@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from routers import teams, players, matches  # ✅ must match filenames
-from routers import player_stats
+from app.routers import teams, players, matches  # ✅ must match filenames
+from app.routers import player_stats
 
 app = FastAPI()
 
