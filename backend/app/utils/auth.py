@@ -3,7 +3,7 @@ from jose import jwt
 from os import getenv
 from sqlalchemy.orm import Session
 from app.models.models import Profile
-from app.database import get_db  # ✅ Missing import fixed
+from app.database import get_db  #  Missing import fixed
 
 # === JWT Parsing ===
 JWT_SECRET = getenv("JWT_SECRET", "your-default-secret")
