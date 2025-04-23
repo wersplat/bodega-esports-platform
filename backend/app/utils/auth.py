@@ -1,9 +1,11 @@
-from fastapi import Depends, HTTPException, Header
+from fastapi import Depends, HTTPException, Header, APIRouter
 from jose import jwt
 from os import getenv
 from sqlalchemy.orm import Session
 from app.models.models import Profile
 from app.database import get_db  #  Missing import fixed
+
+router = APIRouter()
 
 # === JWT Parsing ===
 JWT_SECRET = getenv("JWT_SECRET", "your-default-secret")
@@ -42,3 +44,7 @@ def get_profile(
     if not user:
         raise HTTPException(status_code=404, detail="User profile not found")
     return user
+
+@router.get("/auth/test")
+def test_auth():
+    return {"message": "Auth router is working"}
