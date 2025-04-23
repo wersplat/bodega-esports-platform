@@ -1,12 +1,9 @@
-# backend/main.py
-
 from fastapi import FastAPI
+from routers import teams
 
 app = FastAPI()
 
-@app.get("/")
-def root():
-    return {"message": "Backend is live"}
+app.include_router(teams.router)
 
 @app.get("/ping")
 def ping():
