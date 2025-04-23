@@ -18,6 +18,7 @@ app.include_router(teams.router)
 app.include_router(players.router)
 app.include_router(matches.router)
 app.include_router(player_stats.router)
+app.include_router(match_submissions.router)
 
 
 @app.get("/")
