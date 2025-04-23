@@ -8,6 +8,10 @@ from pathlib import Path
 workspace_root = Path(__file__).resolve().parents[2]
 sys.path.append(str(workspace_root))
 
+# Add the backend directory to the Python path
+backend_path = workspace_root / 'backend'
+sys.path.append(str(backend_path))
+
 app = FastAPI()
 
 app.include_router(teams.router)
