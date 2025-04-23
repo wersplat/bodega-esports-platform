@@ -23,5 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 .env
-backend/credentials/service_account.json
+/backend/credentials/service_account.json
 
