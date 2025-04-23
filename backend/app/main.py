@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from app.routers import teams, players, matches  # ✅ must match filenames
+from app.routers import teams, players, matches  #  must match filenames
 from app.routers import player_stats
 from app.routers import match_submissions
-from app.routers import auth  # ✅ must match filename
+from app.routers import auth  #  must match filename
 # Add the workspace root to the Python path
 import sys
 from pathlib import Path
