@@ -1,4 +1,3 @@
-
 # 🏆 Bodega Esports Platform
 
 A full-stack esports tournament management platform built with React, Supabase, and Vite.
@@ -13,6 +12,7 @@ Manage leagues, teams, players, brackets, and championships — fully self-hoste
 - **Auth & Database:** Supabase
 - **Styling:** Vanilla CSS (responsive, mobile-first)
 - **State Management:** Lightweight React hooks
+- **Backend:** Python (FastAPI)
 
 ---
 
@@ -21,10 +21,15 @@ Manage leagues, teams, players, brackets, and championships — fully self-hoste
 ```
 /public
   - index.html
+  - img/
+    - rt25k-bg.png
+  - vite.svg
 
 /src
   /components
     - Navbar.jsx
+    - NotificationsBell.jsx
+    - PrivateRoute.jsx
   /pages
     - Dashboard.jsx
     - Admin.jsx
@@ -35,14 +40,48 @@ Manage leagues, teams, players, brackets, and championships — fully self-hoste
     - Register.jsx
     - AdminCreateLeague.jsx
     - AdminAddTeam.jsx
+    - LeagueBrowser.jsx
+    - Standings.jsx
+    - PlayerProfile.jsx
   - App.jsx
   - main.jsx
   - index.css
+  - supabaseClient.js
+  - theme.css
+
+/backend
+  /app
+    - main.py
+    - database.py
+    /models
+      - models.py
+    /routers
+      - players.py
+      - teams.py
+      - matches.py
+      - standings.py
+    /schemas
+      - player.py
+      - team.py
+      - match.py
+    /utils
+      - auth.py
+      - hash.py
+      - sheets.py
+  - requirements.txt
+  - render.yaml
+
+/supabase
+  /functions
+    /send-discord
+      - index.ts
+      - deno.json
+  - config.toml
 
 package.json
 vite.config.js
+vercel.json
 README.md
-.env.example
 ```
 
 ---
@@ -62,6 +101,12 @@ cd bodega-esports-platform
 npm install
 ```
 
+For the backend:
+
+```bash
+pip install -r backend/requirements.txt
+```
+
 ### 3. Configure Environment Variables
 
 Create a `.env` file based on the provided `.env.example`:
@@ -75,13 +120,23 @@ Your Supabase project URL and anon key can be found under [Supabase Project Sett
 
 ### 4. Run Locally
 
+Frontend:
+
 ```bash
 npm run dev
 ```
 
-Default server:  
+Backend:
+
+```bash
+python backend/app/main.py
 ```
-http://localhost:5173
+
+Default server:
+
+```bash
+Frontend: http://localhost:5173
+Backend: http://localhost:8000
 ```
 
 ---
@@ -119,9 +174,9 @@ http://localhost:5173
 
 Ready for easy deployment to:
 
-- [Vercel](https://vercel.com/)
+- [Vercel](https://vercel.com/) (via `vercel.json`)
 - [Netlify](https://www.netlify.com/)
-- [Render](https://render.com/)
+- [Render](https://render.com/) (via `render.yaml`)
 - Any custom server (Docker, Nginx, Apache)
 
 ---
@@ -133,5 +188,6 @@ With systems design, live QA testing, and real TO-level optimization 🔥
 
 ---
 
-# 🏋️‍♂️ Road to $25K Ready.  
-# 🏆 Let's GO.
+## 🏋️‍♂️ Road to $25K Ready
+
+Let's GO!
