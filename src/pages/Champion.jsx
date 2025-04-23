@@ -58,39 +58,41 @@ function Champion() {
   };
 
   return (
-    <div style={{ paddingTop: '80px' }}> 
+    <div className="main-content">
       <h1 className="page-title">🏆 Tournament Champion</h1>
 
-      <select
-        value={selectedLeague}
-        onChange={(e) => setSelectedLeague(e.target.value)}
-        className="form-input"
-        style={{ marginBottom: '20px' }}
-      >
-        <option value="">Select League</option>
-        {leagues.map((league) => (
-          <option key={league.id} value={league.id}>
-            {league.name}
-          </option>
-        ))}
-      </select>
+      <div style={{ background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)', maxWidth: 500, margin: '0 auto' }}>
+        <select
+          value={selectedLeague}
+          onChange={(e) => setSelectedLeague(e.target.value)}
+          className="form-input"
+          style={{ marginBottom: '20px' }}
+        >
+          <option value="">Select League</option>
+          {leagues.map((league) => (
+            <option key={league.id} value={league.id}>
+              {league.name}
+            </option>
+          ))}
+        </select>
 
-      <button
-        onClick={detectChampion}
-        className="form-button"
-        style={{ backgroundColor: '#16a34a', marginBottom: '20px' }}
-      >
-        Show Champion
-      </button>
+        <button
+          onClick={detectChampion}
+          className="form-button"
+          style={{ backgroundColor: '#16a34a', marginBottom: '20px' }}
+        >
+          Show Champion
+        </button>
 
-      {championTeamId ? (
-        <div style={{ marginTop: '20px', padding: '30px', backgroundColor: '#fef3c7', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.1)' }}>
-          <h2 style={{ fontSize: '2rem' }}>🎉 {getTeamName(championTeamId)} 🎉</h2>
-          <p style={{ marginTop: '10px', fontSize: '1.2rem' }}>Congratulations, Champion!</p>
-        </div>
-      ) : (
-        <p style={{ marginTop: '20px' }}>No champion yet — tournament still ongoing.</p>
-      )}
+        {championTeamId ? (
+          <div style={{ marginTop: '20px', padding: '30px', background: '#222b3a', color: '#f8fafc', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.18)' }}>
+            <h2 style={{ fontSize: '2rem', color: '#f8fafc' }}>🎉 {getTeamName(championTeamId)} 🎉</h2>
+            <p style={{ marginTop: '10px', fontSize: '1.2rem', color: '#cbd5e1' }}>Congratulations, Champion!</p>
+          </div>
+        ) : (
+          <p style={{ marginTop: '20px', color: '#cbd5e1' }}>No champion yet — tournament still ongoing.</p>
+        )}
+      </div>
     </div>
   );
 }

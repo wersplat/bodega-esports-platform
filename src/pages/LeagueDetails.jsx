@@ -37,29 +37,29 @@ function LeagueDetails() {
   if (!league) return <div>Loading league...</div>;
 
   return (
-    <div style={{ paddingTop: '80px' }}> 
+    <div className="main-content">
       <h1 className="page-title">{league.name}</h1>
-      <p>{league.description}</p>
+      <p style={{ color: '#cbd5e1' }}>{league.description}</p>
 
-      <h2 style={{ marginTop: '30px' }}>Registered Teams</h2>
+      <h2 style={{ marginTop: '30px', color: '#f8fafc' }}>Registered Teams</h2>
 
       {registrations.length === 0 ? (
-        <p>No teams registered yet.</p>
+        <p style={{ color: '#cbd5e1' }}>No teams registered yet.</p>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {registrations.map((registration) => (
-            <li key={registration.id} style={{ marginBottom: '30px', background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.1)' }}>
-              <h3>{registration.teams.name}</h3>
-              <p>{registration.teams.description}</p>
+            <li key={registration.id} style={{ marginBottom: '30px', background: '#222b3a', color: '#f8fafc', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.25)' }}>
+              <h3 style={{ color: '#f8fafc' }}>{registration.teams.name}</h3>
+              <p style={{ color: '#cbd5e1' }}>{registration.teams.description}</p>
 
               {registration.teams.players.length === 0 ? (
-                <p style={{ marginTop: '10px' }}>No players added yet.</p>
+                <p style={{ marginTop: '10px', color: '#cbd5e1' }}>No players added yet.</p>
               ) : (
                 <div style={{ marginTop: '10px' }}>
-                  <h4>Roster</h4>
+                  <h4 style={{ color: '#f8fafc' }}>Roster</h4>
                   <ul style={{ paddingLeft: '20px' }}>
                     {registration.teams.players.map((player) => (
-                      <li key={player.id}>
+                      <li key={player.id} style={{ color: '#f8fafc' }}>
                         {player.name} {player.gamertag && `(${player.gamertag})`}
                       </li>
                     ))}

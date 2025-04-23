@@ -54,18 +54,19 @@ export default function SendAnnouncement() {
   };
 
   return (
-    <div style={{ padding: 80, maxWidth: 600, margin: 'auto' }}>
+    <div className="main-content">
       <h1 className="page-title">Discord Announcement</h1>
-      <form onSubmit={handleSend} className="form">
+      <form onSubmit={handleSend} className="form" style={{ background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)', maxWidth: 500, margin: '0 auto' }}>
         <select
           className="form-input"
           value={selected}
           onChange={e=>setSelected(e.target.value)}
           required
+          style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         >
           <option value="">Select Webhook</option>
           {webhooks.map(w=>(
-            <option key={w.id} value={w.url}>{w.name}</option>
+            <option key={w.id} value={w.url} style={{ background: '#1e293b', color: '#f8fafc' }}>{w.name}</option>
           ))}
         </select>
         <input
@@ -74,6 +75,7 @@ export default function SendAnnouncement() {
           value={title}
           onChange={e=>setTitle(e.target.value)}
           required
+          style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         />
         <textarea
           className="form-input"
@@ -82,10 +84,11 @@ export default function SendAnnouncement() {
           value={desc}
           onChange={e=>setDesc(e.target.value)}
           required
+          style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         />
-        <button className="form-button">Send</button>
-        {msg.success && <p style={{color:'green'}}>{msg.success}</p>}
-        {msg.error   && <p style={{color:'red'}}>{msg.error}</p>}
+        <button className="form-button" style={{ backgroundColor: '#3b82f6', color: '#fff', padding: '12px', borderRadius: '8px', fontWeight: 'bold', fontSize: '16px', border: 'none', marginTop: '20px' }}>Send</button>
+        {msg.success && <p style={{ color: '#34d399', marginTop: '10px' }}>{msg.success}</p>}
+        {msg.error   && <p style={{ color: '#f87171', marginTop: '10px' }}>{msg.error}</p>}
       </form>
     </div>
   );

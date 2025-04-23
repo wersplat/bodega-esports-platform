@@ -80,19 +80,20 @@ function SubmitResult() {
   };
 
   return (
-    <div style={{ paddingTop: '100px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div className="main-content">
       <h1 className="page-title">Submit Match Result</h1>
 
-      <form onSubmit={handleSubmit} style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <form onSubmit={handleSubmit} style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '20px', background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)', maxWidth: 500, margin: '0 auto' }}>
         <select
           value={selectedMatchId}
           onChange={(e) => setSelectedMatchId(e.target.value)}
           className="form-input"
           required
+          style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         >
           <option value="">Select Match</option>
           {matches.map((match) => (
-            <option key={match.id} value={match.id}>
+            <option key={match.id} value={match.id} style={{ background: '#1e293b', color: '#f8fafc' }}>
               {match.team_a} vs {match.team_b}
             </option>
           ))}
@@ -105,6 +106,7 @@ function SubmitResult() {
           value={teamAScore}
           onChange={(e) => setTeamAScore(e.target.value)}
           required
+          style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         />
         <input
           type="number"
@@ -113,6 +115,7 @@ function SubmitResult() {
           value={teamBScore}
           onChange={(e) => setTeamBScore(e.target.value)}
           required
+          style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         />
         <input
           type="text"
@@ -120,20 +123,23 @@ function SubmitResult() {
           placeholder="MVP (optional)"
           value={mvp}
           onChange={(e) => setMvp(e.target.value)}
+          style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         />
         <textarea
           className="form-input"
           placeholder="Notes (optional)"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
+          style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         />
         <input
           type="file"
           className="form-input"
           onChange={(e) => setScreenshot(e.target.files[0])}
+          style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         />
 
-        <button type="submit" className="form-button" style={{ backgroundColor: '#10b981' }}>
+        <button type="submit" className="form-button" style={{ backgroundColor: '#10b981', color: '#fff', padding: '12px', borderRadius: '8px', fontWeight: 'bold', fontSize: '16px', border: 'none', marginTop: '20px' }}>
           Submit Result
         </button>
       </form>

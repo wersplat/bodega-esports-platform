@@ -83,16 +83,16 @@ function Profile() {
   };
 
   if (loading) {
-    return <div>Loading profile...</div>;
+    return <div style={{ padding: 24, color: '#cbd5e1' }}>Loading profile...</div>;
   }
 
   const defaultAvatar = 'https://via.placeholder.com/120?text=Avatar'; // Can replace later
 
   return (
-    <div style={{ paddingTop: '100px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div className="main-content">
       <h1 className="page-title">My Profile</h1>
 
-      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '30px', background: '#1e293b', borderRadius: '12px', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
         <img
           src={profile.avatar_url || defaultAvatar}
           alt="Avatar"
@@ -100,7 +100,7 @@ function Profile() {
         />
       </div>
 
-      <form onSubmit={handleSave} className="form" style={{ marginTop: '20px' }}>
+      <form onSubmit={handleSave} className="form" style={{ marginTop: '20px', background: '#1e293b', borderRadius: '12px', padding: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
         <input
           className="form-input"
           name="username"
@@ -162,8 +162,8 @@ function Profile() {
           Save Profile
         </button>
 
-        {successMessage && <p style={{ color: 'green', marginTop: '10px' }}>{successMessage}</p>}
-        {errorMessage && <p style={{ color: 'red', marginTop: '10px' }}>{errorMessage}</p>}
+        {successMessage && <p style={{ color: '#34d399', marginTop: '10px' }}>{successMessage}</p>}
+        {errorMessage && <p style={{ color: '#f87171', marginTop: '10px' }}>{errorMessage}</p>}
       </form>
     </div>
   );

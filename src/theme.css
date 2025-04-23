@@ -1,0 +1,47 @@
+/* ================================
+   Bodega Esports Platform Theme Consolidation
+   Author: Consolidated by Copilot
+================================== */
+
+:root {
+  /* Light theme (default) */
+  --color-bg: #f8fafc;
+  --color-card: #ffffff;
+  --color-text: #1f2937;
+  --color-accent: #60a5fa;
+  --color-hover: #f43f5e;
+  --color-muted: #94a3b8;
+  --color-white: #ffffff;
+  --color-navbar-bg: #1f2937;
+  --color-navbar-text: #ffffff;
+  --color-navbar-accent: #60a5fa;
+  --color-accent-strong: #b22234; /* Road to $25K Red */
+}
+
+.theme-dark {
+  --color-bg: #0f172a;
+  --color-card: #1f2937;
+  --color-text: #f8fafc;
+  --color-accent: #60a5fa;
+  --color-hover: #f43f5e;
+  --color-muted: #94a3b8;
+  --color-white: #ffffff;
+  --color-navbar-bg: #111827;
+  --color-navbar-text: #e5e7eb;
+  --color-navbar-accent: #60a5fa;
+  --color-accent-strong: #b22234;
+}
+
+.theme-roadto24k {
+  --color-bg: #0f172a;
+  --color-card: #1e293b;
+  --color-text: #f8fafc;
+  --color-accent: #e11d48;
+  --color-hover: #f43f5e;
+  --color-muted: #94a3b8;
+  --color-white: #ffffff;
+  --color-navbar-bg: #0f172a;
+  --color-navbar-text: #f8fafc;
+  --color-navbar-accent: #e11d48;
+  --color-accent-strong: #e11d48;
+}

@@ -36,10 +36,10 @@ export default function Notifications() {
   return (
     <div className="main-content">
       <h1 className="page-title">Notifications</h1>
-      <ul>
+      <ul style={{ listStyle: 'none', padding: 0, marginTop: 20 }}>
         {list.map(n => (
-          <li key={n.id} style={{ marginBottom: 12 }}>
-            {renderText(n)} — {new Date(n.created_at).toLocaleString()}
+          <li key={n.id} style={{ marginBottom: 12, background: '#222b3a', color: '#f8fafc', padding: '12px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.18)' }}>
+            {renderText(n)} — <span style={{ color: '#cbd5e1' }}>{new Date(n.created_at).toLocaleString()}</span>
           </li>
         ))}
       </ul>

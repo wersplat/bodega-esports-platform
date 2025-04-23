@@ -19,13 +19,13 @@ function Standings() {
     if (selectedSeason) {
       fetchDivisions();
     }
-  }, [selectedSeason]);
+  }, [selectedSeason, fetchDivisions]);
 
   useEffect(() => {
     if (selectedDivision) {
       fetchStandings();
     }
-  }, [selectedDivision]);
+  }, [selectedDivision, fetchStandings]);
 
   const fetchSeasons = async () => {
     const { data, error } = await supabase.from('seasons').select('id, name').order('created_at', { ascending: false });
@@ -107,7 +107,7 @@ function Standings() {
   };
 
   return (
-    <div style={{ paddingTop: '100px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div className="main-content">
       <h1 className="page-title">🏆 Standings</h1>
 
       <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
@@ -115,10 +115,10 @@ function Standings() {
           value={selectedSeason}
           onChange={(e) => setSelectedSeason(e.target.value)}
           className="form-input"
-          style={{ minWidth: '200px' }}
+          style={{ minWidth: '200px', background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         >
           {seasons.map((season) => (
-            <option key={season.id} value={season.id}>
+            <option key={season.id} value={season.id} style={{ background: '#1e293b', color: '#f8fafc' }}>
               {season.name}
             </option>
           ))}
@@ -129,10 +129,10 @@ function Standings() {
             value={selectedDivision}
             onChange={(e) => setSelectedDivision(e.target.value)}
             className="form-input"
-            style={{ minWidth: '200px' }}
+            style={{ minWidth: '200px', background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
           >
             {divisions.map((division) => (
-              <option key={division.id} value={division.id}>
+              <option key={division.id} value={division.id} style={{ background: '#1e293b', color: '#f8fafc' }}>
                 {division.name}
               </option>
             ))}
@@ -141,26 +141,26 @@ function Standings() {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center' }}>Loading...</div>
+        <div style={{ textAlign: 'center', color: '#cbd5e1' }}>Loading...</div>
       ) : standings.length === 0 ? (
-        <p style={{ textAlign: 'center' }}>No teams recorded yet.</p>
+        <p style={{ textAlign: 'center', color: '#cbd5e1' }}>No teams recorded yet.</p>
       ) : (
-        <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
+        <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse', background: '#1e293b', color: '#f8fafc', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
           <thead>
-            <tr>
-              <th>Team</th>
-              <th>Wins</th>
-              <th>Losses</th>
-              <th>Win %</th>
+            <tr style={{ background: '#273449', color: '#f8fafc' }}>
+              <th style={{ padding: '12px' }}>Team</th>
+              <th style={{ padding: '12px' }}>Wins</th>
+              <th style={{ padding: '12px' }}>Losses</th>
+              <th style={{ padding: '12px' }}>Win %</th>
             </tr>
           </thead>
           <tbody>
             {standings.map((team, index) => (
-              <tr key={index}>
-                <td>{team.name}</td>
-                <td>{team.wins}</td>
-                <td>{team.losses}</td>
-                <td>{team.winPct}</td>
+              <tr key={index} style={{ borderBottom: '1px solid #334155' }}>
+                <td style={{ padding: '8px', color: '#cbd5e1' }}>{team.name}</td>
+                <td style={{ padding: '8px', color: '#f8fafc' }}>{team.wins}</td>
+                <td style={{ padding: '8px', color: '#f8fafc' }}>{team.losses}</td>
+                <td style={{ padding: '8px', color: '#f8fafc' }}>{team.winPct}</td>
               </tr>
             ))}
           </tbody>

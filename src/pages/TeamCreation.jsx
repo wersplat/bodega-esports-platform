@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,20 +25,20 @@ function TeamCreation() {
     getUser();
   }, []);
 
-  useEffect(() => {
-    if (userId) {
-      fetchTeams();
-    }
-  }, [userId]);
-
-  const fetchTeams = async () => {
+  const fetchTeams = useCallback(async () => {
     const { data, error } = await supabase.from('teams').select('*').eq('owner_id', userId);
     if (error) {
       console.error('Error fetching teams:', error.message);
     } else {
       setTeams(data);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchTeams();
+    }
+  }, [userId, fetchTeams]);
 
   const fetchPlayers = async (teamId) => {
     const { data, error } = await supabase.from('players').select('*').eq('team_id', teamId);
@@ -119,16 +119,17 @@ function TeamCreation() {
   };
 
   return (
-    <div style={{ paddingTop: '80px' }}> 
+    <div className="main-content">
       <h1 className="page-title">Manage Your Teams</h1>
 
-      <form onSubmit={handleCreateTeam} className="form" style={{ marginTop: '30px' }}>
+      <form onSubmit={handleCreateTeam} className="form" style={{ marginTop: '30px', background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)', maxWidth: 500, margin: '0 auto' }}>
         <input
           type="text"
           placeholder="Team Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="form-input"
+          style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         />
         <input
           type="text"
@@ -136,45 +137,40 @@ function TeamCreation() {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="form-input"
+          style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         />
-        <button type="submit" className="form-button" style={{ backgroundColor: '#0ea5e9' }}>
+        <button type="submit" className="form-button" style={{ backgroundColor: '#0ea5e9', color: '#fff', padding: '12px', borderRadius: '8px', fontWeight: 'bold', fontSize: '16px', border: 'none', marginTop: '20px' }}>
           Create Team
         </button>
-        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
-        {success && <p style={{ color: 'green', marginTop: '10px' }}>{success}</p>}
+        {error && <p style={{ color: '#f87171', marginTop: '10px' }}>{error}</p>}
+        {success && <p style={{ color: '#34d399', marginTop: '10px' }}>{success}</p>}
       </form>
 
       <div style={{ marginTop: '40px' }}>
-        <h2>My Teams</h2>
+        <h2 style={{ color: '#f8fafc' }}>My Teams</h2>
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {teams.map((team) => (
-            <li key={team.id} style={{ marginBottom: '30px', background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.1)' }}>
-              <h3>{team.name}</h3>
-              <p>{team.description}</p>
+            <li key={team.id} style={{ marginBottom: '30px', background: '#222b3a', color: '#f8fafc', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.18)' }}>
+              <h3 style={{ color: '#f8fafc' }}>{team.name}</h3>
+              <p style={{ color: '#cbd5e1' }}>{team.description}</p>
               <button 
                 onClick={() => handleSelectTeam(team.id)}
-                style={{
-                  marginTop: '10px',
-                  padding: '8px 16px',
-                  backgroundColor: '#3b82f6',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                }}
+                className="form-button"
+                style={{ marginTop: '10px', backgroundColor: '#3b82f6', color: '#fff', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold', fontSize: '14px', border: 'none' }}
               >
                 Manage Roster
               </button>
 
               {selectedTeam === team.id && (
                 <div style={{ marginTop: '20px' }}>
-                  <form onSubmit={handleAddPlayer} className="form">
+                  <form onSubmit={handleAddPlayer} className="form" style={{ background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
                     <input
                       type="text"
                       placeholder="Player Name"
                       value={playerName}
                       onChange={(e) => setPlayerName(e.target.value)}
                       className="form-input"
+                      style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
                     />
                     <input
                       type="text"
@@ -182,31 +178,25 @@ function TeamCreation() {
                       value={playerGamertag}
                       onChange={(e) => setPlayerGamertag(e.target.value)}
                       className="form-input"
+                      style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
                     />
-                    <button type="submit" className="form-button" style={{ backgroundColor: '#10b981' }}>
+                    <button type="submit" className="form-button" style={{ backgroundColor: '#10b981', color: '#fff', padding: '12px', borderRadius: '8px', fontWeight: 'bold', fontSize: '16px', border: 'none', marginTop: '20px' }}>
                       Add Player
                     </button>
                   </form>
 
-                  {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
-                  {success && <p style={{ color: 'green', marginTop: '10px' }}>{success}</p>}
+                  {error && <p style={{ color: '#f87171', marginTop: '10px' }}>{error}</p>}
+                  {success && <p style={{ color: '#34d399', marginTop: '10px' }}>{success}</p>}
 
-                  <h4 style={{ marginTop: '20px' }}>Roster</h4>
+                  <h4 style={{ marginTop: '20px', color: '#f8fafc' }}>Roster</h4>
                   <ul style={{ paddingLeft: '20px' }}>
                     {players.map((player) => (
-                      <li key={player.id} style={{ marginBottom: '10px' }}>
+                      <li key={player.id} style={{ marginBottom: '10px', color: '#f8fafc' }}>
                         {player.name} {player.gamertag && `(${player.gamertag})`}
                         <button
                           onClick={() => handleDeletePlayer(player.id)}
-                          style={{
-                            marginLeft: '10px',
-                            padding: '4px 8px',
-                            backgroundColor: '#ef4444',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                          }}
+                          className="form-button"
+                          style={{ marginLeft: '10px', backgroundColor: '#ef4444', color: '#fff', padding: '4px 8px', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', border: 'none' }}
                         >
                           Remove
                         </button>

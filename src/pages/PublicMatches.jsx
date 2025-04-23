@@ -36,29 +36,30 @@ function PublicMatches() {
   };
 
   if (loading) {
-    return <div>Loading matches...</div>;
+    return <div style={{ padding: 24, color: '#cbd5e1' }}>Loading matches...</div>;
   }
 
   return (
-    <div style={{ paddingTop: '80px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div className="main-content">
       <h1 className="page-title">Upcoming Matches</h1>
 
       {matches.length === 0 ? (
-        <p>No matches scheduled yet.</p>
+        <p style={{ color: '#cbd5e1' }}>No matches scheduled yet.</p>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {matches.map((match) => (
             <li
               key={match.id}
               style={{
-                background: 'white',
+                background: '#222b3a',
+                color: '#f8fafc',
                 marginBottom: '20px',
                 padding: '20px',
                 borderRadius: '8px',
-                boxShadow: '0 0 6px rgba(0,0,0,0.1)'
+                boxShadow: '0 0 6px rgba(0,0,0,0.18)'
               }}
             >
-              <h3>{match.leagues?.name || 'Unknown League'}</h3>
+              <h3 style={{ color: '#f8fafc' }}>{match.leagues?.name || 'Unknown League'}</h3>
               <p><strong>Date:</strong> {new Date(match.match_date).toLocaleDateString()}</p>
               <p><strong>Status:</strong> {match.status}</p>
               <p><strong>Matchup:</strong> {match.home_team?.name || 'TBD'} vs {match.away_team?.name || 'TBD'}</p>

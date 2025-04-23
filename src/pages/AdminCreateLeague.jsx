@@ -33,10 +33,10 @@ function AdminCreateLeague() {
   };
 
   return (
-    <div style={{ paddingTop: '100px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div className="main-content">
       <h1 className="page-title">Create New League</h1>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '40px' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '40px', background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)', maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}>
         <input
           type="text"
           placeholder="League Name"

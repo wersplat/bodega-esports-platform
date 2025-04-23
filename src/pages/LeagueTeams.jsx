@@ -53,15 +53,15 @@ function LeagueTeams() {
   };
 
   if (loading) {
-    return <div>Loading teams...</div>;
+    return <div style={{ padding: 24, color: '#cbd5e1' }}>Loading teams...</div>;
   }
 
   return (
-    <div style={{ paddingTop: '80px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div className="main-content">
       <h1 className="page-title">{leagueName} - Registered Teams</h1>
 
       {teams.length === 0 ? (
-        <p>No teams registered yet.</p>
+        <p style={{ color: '#cbd5e1' }}>No teams registered yet.</p>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {teams.map((registration) => (
@@ -69,13 +69,14 @@ function LeagueTeams() {
               key={registration.id}
               style={{
                 marginBottom: '20px',
-                background: 'white',
+                background: '#222b3a',
+                color: '#f8fafc',
                 padding: '20px',
                 borderRadius: '8px',
-                boxShadow: '0 0 6px rgba(0,0,0,0.1)'
+                boxShadow: '0 0 6px rgba(0,0,0,0.18)'
               }}
             >
-              <h3>{registration.teams?.name || 'Unknown Team'}</h3>
+              <h3 style={{ color: '#f8fafc' }}>{registration.teams?.name || 'Unknown Team'}</h3>
               {registration.teams?.logo_url && (
                 <img
                   src={registration.teams.logo_url}
@@ -84,7 +85,9 @@ function LeagueTeams() {
                     width: '100px',
                     height: '100px',
                     objectFit: 'contain',
-                    marginTop: '10px'
+                    marginTop: '10px',
+                    borderRadius: '8px',
+                    background: '#1e293b'
                   }}
                 />
               )}

@@ -58,17 +58,17 @@ function AdminMarkWinner() {
   };
 
   return (
-    <div style={{ paddingTop: '80px' }}> 
+    <div className="main-content">
       <h1 className="page-title">🏆 Admin: Mark Match Winners</h1>
 
-      {message && <p style={{ marginTop: '10px', color: 'green' }}>{message}</p>}
+      {message && <p style={{ marginTop: '10px', color: message.includes('success') ? '#34d399' : '#f87171' }}>{message}</p>}
 
       {matches.length === 0 ? (
-        <p>No matches yet.</p>
+        <p style={{ color: '#cbd5e1' }}>No matches yet.</p>
       ) : (
         matches.map((match) => (
-          <div key={match.id} style={{ marginBottom: '20px', background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.1)' }}>
-            <h3>{getLeagueName(match.league_id)}</h3>
+          <div key={match.id} style={{ marginBottom: '20px', background: '#222b3a', color: '#f8fafc', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.18)' }}>
+            <h3 style={{ color: '#f8fafc' }}>{getLeagueName(match.league_id)}</h3>
             <p><strong>Round:</strong> {match.round}</p>
             <p><strong>Match:</strong> {getTeamName(match.team1_id)} vs {getTeamName(match.team2_id)}</p>
             <p><strong>Current Winner:</strong> {match.winner_id ? getTeamName(match.winner_id) : 'No winner yet'}</p>
@@ -78,14 +78,16 @@ function AdminMarkWinner() {
               <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
                 <button
                   onClick={() => handleSetWinner(match.id, match.team1_id)}
-                  style={{ backgroundColor: '#3b82f6', color: 'white', padding: '8px 16px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+                  className="form-button"
+                  style={{ backgroundColor: '#3b82f6' }}
                 >
                   Set {getTeamName(match.team1_id)} as Winner
                 </button>
 
                 <button
                   onClick={() => handleSetWinner(match.id, match.team2_id)}
-                  style={{ backgroundColor: '#10b981', color: 'white', padding: '8px 16px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+                  className="form-button"
+                  style={{ backgroundColor: '#10b981' }}
                 >
                   Set {getTeamName(match.team2_id)} as Winner
                 </button>

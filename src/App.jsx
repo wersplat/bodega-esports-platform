@@ -40,6 +40,7 @@ import AdminRosterLock from './pages/AdminRosterLock';
 import SendAnnouncement from './pages/SendAnnouncement';
 import AdminManageWebhooks from './pages/AdminManageWebhooks';
 import AdminReviewBoard from './pages/AdminReviewBoard';
+import LeagueSettings from './pages/LeagueSettings'; // 👈 NEW
 
 function App() {
   const location = useLocation();
@@ -101,6 +102,7 @@ function App() {
           <Route path="/admin-discord-announce" element={<SendAnnouncement />} />
           <Route path="/admin-manage-webhooks" element={<AdminManageWebhooks />} />
           <Route path="/admin-review-board" element={<AdminReviewBoard />} />
+          <Route path="/admin-league-settings" element={<LeagueSettings />} /> {/* ✅ NEW */}
 
           {/* Alt Theme */}
           <Route path="/alt" element={<Login />} />
@@ -135,6 +137,7 @@ function App() {
           <Route path="/alt/admin-send-announcement" element={<SendAnnouncement />} />
           <Route path="/alt/admin-manage-webhooks" element={<AdminManageWebhooks />} />
           <Route path="/alt/admin-review-board" element={<AdminReviewBoard />} />
+          <Route path="/alt/admin-league-settings" element={<LeagueSettings />} /> {/* ✅ NEW */}
         </Routes>
       </div>
     </>

@@ -93,32 +93,33 @@ function AdminAdvanceRound() {
   };
 
   return (
-    <div style={{ paddingTop: '80px' }}> 
+    <div className="main-content">
       <h1 className="page-title">🏆 Admin: Advance Tournament Round</h1>
 
-      {message && <p style={{ marginTop: '10px', color: 'green' }}>{message}</p>}
+      {message && <p style={{ marginTop: '10px', color: message.includes('success') ? '#34d399' : '#f87171' }}>{message}</p>}
 
-      <select
-        value={selectedLeague}
-        onChange={(e) => setSelectedLeague(e.target.value)}
-        className="form-input"
-        style={{ marginBottom: '20px' }}
-      >
-        <option value="">Select League</option>
-        {leagues.map((league) => (
-          <option key={league.id} value={league.id}>
-            {league.name}
-          </option>
-        ))}
-      </select>
+      <div style={{ background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)', maxWidth: 500, margin: '0 auto' }}>
+        <select
+          value={selectedLeague}
+          onChange={(e) => setSelectedLeague(e.target.value)}
+          className="form-input"
+          style={{ marginBottom: '20px' }}
+        >
+          <option value="">Select League</option>
+          {leagues.map((league) => (
+            <option key={league.id} value={league.id}>
+              {league.name}
+            </option>
+          ))}
+        </select>
 
-      <button
-        onClick={generateNextRound}
-        className="form-button"
-        style={{ backgroundColor: '#6366f1' }}
-      >
-        Generate Next Round
-      </button>
+        <button
+          onClick={generateNextRound}
+          className="form-button"
+        >
+          Generate Next Round
+        </button>
+      </div>
     </div>
   );
 }

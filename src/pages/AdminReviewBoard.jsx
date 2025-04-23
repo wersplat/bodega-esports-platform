@@ -60,39 +60,39 @@ function AdminReviewBoard() {
     }
   };
 
-  if (loading) return <p style={{ padding: 20 }}>Loading submissions…</p>;
+  if (loading) return <p style={{ padding: 20, color: '#cbd5e1' }}>Loading submissions…</p>;
 
   return (
-    <div style={{ padding: '100px 24px 24px' }}>
+    <div className="main-content">
       <h1 className="page-title">🛠️ Admin Review Board</h1>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      {errorMessage && <p style={{ color: '#f87171' }}>{errorMessage}</p>}
 
       {submissions.length === 0 ? (
-        <p>No pending submissions.</p>
+        <p style={{ color: '#cbd5e1' }}>No pending submissions.</p>
       ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 20 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 20, background: '#1e293b', color: '#f8fafc', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Match</th>
-              <th>Scores</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th style={{ background: '#273449', color: '#f8fafc', padding: '12px' }}>Date</th>
+              <th style={{ background: '#273449', color: '#f8fafc', padding: '12px' }}>Match</th>
+              <th style={{ background: '#273449', color: '#f8fafc', padding: '12px' }}>Scores</th>
+              <th style={{ background: '#273449', color: '#f8fafc', padding: '12px' }}>Status</th>
+              <th style={{ background: '#273449', color: '#f8fafc', padding: '12px' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {submissions.map((sub) => (
-              <tr key={sub.id} style={{ borderBottom: '1px solid #ddd' }}>
-                <td style={{ padding: '8px' }}>
+              <tr key={sub.id} style={{ borderBottom: '1px solid #334155' }}>
+                <td style={{ padding: '8px', color: '#cbd5e1' }}>
                   {new Date(sub.submitted_at).toLocaleString()}
                 </td>
-                <td style={{ padding: '8px' }}>
+                <td style={{ padding: '8px', color: '#f8fafc' }}>
                   [{sub.matches.leagues.name}] {sub.home_team.name} vs {sub.away_team.name}
                 </td>
-                <td style={{ padding: '8px' }}>
+                <td style={{ padding: '8px', color: '#f8fafc' }}>
                   {sub.home_score} – {sub.away_score}
                 </td>
-                <td style={{ padding: '8px', textTransform: 'capitalize' }}>
+                <td style={{ padding: '8px', textTransform: 'capitalize', color: '#f8fafc' }}>
                   {sub.status}
                 </td>
                 <td style={{ padding: '8px' }}>

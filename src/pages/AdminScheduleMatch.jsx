@@ -86,10 +86,10 @@ function AdminScheduleMatch() {
   };
 
   return (
-    <div style={{ paddingTop: '100px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div className="main-content">
       <h1 className="page-title">Admin: Schedule a Match</h1>
 
-      <form onSubmit={handleSchedule} style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '30px' }}>
+      <form onSubmit={handleSchedule} style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '30px', background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)', maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}>
         <select
           value={selectedLeague}
           onChange={(e) => setSelectedLeague(e.target.value)}
@@ -142,12 +142,12 @@ function AdminScheduleMatch() {
           required
         />
 
-        <button type="submit" className="form-button" style={{ backgroundColor: '#3b82f6' }}>
+        <button type="submit" className="form-button">
           Schedule Match
         </button>
 
-        {successMessage && <p style={{ color: 'green', marginTop: '10px' }}>{successMessage}</p>}
-        {errorMessage && <p style={{ color: 'red', marginTop: '10px' }}>{errorMessage}</p>}
+        {successMessage && <p style={{ color: '#34d399', marginTop: '10px' }}>{successMessage}</p>}
+        {errorMessage && <p style={{ color: '#f87171', marginTop: '10px' }}>{errorMessage}</p>}
       </form>
     </div>
   );

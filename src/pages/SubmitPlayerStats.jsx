@@ -135,29 +135,30 @@ function SubmitPlayerStats() {
     }
   };
 
-  if (loading) return <div style={{ paddingTop: '100px', textAlign: 'center' }}>Loading...</div>;
+  if (loading) return <div style={{ paddingTop: '100px', textAlign: 'center', color: '#cbd5e1' }}>Loading...</div>;
 
   return (
-    <div style={{ paddingTop: '100px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div className="main-content">
       <h1 className="page-title">Submit Your Game Stats</h1>
 
-      {error   && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+      {error   && <p style={{ color: '#f87171' }}>{error}</p>}
+      {success && <p style={{ color: '#34d399' }}>{success}</p>}
 
       {matches.length === 0 ? (
-        <p>No completed games awaiting your stats.</p>
+        <p style={{ color: '#cbd5e1' }}>No completed games awaiting your stats.</p>
       ) : (
-        <form onSubmit={handleSubmit} className="form" style={{ maxWidth: '400px', margin: '0 auto' }}>
+        <form onSubmit={handleSubmit} className="form" style={{ maxWidth: '400px', margin: '0 auto', background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
           {/* Match selector */}
           <select
             className="form-input"
             value={selectedMatch}
             onChange={(e) => setSelectedMatch(e.target.value)}
             required
+            style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
           >
             <option value="">Select Match</option>
             {matches.map((m) => (
-              <option key={m.id} value={m.id}>
+              <option key={m.id} value={m.id} style={{ background: '#1e293b', color: '#f8fafc' }}>
                 {new Date(m.scheduled_date).toLocaleDateString()} vs. {m.team_a_id === teamId ? m.team_b_id : m.team_a_id}
               </option>
             ))}
@@ -187,10 +188,11 @@ function SubmitPlayerStats() {
               value={stats[key]}
               onChange={handleChange}
               className="form-input"
+              style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
             />
           ))}
 
-          <button type="submit" className="form-button" style={{ marginTop: '20px' }}>
+          <button type="submit" className="form-button" style={{ marginTop: '20px', backgroundColor: '#3b82f6', color: '#fff', padding: '12px', borderRadius: '8px', fontWeight: 'bold', fontSize: '16px', border: 'none' }}>
             Submit Stats
           </button>
         </form>

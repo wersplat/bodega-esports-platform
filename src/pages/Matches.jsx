@@ -42,15 +42,15 @@ function Matches() {
   };
 
   return (
-    <div style={{ paddingTop: '80px' }}> 
+    <div className="main-content">
       <h1 className="page-title">🏆 Current Matches</h1>
 
       {matches.length === 0 ? (
-        <p>No matches yet.</p>
+        <p style={{ color: '#cbd5e1' }}>No matches yet.</p>
       ) : (
         matches.map((match) => (
-          <div key={match.id} style={{ marginBottom: '20px', background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.1)' }}>
-            <h3>{getLeagueName(match.league_id)}</h3>
+          <div key={match.id} style={{ marginBottom: '20px', background: '#222b3a', color: '#f8fafc', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.18)' }}>
+            <h3 style={{ color: '#f8fafc' }}>{getLeagueName(match.league_id)}</h3>
             <p><strong>Round:</strong> {match.round}</p>
             <p><strong>Match:</strong> {getTeamName(match.team1_id)} vs {getTeamName(match.team2_id)}</p>
             {match.winner_id ? (

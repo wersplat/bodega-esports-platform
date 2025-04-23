@@ -79,31 +79,33 @@ function AdminBracketGenerator() {
   };
 
   return (
-    <div style={{ paddingTop: '80px' }}> 
+    <div className="main-content">
       <h1 className="page-title">Admin: Bracket Generator</h1>
 
-      <select
-        value={selectedLeague}
-        onChange={(e) => setSelectedLeague(e.target.value)}
-        className="form-input"
-      >
-        <option value="">Select League</option>
-        {leagues.map((league) => (
-          <option key={league.id} value={league.id}>
-            {league.name}
-          </option>
-        ))}
-      </select>
+      <div style={{ background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)', maxWidth: 500, margin: '0 auto' }}>
+        <select
+          value={selectedLeague}
+          onChange={(e) => setSelectedLeague(e.target.value)}
+          className="form-input"
+        >
+          <option value="">Select League</option>
+          {leagues.map((league) => (
+            <option key={league.id} value={league.id}>
+              {league.name}
+            </option>
+          ))}
+        </select>
 
-      <button
-        onClick={generateBracket}
-        className="form-button"
-        style={{ marginTop: '20px', backgroundColor: '#10b981' }}
-      >
-        Generate Bracket
-      </button>
+        <button
+          onClick={generateBracket}
+          className="form-button"
+          style={{ marginTop: '20px' }}
+        >
+          Generate Bracket
+        </button>
 
-      {message && <p style={{ marginTop: '20px' }}>{message}</p>}
+        {message && <p style={{ marginTop: '20px', color: message.includes('success') ? '#34d399' : '#f87171' }}>{message}</p>}
+      </div>
     </div>
   );
 }

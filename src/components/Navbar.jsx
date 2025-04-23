@@ -1,90 +1,95 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import NotificationsBell from './NotificationsBell';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import NotificationsBell from './NotificationsBell';
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const menuRef = useRef(null);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
-  };
+  const logo = "https://drive.google.com/uc?export=view&id=1KcnUumzzRDfmjtgAjttZPPIAFG_vRQLh";
 
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
     };
-
     fetchUser();
   }, []);
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
+
+  useEffect(() => setIsMenuOpen(false), [location]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+    if (isMenuOpen) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMenuOpen]);
+
+  const navLinks = [
+    { label: 'Dashboard', path: '/dashboard' },
+    { label: 'Profile', path: '/profile' },
+    { label: 'Leagues', path: '/leagues' },
+    { label: 'Matches', path: '/matches' },
+    { label: 'Bracket', path: '/public-bracket' },
+    { label: 'Champion', path: '/champion' },
+    { label: 'Public Matches', path: '/public-matches' },
+    { label: 'Submit Stats', path: '/submit-stats' },
+    { label: 'Contracts', path: '/contracts' },
+    { label: 'Admin', path: '/admin' },
+  ];
+
   return (
-    <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px', backgroundColor: '#1f2937', color: '#fff' }}>
-      {/* Branding/Logo */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <img src="/vite.svg" alt="Logo" style={{ height: '40px', marginRight: '10px' }} />
-        <h1 style={{ fontSize: '20px', fontWeight: 'bold' }}>Bodega Esports</h1>
-      </div>
+    <nav className="upa-navbar">
+      <div className="upa-navbar-container">
+        <Link to="/" className="upa-logo">
+          <img src={logo} alt="Logo" />
+        </Link>
 
-      {/* Hamburger Menu and Notifications Bell */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '15px', justifyContent: 'center', flex: 1 }}>
-        <button
-          onClick={toggleMenu}
-          style={{
-            display: 'block',
-            backgroundColor: 'transparent',
-            border: 'none',
-            color: '#fff',
-            fontSize: '24px',
-            cursor: 'pointer',
-          }}
-          className="hamburger-menu"
-        >
-          ☰
-        </button>
-        <NotificationsBell />
-      </div>
+        <div className="upa-hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>☰</div>
 
-      {/* Navigation Links */}
-      <div
-        style={{
-          display: isMenuOpen ? 'flex' : 'none',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '10px',
-          position: 'absolute',
-          top: '50px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          backgroundColor: '#1f2937',
-          padding: '15px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          zIndex: 1000,
-        }}
-        className="nav-links"
-      >
-        <Link to="/dashboard" className="nav-link" style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '5px 10px' }}>Dashboard</Link>
-        <Link to="/profile" className="nav-link" style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '5px 10px' }}>Profile</Link>
-        <Link to="/leagues" className="nav-link" style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '5px 10px' }}>Leagues</Link>
-        <Link to="/matches" className="nav-link" style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '5px 10px' }}>Matches</Link>
-        <Link to="/public-bracket" className="nav-link" style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '5px 10px' }}>Bracket</Link>
-        <Link to="/champion" className="nav-link" style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '5px 10px' }}>Champion</Link>
-        <Link to="/public-matches" className="nav-link" style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '5px 10px' }}>Public Matches</Link>
-        <Link to="/submit-stats" className="nav-link" style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '5px 10px' }}>Submit My Stats</Link>
-        <Link to="/contracts" className="nav-link" style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '5px 10px' }}>Contracts</Link>
-        <Link to="/admin" className="nav-link" style={{ color: '#fff', textDecoration: 'none', fontSize: '16px', padding: '5px 10px' }}>Admin Dashboard</Link>
-        {user && (
-          <button onClick={handleLogout} style={{ backgroundColor: '#ef4444', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '5px', cursor: 'pointer' }}>Logout</button>
-        )}
+        <div className="upa-nav-links">
+          {navLinks.map(({ label, path }) => (
+            <Link key={label} to={path} className={`upa-nav-link ${location.pathname === path ? 'active' : ''}`}>
+              {label}
+            </Link>
+          ))}
+        </div>
+
+        <div className="upa-nav-actions">
+          <NotificationsBell />
+          {user ? (
+            <button onClick={handleLogout} className="upa-logout">Logout</button>
+          ) : (
+            <Link to="/get-started" className="upa-cta">Get Started</Link>
+          )}
+        </div>
+
+        {/* Slide-out menu */}
+        <div ref={menuRef} className={`upa-slide-menu ${isMenuOpen ? 'open' : ''}`}>
+          <button className="upa-close" onClick={() => setIsMenuOpen(false)}>×</button>
+          {navLinks.map(({ label, path }) => (
+            <Link key={label} to={path} className={`upa-nav-link ${location.pathname === path ? 'active' : ''}`}>
+              {label}
+            </Link>
+          ))}
+          {user ? (
+            <button onClick={handleLogout} className="upa-logout">Logout</button>
+          ) : (
+            <Link to="/get-started" className="upa-cta">Get Started</Link>
+          )}
+        </div>
       </div>
     </nav>
   );

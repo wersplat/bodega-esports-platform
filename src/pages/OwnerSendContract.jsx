@@ -33,7 +33,7 @@ function OwnerSendContract() {
       setPlayers(freeAgents ?? []);
     };
     load();
-  }, []);
+  }, [nav]);
 
   const sendOffer = async (e) => {
     e.preventDefault();
@@ -49,7 +49,7 @@ function OwnerSendContract() {
     }]);
     if (error) setMsg(error.message);
     else {
-      setMsg('Offer sent! 🎉');
+      setMsg('Contract offer sent successfully!');
       setSelectedPlayer('');
       setSelectedTeam('');
       setTermEnd('');
@@ -61,55 +61,71 @@ function OwnerSendContract() {
     <div className="main-content">
       <h1 className="page-title">Send Contract Offer</h1>
 
-      {msg && <p>{msg}</p>}
-
-      <form onSubmit={sendOffer} className="form" style={{ maxWidth: 400 }}>
+      <form
+        onSubmit={sendOffer}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          marginTop: '30px',
+          background: '#1e293b',
+          borderRadius: 12,
+          padding: 24,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+          maxWidth: 500,
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        }}
+      >
         <select
-          className="form-input"
           value={selectedPlayer}
-          onChange={e => setSelectedPlayer(e.target.value)}
+          onChange={(e) => setSelectedPlayer(e.target.value)}
+          className="form-input"
           required
         >
           <option value="">Select Player</option>
-          {players.map(p => (
-            <option key={p.id} value={p.id}>{p.display_name || p.username}</option>
+          {players.map((player) => (
+            <option key={player.id} value={player.id}>
+              {player.name}
+            </option>
           ))}
         </select>
 
         <select
-          className="form-input"
           value={selectedTeam}
-          onChange={e => setSelectedTeam(e.target.value)}
+          onChange={(e) => setSelectedTeam(e.target.value)}
+          className="form-input"
           required
         >
-          <option value="">Select Your Team</option>
-          {myTeams.map(t => (
-            <option key={t.id} value={t.id}>{t.name}</option>
+          <option value="">Select Team</option>
+          {myTeams.map((team) => (
+            <option key={team.id} value={team.id}>
+              {team.name}
+            </option>
           ))}
         </select>
 
-        <label style={{ fontSize: 14 }}>Contract End Date*</label>
         <input
           type="date"
-          className="form-input"
           value={termEnd}
-          onChange={e => setTermEnd(e.target.value)}
+          onChange={(e) => setTermEnd(e.target.value)}
+          className="form-input"
           required
         />
 
         <input
           type="number"
           placeholder="Buyout Amount (optional)"
-          className="form-input"
           value={buyout}
-          onChange={e => setBuyout(e.target.value)}
-          min="0"
-          step="0.01"
+          onChange={(e) => setBuyout(e.target.value)}
+          className="form-input"
         />
 
-        <button className="form-button" style={{ marginTop: 16 }}>
+        <button type="submit" className="form-button">
           Send Offer
         </button>
+
+        {msg && <p style={{ marginTop: '10px', color: msg.includes('successfully') ? '#34d399' : '#f87171' }}>{msg}</p>}
       </form>
     </div>
   );

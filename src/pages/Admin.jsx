@@ -1,6 +1,23 @@
+// src/pages/Admin.jsx
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import AdminNavButton from '../components/AdminNavButton';
+import {
+  PlusCircleIcon,
+  UserGroupIcon,
+  CalendarDaysIcon,
+  ClipboardDocumentListIcon,
+  EyeIcon,
+  ChartBarIcon,
+  Cog6ToothIcon,
+  MegaphoneIcon,
+  LockClosedIcon,
+  ServerIcon,
+  TrophyIcon,
+  ClipboardIcon
+} from '@heroicons/react/24/outline';
 
 function Admin() {
   const [loading, setLoading] = useState(true);
@@ -43,53 +60,24 @@ function Admin() {
   }
 
   return (
-    <div style={{ paddingTop: '100px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div className="main-content" style={{ color: '#f8fafc', background: 'transparent' }}>
       <h1 className="page-title">Admin Dashboard</h1>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '40px' }}>
-        <button onClick={() => navigate('/admin-create-league')} className="form-button">
-          ➕ Create League
-        </button>
-        <button onClick={() => navigate('/admin-add-team')} className="form-button">
-          ➕ Add Team
-        </button>
-        <button onClick={() => navigate('/admin-schedule-match')} className="form-button">
-          📅 Schedule Match {/* ✅ NEW BUTTON */}
-        </button>
-        <button onClick={() => navigate('/admin-match-results')} className="form-button">
-          📝 Enter Match Results
-        </button>
-        <button onClick={() => navigate('/admin-view-teams')} className="form-button">
-          📋 View Teams {/* ✅ NEW BUTTON */}
-        </button>
-        
-        <button onClick={() => navigate('/admin-bracket-generator')} className="form-button">
-          🏆 Manage Brackets
-        </button>
-        <button onClick={() => navigate('/leagues')} className="form-button">
-          📋 View Registered Teams
-        </button>
-        <button onClick={() => navigate('/admin-review-matches')} className="form-button">
-          📝 Review Matches
-        </button>
-        <button onClick={() => navigate('/admin-review-stats')} className="form-button">
-          📊 Review Player Stats
-        </button>
-        <button onClick={() => navigate('/admin-review-board')} className="form-button">
-          📝 Review Submissions
-        </button>
-        <button onClick={() => navigate('/admin-roster-lock')} className="form-button">
-          🔒 Roster-Lock
-        </button>
-        <button onClick={() => navigate('/admin-discord-announce')} className="form-button">
-          📢 Discord Announcement
-        </button>
-        <button onClick={() => navigate('/admin-manage-webhooks')} className="form-button">
-  🛠️ Manage Webhooks
-</button>
-
-
-        
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '40px', background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
+        <AdminNavButton icon={PlusCircleIcon} label="Create League" path="/admin-create-league" />
+        <AdminNavButton icon={UserGroupIcon} label="Add Team" path="/admin-add-team" />
+        <AdminNavButton icon={CalendarDaysIcon} label="Schedule Match" path="/admin-schedule-match" />
+        <AdminNavButton icon={ClipboardDocumentListIcon} label="Enter Match Results" path="/admin-match-results" />
+        <AdminNavButton icon={ClipboardIcon} label="View Teams" path="/admin-view-teams" />
+        <AdminNavButton icon={TrophyIcon} label="Manage Brackets" path="/admin-bracket-generator" />
+        <AdminNavButton icon={ClipboardIcon} label="View Registered Teams" path="/leagues" />
+        <AdminNavButton icon={EyeIcon} label="Review Matches" path="/admin-review-matches" />
+        <AdminNavButton icon={ChartBarIcon} label="Review Player Stats" path="/admin-review-stats" />
+        <AdminNavButton icon={ClipboardDocumentListIcon} label="Review Submissions" path="/admin-review-board" />
+        <AdminNavButton icon={LockClosedIcon} label="Roster-Lock" path="/admin-roster-lock" />
+        <AdminNavButton icon={MegaphoneIcon} label="Discord Announcement" path="/admin-discord-announce" />
+        <AdminNavButton icon={ServerIcon} label="Manage Webhooks" path="/admin-manage-webhooks" />
+        <AdminNavButton icon={Cog6ToothIcon} label="League Settings" path="/admin-league-settings" />
       </div>
     </div>
   );

@@ -72,7 +72,7 @@ function AdminAddTeam() {
   };
 
   return (
-    <div style={{ paddingTop: '100px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div className="main-content">
       <h1 className="page-title">Admin: Add New Team</h1>
 
       <form
@@ -81,7 +81,11 @@ function AdminAddTeam() {
           display: 'flex',
           flexDirection: 'column',
           gap: '20px',
-          marginTop: '40px'
+          marginTop: '40px',
+          background: '#1e293b',
+          borderRadius: 12,
+          padding: 24,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)'
         }}
       >
         <input
@@ -110,13 +114,12 @@ function AdminAddTeam() {
         <button
           type="submit"
           className="form-button"
-          style={{ backgroundColor: '#3b82f6' }}
         >
           Add Team
         </button>
 
-        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
-        {success && <p style={{ color: 'green', marginTop: '10px' }}>{success}</p>}
+        {error && <p style={{ color: '#f87171', marginTop: '10px' }}>{error}</p>}
+        {success && <p style={{ color: '#34d399', marginTop: '10px' }}>{success}</p>}
       </form>
     </div>
   );

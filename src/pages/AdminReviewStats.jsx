@@ -84,25 +84,30 @@ function AdminReviewStats() {
     else setStats(stats.filter((r) => r.id !== id));
   };
 
-  if (loading) return <div style={{ padding: 24 }}>Loading pending stats…</div>;
-  if (!stats.length) return <div style={{ padding: 24 }}>No stats awaiting review.</div>;
+  if (loading) return <div style={{ padding: 24, color: '#cbd5e1' }}>Loading pending stats…</div>;
+  if (!stats.length) return <div style={{ padding: 24, color: '#cbd5e1' }}>No stats awaiting review.</div>;
 
   return (
-    <div style={{ padding: 24 }}>
+    <div className="main-content">
       <h1 className="page-title">Admin: Review Player Stats</h1>
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 16 }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 16, background: '#1e293b', color: '#f8fafc', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
         <thead>
-          <tr style={{ background: '#1f2937', color: 'white' }}>
-            <th>Player</th><th>Team</th><th>Match Date</th>
-            <th>PTS</th><th>AST</th><th>REB</th><th>Actions</th>
+          <tr style={{ background: '#273449', color: '#f8fafc' }}>
+            <th style={{ padding: '12px' }}>Player</th>
+            <th style={{ padding: '12px' }}>Team</th>
+            <th style={{ padding: '12px' }}>Match Date</th>
+            <th style={{ padding: '12px' }}>PTS</th>
+            <th style={{ padding: '12px' }}>AST</th>
+            <th style={{ padding: '12px' }}>REB</th>
+            <th style={{ padding: '12px' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {stats.map((row) => (
-            <tr key={row.id} style={{ borderBottom: '1px solid #ccc' }}>
-              <td style={{ padding: 8 }}>{row.profiles.display_name}</td>
-              <td style={{ padding: 8 }}>{row.teams.name}</td>
-              <td style={{ padding: 8 }}>
+            <tr key={row.id} style={{ borderBottom: '1px solid #334155' }}>
+              <td style={{ padding: 8, color: '#cbd5e1' }}>{row.profiles.display_name}</td>
+              <td style={{ padding: 8, color: '#f8fafc' }}>{row.teams.name}</td>
+              <td style={{ padding: 8, color: '#f8fafc' }}>
                 {new Date(row.matches.scheduled_date).toLocaleDateString()}
               </td>
 
@@ -112,37 +117,37 @@ function AdminReviewStats() {
                     <input
                       type="number" value={edited.points}
                       onChange={(e) => setEdited({ ...edited, points: +e.target.value })}
-                      style={{ width: 60 }}
+                      style={{ width: 60, background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: 4 }}
                     />
                   </td>
                   <td>
                     <input
                       type="number" value={edited.assists}
                       onChange={(e) => setEdited({ ...edited, assists: +e.target.value })}
-                      style={{ width: 60 }}
+                      style={{ width: 60, background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: 4 }}
                     />
                   </td>
                   <td>
                     <input
                       type="number" value={edited.rebounds}
                       onChange={(e) => setEdited({ ...edited, rebounds: +e.target.value })}
-                      style={{ width: 60 }}
+                      style={{ width: 60, background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: 4 }}
                     />
                   </td>
                   <td>
                     <button onClick={() => saveEdit(row.id)} className="form-button">
                       Save
                     </button>
-                    <button onClick={() => setEditingId(null)} style={{ marginLeft: 8 }}>
+                    <button onClick={() => setEditingId(null)} style={{ marginLeft: 8 }} className="form-button">
                       Cancel
                     </button>
                   </td>
                 </>
               ) : (
                 <>
-                  <td style={{ padding: 8 }}>{row.points}</td>
-                  <td style={{ padding: 8 }}>{row.assists}</td>
-                  <td style={{ padding: 8 }}>{row.rebounds}</td>
+                  <td style={{ padding: 8, color: '#f8fafc' }}>{row.points}</td>
+                  <td style={{ padding: 8, color: '#f8fafc' }}>{row.assists}</td>
+                  <td style={{ padding: 8, color: '#f8fafc' }}>{row.rebounds}</td>
                   <td style={{ padding: 8 }}>
                     <button onClick={() => startEdit(row)} className="form-button">
                       Edit

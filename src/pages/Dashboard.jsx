@@ -86,32 +86,34 @@ function Dashboard() {
     : null;
 
   return (
-    <div style={{ paddingTop: 100, paddingInline: 24 }}>
+    <div className="main-content">
       <h1 className="page-title">🏠 Dashboard</h1>
-      {user && <h2 style={{ marginTop: 10 }}>Welcome, {user.email}!</h2>}
+      {user && <h2 style={{ marginTop: 10, color: '#f8fafc' }}>Welcome, {user.email}!</h2>}
 
       {/* 🔒  Roster‑lock countdown banner */}
       {daysLeft !== null && daysLeft >= 0 && (
         <div
           style={{
             marginTop: 20,
-            background: '#facc15',  // yellow‑400
+            background: '#334155', // dark blue-gray
+            color: '#f8fafc',
             padding: '10px 16px',
             borderRadius: 6,
             fontWeight: 600,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.25)'
           }}
         >
           Roster locks in&nbsp;
-          <span style={{ color: '#b45309' }}>{daysLeft}</span> day
+          <span style={{ color: '#facc15' }}>{daysLeft}</span> day
           {daysLeft !== 1 && 's'} ({userSeason.roster_lock_date})
         </div>
       )}
 
       {/* ────────── Teams ────────── */}
-      <div style={{ marginTop: 30 }}>
-        <h3>🛡️ Your Teams</h3>
+      <div style={{ marginTop: 30, background: '#222b3a', borderRadius: 8, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+        <h3 style={{ color: '#f8fafc' }}>🛡️ Your Teams</h3>
         {teams.length === 0 ? (
-          <p>You have no teams yet.</p>
+          <p style={{ color: '#cbd5e1' }}>You have no teams yet.</p>
         ) : (
           <ul>
             {teams.map((t) => (
@@ -122,10 +124,10 @@ function Dashboard() {
       </div>
 
       {/* ────────── Leagues ────────── */}
-      <div style={{ marginTop: 30 }}>
-        <h3>🏆 Active Leagues</h3>
+      <div style={{ marginTop: 30, background: '#222b3a', borderRadius: 8, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+        <h3 style={{ color: '#f8fafc' }}>🏆 Active Leagues</h3>
         {leagues.length === 0 ? (
-          <p>No active leagues yet.</p>
+          <p style={{ color: '#cbd5e1' }}>No active leagues yet.</p>
         ) : (
           <ul>
             {leagues.map((l) => (
@@ -136,12 +138,12 @@ function Dashboard() {
       </div>
 
       {/* ────────── Matches ────────── */}
-      <div style={{ marginTop: 40 }}>
-        <h3>📅 My Upcoming Matches</h3>
+      <div style={{ marginTop: 40, background: '#222b3a', borderRadius: 8, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+        <h3 style={{ color: '#f8fafc' }}>📅 My Upcoming Matches</h3>
         {loadingMatches ? (
-          <p>Loading your matches…</p>
+          <p style={{ color: '#cbd5e1' }}>Loading your matches…</p>
         ) : matches.length === 0 ? (
-          <p>No scheduled matches yet.</p>
+          <p style={{ color: '#cbd5e1' }}>No scheduled matches yet.</p>
         ) : (
           <ul>
             {matches.map((m) => (

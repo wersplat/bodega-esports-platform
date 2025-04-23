@@ -53,20 +53,20 @@ function AdminReviewMatches() {
   };
 
   if (loading) {
-    return <div style={{ paddingTop: '100px' }}>Loading matches...</div>;
+    return <div style={{ paddingTop: '100px', color: '#cbd5e1' }}>Loading matches...</div>;
   }
 
   return (
-    <div style={{ paddingTop: '100px', paddingLeft: '24px', paddingRight: '24px' }}>
+    <div className="main-content">
       <h1 className="page-title">Admin: Review Match Results</h1>
 
       {matches.length === 0 ? (
-        <p>No pending match results.</p>
+        <p style={{ color: '#cbd5e1' }}>No pending match results.</p>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {matches.map((match) => (
-            <li key={match.id} style={{ marginBottom: '20px', background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.1)' }}>
-              <h3>{match.team_a_name} ({match.team_a_score}) vs {match.team_b_name} ({match.team_b_score})</h3>
+            <li key={match.id} style={{ marginBottom: '20px', background: '#222b3a', color: '#f8fafc', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.18)' }}>
+              <h3 style={{ color: '#f8fafc' }}>{match.team_a_name} ({match.team_a_score}) vs {match.team_b_name} ({match.team_b_score})</h3>
 
               <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
                 <button
