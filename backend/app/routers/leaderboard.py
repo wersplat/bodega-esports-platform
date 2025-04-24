@@ -24,9 +24,7 @@ def get_leaderboard(
         Profile, PlayerStat.player_id == Profile.id
     )
 
-    query = query.filter(
-        PlayerStat.season_id == season_id
-    )
+    query = query.filter(PlayerStat.season_id == season_id)
 
     if team_id:
         query = query.filter(PlayerStat.team_id == team_id)

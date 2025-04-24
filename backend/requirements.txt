@@ -4,22 +4,9 @@ uvicorn[standard]
 sqlalchemy
 psycopg2-binary
 python-dotenv
-python-jose
-gspread
-oauth2client
-pandas
-python-jose==3.3.0
-fastapi
-uvicorn[standard]
-sqlalchemy
-psycopg2-binary
-python-dotenv
-python-jose==3.3.0
-fastapi
 gspread
 oauth2client
 pandas
 axios
 apscheduler
-python-jose==3.3.0
 

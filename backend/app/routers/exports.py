@@ -20,20 +20,15 @@ def export_standings_to_sheets(
     rows = []
     for team in standings_by_season.get(season_id, []):
         rows.append([
-            team["team_name"],
-            team["wins"],
-            team["losses"],
-            team["point_diff"],
-            team["win_pct"]
+            team['team_name'],
+            team['wins'],
+            team['losses'],
+            team['point_diff'],
+            team['win_pct']
         ])
 
-    write_sheet(
-        SHEET_ID,
-        tab_name=f"Standings S{season_id}",
-        headers=["Team", "Wins", "Losses", "Point Diff", "Win %"],
-        rows=rows
-    )
-    return {"status": "Standings exported to Google Sheets."}
+    write_sheet(SHEET_ID, "Standings", rows)
+    return {"message": "Standings exported successfully."}
 
 
 @router.post("/leaderboard-to-sheets")

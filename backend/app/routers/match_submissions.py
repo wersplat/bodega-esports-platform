@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from datetime import datetime
 
@@ -10,6 +10,7 @@ from app.utils.hash import hash_submission  #  New utility import
 
 router = APIRouter(prefix="/match-submissions", tags=["Match Submissions"])
 
+
 @router.post("/", response_model=MatchSubmissionRead)
 def create_submission(
     submission: MatchSubmissionCreate,
@@ -18,19 +19,17 @@ def create_submission(
 ):
     submission_data = submission.dict()
     submission_data["submitted_by"] = user_id
-    submission_data["submitted_at"] = submission_data.get("submitted_at") or datetime.utcnow()
+    submission_data["submitted_at"] = (
+        submission_data.get("submitted_at") or datetime.utcnow()
+    )
 
-    submission_hash = hash_submission(submission_data)
-
-    # 🔁 Check for duplicate by hash
-    if db.query(MatchSubmission).filter(MatchSubmission.submission_hash == submission_hash).first():
-        raise HTTPException(status_code=409, detail="Duplicate match submission detected.")
-
-    db_submission = MatchSubmission(**submission_data, submission_hash=submission_hash)
+    submission_data["hash"] = hash_submission(submission_data)
+    db_submission = MatchSubmission(**submission_data)
     db.add(db_submission)
     db.commit()
     db.refresh(db_submission)
     return db_submission
+
 
 @router.get("/", response_model=list[MatchSubmissionRead])
 def get_submissions(db: Session = Depends(get_db)):

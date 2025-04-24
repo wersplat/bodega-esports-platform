@@ -18,12 +18,13 @@ def leaderboard(
     division_id: int = None,
     db: Session = Depends(get_db),
 ):
-    query = (
-        db.query(PlayerStat, Profile.username)
-        .join(Profile, PlayerStat.player_id == Profile.id)
-        .join(Match, PlayerStat.match_id == Match.id)
-        .filter(PlayerStat.season_id == season_id)
+    query = db.query(
+        PlayerStat, Profile.username
+    ).join(
+        Profile, PlayerStat.player_id == Profile.id
     )
+
+    query = query.filter(PlayerStat.season_id == season_id)
 
     if team_id:
         query = query.filter(PlayerStat.team_id == team_id)
@@ -34,15 +35,17 @@ def leaderboard(
     for stat, username in query.all():
         total_matches = db.query(Match).filter(
             (
-                (Match.team1_id == stat.team_id)
-                | (Match.team2_id == stat.team_id)
+                (Match.team1_id == stat.team_id) |
+                (Match.team2_id == stat.team_id)
             ),
-            Match.season_id == season_id,
+            Match.season_id == season_id
         ).count()
+
         wins = db.query(Match).filter(
             Match.winner_id == stat.team_id,
-            Match.season_id == season_id,
+            Match.season_id == season_id
         ).count()
+
         win_pct = round(wins / total_matches, 2) if total_matches > 0 else 0
 
         stats.append(

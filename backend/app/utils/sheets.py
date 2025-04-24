@@ -21,7 +21,11 @@ def write_sheet(sheet_id, tab_name, headers, rows):
         pass
 
     worksheet = sheet.add_worksheet(title=tab_name, rows="100", cols="20")
+
+    # Write headers
     worksheet.append_row(headers)
+
+    # Write rows
     for row in rows:
         worksheet.append_row(row)
 

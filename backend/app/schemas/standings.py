@@ -7,3 +7,6 @@ class TeamStanding(BaseModel):
     losses: int
     point_diff: int
     win_pct: float
+
+    class Config:
+        from_attributes = True

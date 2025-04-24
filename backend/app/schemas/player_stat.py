@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+
 
 class PlayerStatBase(BaseModel):
     match_id: int
@@ -14,11 +14,13 @@ class PlayerStatBase(BaseModel):
     turnovers: int
     fouls: int
 
+
 class PlayerStatCreate(PlayerStatBase):
     pass
+
 
 class PlayerStatRead(PlayerStatBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -11,3 +11,6 @@ class PlayerLeaderboardEntry(BaseModel):
     eff: float
     win_pct: float
     mvp: bool
+
+    class Config:
+        from_attributes = True
