@@ -20,3 +20,6 @@ gspread
 oauth2client
 pandas
 axios
+apscheduler
+python-jose==3.3.0
+
