@@ -15,33 +15,27 @@ function Leaderboard() {
   const fetchSeasons = async () => {
     try {
       const { data } = await axios.get('/api/seasons');
-      console.log('Seasons API Response:', data); // Debugging output
       if (Array.isArray(data)) {
         setSeasons(data);
         if (data.length > 0) setSelectedSeason(data[0].id);
       } else {
-        console.error('Unexpected API response format for seasons:', data);
-        setSeasons([]);
+        console.error('Unexpected API response format for seasons');
       }
-    } catch (err) {
-      console.error('Failed to fetch seasons:', err);
-      setSeasons([]);
+    } catch (error) {
+      console.error('Error fetching seasons:', error);
     }
   };
 
   const fetchTeams = async () => {
     try {
       const { data } = await axios.get('/api/teams');
-      console.log('Teams API Response:', data); // Debugging output
       if (Array.isArray(data)) {
         setTeams(data);
       } else {
-        console.error('Unexpected API response format for teams:', data);
-        setTeams([]);
+        console.error('Unexpected API response format for teams');
       }
-    } catch (err) {
-      console.error('Failed to fetch teams:', err);
-      setTeams([]);
+    } catch (error) {
+      console.error('Error fetching teams:', error);
     }
   };
 

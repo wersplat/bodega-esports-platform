@@ -1,5 +1,6 @@
 import requests
 
+
 def send_discord_message(webhook_url: str, content: str, embeds: list = None):
     """
     Sends a message to a Discord webhook.
@@ -18,4 +19,7 @@ def send_discord_message(webhook_url: str, content: str, embeds: list = None):
     response = requests.post(webhook_url, json=payload, headers=headers)
 
     if response.status_code != 204:
-        raise Exception(f"Failed to send message to Discord webhook: {response.status_code}, {response.text}")
+        raise Exception(
+            "Failed to send message to Discord webhook: "
+            f"{response.status_code}, {response.text}"
+        )

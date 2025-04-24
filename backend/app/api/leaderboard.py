@@ -22,6 +22,8 @@ def leaderboard(
         PlayerStat, Profile.username
     ).join(
         Profile, PlayerStat.player_id == Profile.id
+    ).join(
+        Match, PlayerStat.match_id == Match.id
     )
 
     query = query.filter(PlayerStat.season_id == season_id)
@@ -41,23 +43,14 @@ def leaderboard(
             Match.season_id == season_id
         ).count()
 
-        wins = db.query(Match).filter(
-            Match.winner_id == stat.team_id,
-            Match.season_id == season_id
-        ).count()
-
-        win_pct = round(wins / total_matches, 2) if total_matches > 0 else 0
-
-        stats.append(
-            {
-                "player_id": stat.player_id,
-                "username": username,
-                "points_per_game": stat.points,
-                "assists_per_game": stat.assists,
-                "rebounds_per_game": stat.rebounds,
-                "win_percentage": win_pct,
-            }
-        )
+        stats.append({
+            "username": username,
+            "team_id": stat.team_id,
+            "total_points": stat.points,
+            "total_assists": stat.assists,
+            "total_rebounds": stat.rebounds,
+            "total_matches": total_matches,
+        })
 
     return stats
 
@@ -71,16 +64,34 @@ def export_csv(season_id: int, db: Session = Depends(get_db)):
     query = (
         db.query(PlayerStat, Profile.username)
         .join(Profile, PlayerStat.player_id == Profile.id)
+        .join(Match, PlayerStat.match_id == Match.id)
         .filter(PlayerStat.season_id == season_id)
     )
 
     for stat, username in query.all():
+        total_matches = db.query(Match).filter(
+            (
+                (Match.team1_id == stat.team_id) |
+                (Match.team2_id == stat.team_id)
+            ),
+            Match.season_id == season_id
+        ).count()
+
+        wins = db.query(Match).filter(
+            Match.winner_id == stat.team_id,
+            Match.season_id == season_id
+        ).count()
+
+        win_percentage = (
+            (wins / total_matches * 100) if total_matches > 0 else 0
+        )
+
         writer.writerow([
             username,
             stat.points,
             stat.assists,
             stat.rebounds,
-            "N/A",
+            f"{win_percentage:.2f}%",
         ])
 
     output.seek(0)

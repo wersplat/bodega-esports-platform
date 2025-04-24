@@ -2,8 +2,17 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 
 serve(async (req) => {
+  if (req.method !== "POST") {
+    return new Response("Method Not Allowed", { status: 405 });
+  }
+
   try {
     const { content } = await req.json();
+
+    if (!content || content.trim() === "") {
+      return new Response("Content cannot be empty", { status: 400 });
+    }
+
     const webhook = Deno.env.get("DISCORD_WEBHOOK_URL");
 
     if (!webhook) {
