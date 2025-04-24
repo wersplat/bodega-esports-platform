@@ -7,6 +7,7 @@ from app.routers import standings
 from app.routers import leaderboard
 from app.routers import stats  # Importing stats router
 from app.routers import divisions  # Importing divisions router
+from app.routers import stats_charts  # Importing stats_charts router
 
 # Add the workspace root to the Python path
 import sys
@@ -30,6 +31,7 @@ app.include_router(standings.router)
 app.include_router(leaderboard.router)
 app.include_router(stats.router)
 app.include_router(divisions.router)
+app.include_router(stats_charts.router)
 
 @app.get("/")
 def root():
