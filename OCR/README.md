@@ -87,8 +87,8 @@ Before you begin, ensure you have met the following requirements:
    Create and activate a virtual environment:
 
    ```sh
-   python -m venv venv
-   venv\Scripts\activate  # On Windows
+   python -m venv .venv
+   .venv\Scripts\activate  # On Windows
    ```
 
 5. **Install Dependencies**

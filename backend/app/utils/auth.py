@@ -1,3 +1,4 @@
+from functools import wraps
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -45,3 +46,20 @@ def get_current_user(
             detail="Invalid authentication credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+
+def admin_required(get_current_user):
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            user = await get_current_user()
+            if not user.is_admin:  # Assuming `is_admin` is a property of the user model
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail=(
+                        "Administrative privileges required."
+                    )
+                )
+            return await func(*args, **kwargs)
+        return wrapper
+    return decorator
