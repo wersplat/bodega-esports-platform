@@ -1,8 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.database import get_db
+from app.models.models import Team
 
-router = APIRouter(prefix="/teams", tags=["Teams"])
+router = APIRouter()
 
-@router.get("/teams/all")
+@router.get("/teams")
 def get_all_teams(db: Session = Depends(get_db)):
     teams = db.query(Team).all()
-    return [{"id": t.id, "name": t.name} for t in teams]
+    return [{"id": team.id, "name": team.name} for team in teams]

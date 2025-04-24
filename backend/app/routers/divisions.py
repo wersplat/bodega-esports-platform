@@ -5,7 +5,7 @@ from app.models.models import Division
 
 router = APIRouter()
 
-@router.get("/divisions/all")
+@router.get("/divisions")
 def get_all_divisions(db: Session = Depends(get_db)):
     divisions = db.query(Division).all()
-    return [{"id": d.id, "name": d.name} for d in divisions]
+    return [{"id": div.id, "name": div.name} for div in divisions]
