@@ -5,45 +5,12 @@ import TopScorersChart from '../components/TopScorersChart';
 function Leaderboard() {
   const [seasons, setSeasons] = useState([]);
   const [teams, setTeams] = useState([]);
-  const [divisions, setDivisions] = useState([]);
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [selectedSeason, setSelectedSeason] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('');
-  const [selectedDivision, setSelectedDivision] = useState('');
   const [selectedStat, setSelectedStat] = useState('points');
-
-  const fetchLeaderboard = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get('/api/leaderboard', {
-        params: {
-          season_id: selectedSeason,
-          team_id: selectedTeam || undefined,
-          division_id: selectedDivision || undefined,
-          stat_type: selectedStat || undefined,
-        },
-      });
-      setPlayers(res.data || []);
-    } catch (err) {
-      console.error('Error fetching leaderboard:', err);
-      setPlayers([]);
-    }
-    setLoading(false);
-  }, [selectedSeason, selectedTeam, selectedDivision, selectedStat]);
-
-  useEffect(() => {
-    fetchSeasons();
-    fetchTeams();
-    fetchDivisions();
-  }, []);
-
-  useEffect(() => {
-    if (selectedSeason) {
-      fetchLeaderboard();
-    }
-  }, [fetchLeaderboard, selectedSeason]);
 
   const fetchSeasons = async () => {
     try {
@@ -65,20 +32,48 @@ function Leaderboard() {
   const fetchTeams = async () => {
     try {
       const { data } = await axios.get('/api/teams');
-      setTeams(data);
+      console.log('Teams API Response:', data); // Debugging output
+      if (Array.isArray(data)) {
+        setTeams(data);
+      } else {
+        console.error('Unexpected API response format for teams:', data);
+        setTeams([]);
+      }
     } catch (err) {
       console.error('Failed to fetch teams:', err);
+      setTeams([]);
     }
   };
 
-  const fetchDivisions = async () => {
+  const fetchLeaderboard = useCallback(async () => {
+    setLoading(true);
     try {
-      const { data } = await axios.get('/api/divisions');
-      setDivisions(data);
+      const res = await axios.get('/api/leaderboard', {
+        params: {
+          season_id: selectedSeason,
+          team_id: selectedTeam || undefined,
+          stat_type: selectedStat || undefined,
+        },
+      });
+      setPlayers(res.data || []);
     } catch (err) {
-      console.error('Failed to fetch divisions:', err);
+      console.error('Error fetching leaderboard:', err);
+      setPlayers([]);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [selectedSeason, selectedTeam, selectedStat]);
+
+  useEffect(() => {
+    fetchSeasons();
+    fetchTeams();
+  }, []);
+
+  useEffect(() => {
+    if (selectedSeason) {
+      fetchLeaderboard();
+    }
+  }, [fetchLeaderboard, selectedSeason]);
 
   return (
     <div className="main-content">
@@ -101,25 +96,12 @@ function Leaderboard() {
             ))}
           </select>
 
-          <select value={selectedDivision} onChange={(e) => setSelectedDivision(e.target.value)} className="form-input">
-            <option value="">Division</option>
-            {divisions.map((d) => (
-              <option key={d.id} value={d.id}>{d.name}</option>
-            ))}
-          </select>
-
           <select value={selectedStat} onChange={(e) => setSelectedStat(e.target.value)} className="form-input">
             <option value="points">Points</option>
             <option value="assists">Assists</option>
             <option value="rebounds">Rebounds</option>
             <option value="win_percentage">Win %</option>
           </select>
-        </div>
-
-        {/* Export Buttons */}
-        <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
-          <button onClick={() => {}} className="form-input" style={{ background: '#0ea5e9' }}>📄 Export CSV</button>
-          <button onClick={() => {}} className="form-input" style={{ background: '#10b981' }}>📊 Export to Sheets</button>
         </div>
 
         {/* Leaderboard Table */}

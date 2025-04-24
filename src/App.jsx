@@ -63,6 +63,7 @@ function App() {
 
   return (
     <>
+      {/* Always render Navbar */}
       <Navbar />
       <div className="main-content">
         <Routes>
