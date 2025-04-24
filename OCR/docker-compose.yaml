@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  ocr-sheets:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: "2k-ocr-gpu:latest"
+    # use NVIDIA runtime for GPU support
+    runtime: nvidia
+
+    # bind mount your processing dirs and auth files
+    volumes:
+      - type: bind
+        source: ./toProcess/images
+        target: /app/toProcess/images
+      - type: bind
+        source: ./toProcess/json
+        target: /app/toProcess/json
+      - type: bind
+        source: ./processed/images
+        target: /app/processed/images
+      - type: bind
+        source: ./processed/json
+        target: /app/processed/json
+      - type: bind
+        source: ./credentials.json
+        target: /app/credentials.json
+        read_only: true
+      - type: bind
+        source: ./token.json
+        target: /app/token.json
+        read_only: true
+
+    # configuration for your Google Sheets scripts and GPU
+    environment:
+      NVIDIA_VISIBLE_DEVICES: "all"
+      NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
+      SPREADSHEET_NAME: "YourSheetName"
+      # Uncomment or add any additional sheet names:
+      # F_DB_SHEET: "F DB"
+      # O_DB_SHEET: "O DB"
+      # GAME_DB_SHEET: "GAME DB"
+
+    # prevents automatic restarts once the job finishes
+    restart: "no"

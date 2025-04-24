@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  ocr-sheets:
+    build: .
+    image: 2k-ocr-gpu:latest
+    # enable all NVIDIA GPUs
+    gpus: all
+
+    # mount your work dirs and auth files
+    volumes:
+      - type: bind
+        source: ./toProcess/images
+        target: /app/toProcess/images
+      - type: bind
+        source: ./toProcess/json
+        target: /app/toProcess/json
+      - type: bind
+        source: ./processed/images
+        target: /app/processed/images
+      - type: bind
+        source: ./processed/json
+        target: /app/processed/json
+      - type: bind
+        source: ./credentials.json
+        target: /app/credentials.json
+      - type: bind
+        source: ./token.json
+        target: /app/token.json
+
+    # your Google Sheets & script configs
+    environment:
+      - SPREADSHEET_NAME=YourSheetName
+      # add or override any other vars your scripts read:
+      # - F_DB_SHEET=F DB
+      # - O_DB_SHEET=O DB
+      # - GAME_DB_SHEET=GAME DB
+
+    # the entrypoint in your Dockerfile will kick off the loop
+    restart: "no"
