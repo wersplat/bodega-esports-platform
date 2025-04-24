@@ -5,6 +5,9 @@ from app.routers import match_submissions
 from app.utils import auth  # Updated to match the correct location of auth.py
 from app.routers import standings
 from app.routers import leaderboard
+from app.routers import stats  # Importing stats router
+from app.routers import divisions  # Importing divisions router
+
 # Add the workspace root to the Python path
 import sys
 from pathlib import Path
@@ -25,6 +28,8 @@ app.include_router(match_submissions.router)
 app.include_router(auth.router)
 app.include_router(standings.router)
 app.include_router(leaderboard.router)
+app.include_router(stats.router)
+app.include_router(divisions.router)
 
 @app.get("/")
 def root():

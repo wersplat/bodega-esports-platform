@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Optional
 
 class PlayerLeaderboardEntry(BaseModel):
     player_id: int
@@ -10,4 +9,5 @@ class PlayerLeaderboardEntry(BaseModel):
     apg: float
     rpg: float
     eff: float
-    mvp: Optional[bool] = False
+    win_pct: float
+    mvp: bool

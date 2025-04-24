@@ -1,96 +1,73 @@
-from fastapi import APIRouter, Depends, Query
-from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from collections import defaultdict
-import json, io, csv
+from fastapi.responses import StreamingResponse
+from io import StringIO
+import csv
 
 from app.database import get_db
-from app.models.models import PlayerStat, Profile, Team
-from app.schemas.leaderboard import PlayerLeaderboardEntry
+from app.models.models import PlayerStat, Profile, Match
+from app.utils.sheets import append_leaderboard_to_sheet  # You’ll implement this
 
-router = APIRouter(prefix="/leaderboard", tags=["Leaderboard"])
+router = APIRouter()
 
-@router.get("/", response_model=list[PlayerLeaderboardEntry])
-def get_leaderboard(
-    season_id: int = Query(...),
-    min_games: int = Query(5),
-    sort_by: str = Query("ppg", regex="^(ppg|apg|rpg|eff)$"),
-    db: Session = Depends(get_db)
-):
-    raw_stats = db.query(PlayerStat).filter(PlayerStat.season_id == season_id).all()
+@router.get("/api/leaderboard")
+def leaderboard(season_id: int, team_id: int = None, division_id: int = None, db: Session = Depends(get_db)):
+    query = db.query(PlayerStat, Profile.username)\
+              .join(Profile, PlayerStat.player_id == Profile.id)\
+              .join(Match, PlayerStat.match_id == Match.id)\
+              .filter(PlayerStat.season_id == season_id)
 
-    player_aggregate = defaultdict(lambda: {
-        "games": 0,
-        "points": 0,
-        "assists": 0,
-        "rebounds": 0,
-        "steals": 0,
-        "blocks": 0,
-        "turnovers": 0,
-        "fouls": 0,
-        "player_id": None,
-        "team_id": None
-    })
+    if team_id:
+        query = query.filter(PlayerStat.team_id == team_id)
+    if division_id:
+        query = query.filter(Match.division_id == division_id)
 
-    for stat in raw_stats:
-        p = player_aggregate[stat.player_id]
-        p["games"] += 1
-        p["points"] += stat.points
-        p["assists"] += stat.assists
-        p["rebounds"] += stat.rebounds
-        p["steals"] += stat.steals
-        p["blocks"] += stat.blocks
-        p["turnovers"] += stat.turnovers
-        p["fouls"] += stat.fouls
-        p["player_id"] = stat.player_id
-        p["team_id"] = stat.team_id
+    stats = []
+    for stat, username in query.all():
+        total_matches = db.query(Match).filter(
+            ((Match.team1_id == stat.team_id) | (Match.team2_id == stat.team_id)),
+            Match.season_id == season_id
+        ).count()
+        wins = db.query(Match).filter(
+            Match.winner_id == stat.team_id,
+            Match.season_id == season_id
+        ).count()
+        win_pct = round(wins / total_matches, 2) if total_matches > 0 else 0
 
-    leaderboard = []
+        stats.append({
+            "player_id": stat.player_id,
+            "username": username,
+            "points_per_game": stat.points,
+            "assists_per_game": stat.assists,
+            "rebounds_per_game": stat.rebounds,
+            "win_percentage": win_pct
+        })
 
-    for player_id, stats in player_aggregate.items():
-        if stats["games"] < min_games:
-            continue
+    return stats
 
-        profile = db.query(Profile).filter(Profile.id == player_id).first()
-        team = db.query(Team).filter(Team.id == stats["team_id"]).first()
-
-        leaderboard.append(PlayerLeaderboardEntry(
-            player_id=player_id,
-            player_name=profile.username if profile else "Unknown",
-            team_id=team.id if team else 0,
-            team_name=team.name if team else "Unknown",
-            ppg=round(stats["points"] / stats["games"], 2),
-            apg=round(stats["assists"] / stats["games"], 2),
-            rpg=round(stats["rebounds"] / stats["games"], 2),
-            eff=round(
-                (stats["points"] + stats["assists"] + stats["rebounds"] +
-                 stats["steals"] + stats["blocks"] -
-                 stats["turnovers"] - stats["fouls"]) / stats["games"], 2
-            ),
-            mvp=False  # default
-        ))
-
-    leaderboard = sorted(leaderboard, key=lambda x: -getattr(x, sort_by))
-    if leaderboard:
-        leaderboard[0].mvp = True
-
-    return leaderboard
-
-@router.get("/export")
-def export_leaderboard_csv(
-    season_id: int = Query(...),
-    min_games: int = Query(5),
-    sort_by: str = Query("ppg", regex="^(ppg|apg|rpg|eff)$"),
-    db: Session = Depends(get_db)
-):
-    players = get_leaderboard(season_id=season_id, min_games=min_games, sort_by=sort_by, db=db)
-
-    output = io.StringIO()
+@router.get("/api/leaderboard/export/csv")
+def export_csv(season_id: int, db: Session = Depends(get_db)):
+    output = StringIO()
     writer = csv.writer(output)
-    writer.writerow(["Player", "Team", "PPG", "APG", "RPG", "EFF", "MVP"])
-    for p in players:
-        writer.writerow([p.player_name, p.team_name, p.ppg, p.apg, p.rpg, p.eff, "✅" if p.mvp else ""])
+    writer.writerow(["Username", "Points", "Assists", "Rebounds", "Win %"])
 
-    response = StreamingResponse(iter([output.getvalue()]), media_type="text/csv")
-    response.headers["Content-Disposition"] = f"attachment; filename=leaderboard_s{season_id}.csv"
-    return response
+    query = db.query(PlayerStat, Profile.username).join(Profile, PlayerStat.player_id == Profile.id)
+    query = query.filter(PlayerStat.season_id == season_id)
+
+    for stat, username in query.all():
+        writer.writerow([
+            username,
+            stat.points,
+            stat.assists,
+            stat.rebounds,
+            "N/A"  # You can add win % logic here too
+        ])
+
+    output.seek(0)
+    return StreamingResponse(output, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=leaderboard.csv"})
+
+@router.get("/api/leaderboard/export/sheets")
+def export_to_sheets(season_id: int, db: Session = Depends(get_db)):
+    stats = leaderboard(season_id, db=db)
+    success = append_leaderboard_to_sheet(season_id, stats)
+    return {"status": "success" if success else "error"}
