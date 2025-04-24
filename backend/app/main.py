@@ -12,6 +12,9 @@ from app.api import (
 )
 from app.routers import stats  # Importing stats router
 from app.routers import stats_charts  # Importing stats_charts router
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+from app.routers.exports import export_all_to_sheets
 
 # Add the workspace root to the Python path
 import sys
@@ -37,6 +40,24 @@ app.include_router(standings.router)
 app.include_router(leaderboard.router)  # Updated to use the new API router
 app.include_router(stats.router)
 app.include_router(stats_charts.router)
+
+
+def start_scheduler():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(
+        func=lambda: export_all_to_sheets(
+            season_id=1, min_games=5, db=None
+        ),
+        trigger=CronTrigger(day_of_week="sun", hour=0, minute=0),
+        id="weekly_export",
+        replace_existing=True
+    )
+    scheduler.start()
+
+
+# Call the scheduler when the app starts
+start_scheduler()
+
 
 @app.get("/")
 def root():

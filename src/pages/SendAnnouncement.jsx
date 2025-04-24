@@ -7,7 +7,7 @@ export default function SendAnnouncement() {
   const [selected, setSelected] = useState('');
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
-  const [msg, setMsg] = useState({ success:'', error:'' });
+  const [msg, setMsg] = useState({ success: '', error: '' });
 
   // load user
   useEffect(() => {
@@ -31,25 +31,31 @@ export default function SendAnnouncement() {
 
   const handleSend = async (e) => {
     e.preventDefault();
-    setMsg({ success:'', error:'' });
-    if (!selected || !title|| !desc) {
-      setMsg(m => ({ ...m, error: 'All fields required.' }));
+    setMsg({ success: '', error: '' });
+    if (!selected || !title || !desc) {
+      setMsg((m) => ({ ...m, error: 'All fields required.' }));
       return;
     }
     try {
-      const res = await fetch(selected, {
+      const res = await fetch('/api/discord/announce', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-          embeds:[{ title, description: desc, color: 5814783 }]
-        })
+          webhook_url: selected,
+          title,
+          description: desc,
+        }),
       });
       if (!res.ok) throw new Error(await res.text());
-      setMsg(m=>({ ...m, success:'Sent to Discord!' }));
-      setTitle(''); setDesc(''); setSelected('');
-    } catch(err) {
+      setMsg((m) => ({ ...m, success: 'Sent to Discord!' }));
+      setTitle('');
+      setDesc('');
+      setSelected('');
+    } catch (err) {
       console.error(err);
-      setMsg(m=>({ ...m, error:'Failed to send.' }));
+      setMsg((m) => ({ ...m, error: 'Failed to send.' }));
     }
   };
 
@@ -60,12 +66,12 @@ export default function SendAnnouncement() {
         <select
           className="form-input"
           value={selected}
-          onChange={e=>setSelected(e.target.value)}
+          onChange={e => setSelected(e.target.value)}
           required
           style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         >
           <option value="">Select Webhook</option>
-          {webhooks.map(w=>(
+          {webhooks.map(w => (
             <option key={w.id} value={w.url} style={{ background: '#1e293b', color: '#f8fafc' }}>{w.name}</option>
           ))}
         </select>
@@ -73,7 +79,7 @@ export default function SendAnnouncement() {
           className="form-input"
           placeholder="Title"
           value={title}
-          onChange={e=>setTitle(e.target.value)}
+          onChange={e => setTitle(e.target.value)}
           required
           style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         />
@@ -82,13 +88,13 @@ export default function SendAnnouncement() {
           placeholder="Description"
           rows={4}
           value={desc}
-          onChange={e=>setDesc(e.target.value)}
+          onChange={e => setDesc(e.target.value)}
           required
           style={{ background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
         />
         <button className="form-button" style={{ backgroundColor: '#3b82f6', color: '#fff', padding: '12px', borderRadius: '8px', fontWeight: 'bold', fontSize: '16px', border: 'none', marginTop: '20px' }}>Send</button>
         {msg.success && <p style={{ color: '#34d399', marginTop: '10px' }}>{msg.success}</p>}
-        {msg.error   && <p style={{ color: '#f87171', marginTop: '10px' }}>{msg.error}</p>}
+        {msg.error && <p style={{ color: '#f87171', marginTop: '10px' }}>{msg.error}</p>}
       </form>
     </div>
   );

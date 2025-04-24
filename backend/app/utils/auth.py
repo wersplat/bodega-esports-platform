@@ -1,50 +1,47 @@
-from fastapi import Depends, HTTPException, Header, APIRouter
-from jose import jwt
-from os import getenv
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from app.database import get_db
 from sqlalchemy.orm import Session
+
 from app.models.models import Profile
-from app.database import get_db  #  Missing import fixed
 
-router = APIRouter()
 
-# === JWT Parsing ===
-JWT_SECRET = getenv("JWT_SECRET", "your-default-secret")
+# Replace with your actual secret key and algorithm
+SECRET_KEY = "your_secret_key"
+ALGORITHM = "HS256"
 
-def get_current_user_id(authorization: str = Header(...)) -> str:
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid auth header")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
-    token = authorization.split(" ")[1]
+
+def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve the current authenticated user based on the provided token.
+    """
     try:
-        payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
-        return payload.get("sub")  # Supabase UID is stored in `sub`
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-# === Admin Check ===
-def is_admin(user_id: str, db: Session):
-    user = db.query(Profile).filter(Profile.id == user_id).first()
-    if not user or user.role != "admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-
-# === Admin Dependency ===
-def admin_required(
-    user_id: str = Depends(get_current_user_id),
-    db: Session = Depends(get_db)
-) -> str:
-    is_admin(user_id, db)
-    return user_id
-
-# === Profile Dependency ===
-def get_profile(
-    user_id: str = Depends(get_current_user_id),
-    db: Session = Depends(get_db)
-) -> Profile:
-    user = db.query(Profile).filter(Profile.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User profile not found")
-    return user
-
-@router.get("/auth/test")
-def test_auth():
-    return {"message": "Auth router is working"}
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        # Query the database for the user
+        user = db.query(Profile).filter(Profile.id == user_id).first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return user
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
