@@ -111,3 +111,17 @@ class MatchSubmission(Base):
 
 # Add relationship to Match
 Match.submissions = relationship("MatchSubmission", back_populates="match")
+
+
+# Define the PlayerStat model
+class PlayerStat(Base):
+    __tablename__ = 'player_stats'
+    id = Column(Integer, primary_key=True)
+    player_id = Column(Integer, ForeignKey('players.id'))
+    player = relationship("Player", back_populates="player_stats")
+    stat_type = Column(String, nullable=False)
+    value = Column(Integer, nullable=False)
+
+
+# Add relationship to Player
+Player.player_stats = relationship("PlayerStat", back_populates="player")
