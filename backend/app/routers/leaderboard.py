@@ -8,10 +8,10 @@ from app.database import get_db
 from app.models.models import PlayerStat, Profile, Match
 from app.utils.sheets import append_leaderboard_to_sheet  # You’ll implement this
 
-router = APIRouter()
+router = APIRouter(prefix="/api/leaderboard", tags=["Leaderboard"])
 
 
-@router.get("/api/leaderboard")
+@router.get("/")
 def get_leaderboard(
     season_id: int,
     team_id: int = None,
@@ -62,7 +62,7 @@ def get_leaderboard(
     return stats
 
 
-@router.get("/api/leaderboard/export/csv")
+@router.get("/export/csv")
 def export_csv(season_id: int, db: Session = Depends(get_db)):
     output = StringIO()
     writer = csv.writer(output)
@@ -90,7 +90,7 @@ def export_csv(season_id: int, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/api/leaderboard/export/sheets")
+@router.get("/export/sheets")
 def export_to_sheets(season_id: int, db: Session = Depends(get_db)):
     stats = get_leaderboard(season_id, db=db)
     success = append_leaderboard_to_sheet(season_id, stats)

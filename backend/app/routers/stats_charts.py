@@ -4,7 +4,7 @@ from app.database import get_db
 from app.models.models import PlayerStat, Match, Team, Profile
 from sqlalchemy import func
 
-router = APIRouter(prefix="/api/stats", tags=["Chart Data"])
+router = APIRouter(prefix="/api/stats", tags=["Stats Charts"])
 
 
 @router.get("/top-scorers")

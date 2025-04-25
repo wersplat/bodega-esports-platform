@@ -4,7 +4,7 @@ from app.models.models import Match
 from app.database import get_db
 from app.schemas.match import MatchCreate, MatchRead
 
-router = APIRouter(prefix="/matches", tags=["Matches"])
+router = APIRouter(prefix="/api/matches", tags=["Matches"])
 
 @router.post("/", response_model=MatchRead)
 def create_match(match: MatchCreate, db: Session = Depends(get_db)):

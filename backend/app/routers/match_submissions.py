@@ -8,7 +8,7 @@ from app.database import get_db
 from app.utils.auth import admin_required
 from app.utils.hash import hash_submission  #  New utility import
 
-router = APIRouter(prefix="/match-submissions", tags=["Match Submissions"])
+router = APIRouter(prefix="/api/match-submissions", tags=["Match Submissions"])
 
 
 @router.post("/", response_model=MatchSubmissionRead)

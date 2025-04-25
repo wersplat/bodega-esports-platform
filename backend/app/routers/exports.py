@@ -6,12 +6,12 @@ from app.database import get_db
 from sqlalchemy.orm import Session
 from app.utils.auth import get_current_user
 
-router = APIRouter(prefix="/export", tags=["Google Sheets Export"])
+router = APIRouter(prefix="/api/exports", tags=["Exports"])
 
 SHEET_ID = "your_google_sheet_id_here"
 
 
-@router.post("/standings-to-sheets")
+@router.post("/export-standings")
 def export_standings_to_sheets(
     season_id: int = Query(...),
     db: Session = Depends(get_db)
@@ -31,7 +31,7 @@ def export_standings_to_sheets(
     return {"message": "Standings exported successfully."}
 
 
-@router.post("/leaderboard-to-sheets")
+@router.post("/export-leaderboard")
 def export_leaderboard_to_sheets(
     season_id: int = Query(...),
     min_games: int = Query(5),
@@ -59,7 +59,7 @@ def export_leaderboard_to_sheets(
     return {"status": "Leaderboard exported to Google Sheets."}
 
 
-@router.post("/all")
+@router.post("/export-all")
 def export_all_to_sheets(
     season_id: int = Query(...),
     min_games: int = Query(5),

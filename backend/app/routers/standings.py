@@ -7,7 +7,7 @@ from collections import defaultdict
 import io
 import csv
 
-router = APIRouter(prefix="/standings", tags=["Standings"])
+router = APIRouter(prefix="/api/standings", tags=["Standings"])
 
 
 @router.get("/", response_model=dict)

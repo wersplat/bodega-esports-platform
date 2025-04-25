@@ -7,7 +7,7 @@ from app.models.models import Player
 from app.schemas.player import PlayerCreate, PlayerRead
 
 # Ensure the router is properly defined
-router = APIRouter(prefix="/players", tags=["Players"])
+router = APIRouter(prefix="/api/players", tags=["Players"])
 
 
 @router.post("/", response_model=PlayerRead)

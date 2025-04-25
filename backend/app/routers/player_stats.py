@@ -6,7 +6,7 @@ from app.schemas.player_stat import PlayerStatCreate, PlayerStatRead
 from app.database import get_db
 from app.utils.hash import hash_statline
 
-router = APIRouter(prefix="/player-stats", tags=["Player Stats"])
+router = APIRouter(prefix="/api/player-stats", tags=["Player Stats"])
 
 @router.post("/", response_model=PlayerStatRead)
 def create_player_stat(stat: PlayerStatCreate, db: Session = Depends(get_db)):

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-router = APIRouter()
+router = APIRouter(prefix="/api/stats", tags=["Stats"])
 
 @router.get("/stat-types")
 def get_stat_types():
