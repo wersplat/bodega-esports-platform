@@ -9,11 +9,7 @@ pandas
 axios
 apscheduler
 pillow
-#pytesseract
 numpy
 requests
-#opencv-python
-easyocr
-#oauth2client
-#torch
-#torchvision
+oauth2client
+
