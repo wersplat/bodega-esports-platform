@@ -42,6 +42,15 @@ app.include_router(leaderboard.router)  # Updated to use the new API router
 app.include_router(stats.router)
 app.include_router(stats_charts.router)
 app.include_router(webhooks.router)  # Include the webhooks router
+# Include the exports router for Discord announcements
+app.include_router(
+    exports.router
+)
+
+# Include the meta router for additional endpoints
+app.include_router(
+    meta.router
+)
 
 
 def start_scheduler():

@@ -9,6 +9,9 @@ import {
 } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+
+
 
 // Auth & General User Pages
 import Login from './pages/Login';
@@ -105,6 +108,7 @@ function App() {
     </>
   );
 }
+
 
 export default function AppWrapper() {
   return (
