@@ -19559,3 +19559,6 @@ dist-ssr
 .venv/Scripts/websockets.exe
 .venv/share/man/man1/isympy.1
 .OCR/
+OCR
+OCR/
+OCR/requirements.txt
