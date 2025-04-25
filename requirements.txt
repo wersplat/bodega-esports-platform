@@ -12,4 +12,5 @@ pillow
 numpy
 requests
 oauth2client
+rollup-plugin-visualizer
 
