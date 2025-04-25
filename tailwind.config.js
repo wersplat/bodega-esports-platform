@@ -2,7 +2,7 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,jsx,ts,tsx}",
+    "./frontend/**/*.{js,jsx,ts,tsx}",
     "./node_modules/@heroicons/react/**/*.js",
   ],
   theme: {

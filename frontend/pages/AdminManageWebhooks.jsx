@@ -21,9 +21,8 @@ function AdminManageWebhooks() {
 
   // Fetch webhooks
   useEffect(() => {
-    if (!user) return;
     fetchWebhooks();
-  }, [user]);
+  }, [user, fetchWebhooks]);
 
   const fetchWebhooks = async () => {
     const { data, error } = await supabase

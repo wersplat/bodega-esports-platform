@@ -64,9 +64,8 @@
 
 ### Frontend Tasks
 
-- [ ] Test all pages in the `src/pages/` directory for responsiveness and cross-browser compatibility.
-- [ ] Optimize the `Leaderboard.jsx` and `Leaderboardsup.jsx` components for performance.
-- [ ] Add unit tests for critical components in `src/components/`.
+- [ ] Test all pages in the `frontend/pages/` directory for responsiveness and cross-browser compatibility.
+- [ ] Add unit tests for critical components in `frontend/components/`.
 
 ### Backend Tasks
 

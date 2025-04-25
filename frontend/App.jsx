@@ -32,8 +32,6 @@ import LeagueTeams from './pages/LeagueTeams';
 import OwnerSendContract from './pages/OwnerSendContract';
 import MyContracts from './pages/MyContracts';
 import Notifications from './pages/Notifications';
-
-// Admin Pages
 import Admin from './pages/Admin';
 import AdminReviewMatches from './pages/AdminReviewMatches';
 import AdminSubmitResult from './pages/AdminSubmitResult';

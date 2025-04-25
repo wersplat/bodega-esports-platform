@@ -15,7 +15,7 @@ The Bodega Esports Platform is a comprehensive solution for managing esports lea
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
   - [Frontend](#frontend)
-    - [Structure](#structure)
+    - [Structure Details](#structure-details)
     - [Running the Frontend](#running-the-frontend)
     - [Key Components](#key-components)
   - [Backend](#backend)
@@ -82,14 +82,12 @@ Ensure the following tools and accounts are set up before proceeding:
 
 ## Frontend
 
-### Structure
+### Structure Details
 
-The frontend is built with React and Vite. Key directories include:
-
-- `src/components`: Reusable UI components such as `Navbar` and `NotificationsBell`.
-- `src/pages`: Page-level components for views like `Dashboard`, `Leaderboard`, and `Login`.
-- `src/hooks`: Custom React hooks for state management and API calls.
-- `src/theme.css`: Centralized styling for consistent UI.
+- `frontend/components`: Reusable UI components such as `Navbar` and `NotificationsBell`.
+- `frontend/pages`: Page-level components for views like `Dashboard`, `Leaderboard`, and `Login`.
+- `frontend/hooks`: Custom React hooks for state management and API calls.
+- `frontend/theme.css`: Centralized styling for consistent UI.
 
 ### Running the Frontend
 
