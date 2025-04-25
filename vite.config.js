@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
+  root: 'frontend', // Set the root directory to frontend
   plugins: [
     react(),
     visualizer({
@@ -11,7 +12,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: 'dist', // ✅ Add this to ensure correct output location
+    outDir: 'dist',
     sourcemap: true,
     rollupOptions: {
       output: {
