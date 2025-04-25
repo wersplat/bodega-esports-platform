@@ -9,7 +9,6 @@ import {
 } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
-import { SpeedInsights } from '@vercel/speed-insights/react';
 
 
 
