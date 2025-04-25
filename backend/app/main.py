@@ -1,29 +1,29 @@
-from fastapi import FastAPI
-from .routers import players, matches  # must match filenames
-from app.routers import player_stats
-from app.routers import match_submissions
-from app.utils import auth  # Updated to match the correct location of auth.py
-from app.routers import standings
-from app.api import (
-    leaderboard,
-    seasons,
-    teams,
-    divisions,  # Updated to use the new API structure
-    webhooks,  # Import the new webhooks API
-)
-from app.routers import stats  # Importing stats router
-from app.routers import stats_charts  # Importing stats_charts router
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
-from app.routers.exports import export_all_to_sheets
-
-
-# Add the workspace root to the Python path
+# Standard library imports
 import sys
 from pathlib import Path
 
-from app.routers import exports, meta  # Corrected import paths
+# Third-party imports
+from fastapi import FastAPI
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 
+# Local application imports
+from app.routers import (
+    players,
+    matches,
+    player_stats,
+    match_submissions,
+    standings,
+    stats,
+    stats_charts,
+    exports,
+    meta,
+    discord,
+)
+from app.api import leaderboard, seasons, teams, divisions, webhooks
+from app.utils import auth
+
+# Add the workspace root to the Python path
 workspace_root = Path(__file__).resolve().parents[2]
 sys.path.append(str(workspace_root))
 
@@ -33,46 +33,33 @@ sys.path.append(str(backend_path))
 
 app = FastAPI()
 
-app.include_router(seasons.router)  # Include seasons router
-app.include_router(teams.router)  # Include teams router
-app.include_router(divisions.router)  # Include divisions router
+# Include routers
+app.include_router(seasons.router)
+app.include_router(teams.router)
+app.include_router(divisions.router)
 app.include_router(players.router)
 app.include_router(matches.router)
 app.include_router(player_stats.router)
 app.include_router(match_submissions.router)
 app.include_router(auth.router)
 app.include_router(standings.router)
-app.include_router(leaderboard.router)  # Updated to use the new API router
+app.include_router(leaderboard.router)
 app.include_router(stats.router)
 app.include_router(stats_charts.router)
-app.include_router(webhooks.router)  # Include the webhooks router
-# Include the exports router for Discord announcements
-app.include_router(
-    exports.router
-)
+app.include_router(webhooks.router)
+app.include_router(exports.router)
+app.include_router(meta.router)
+app.include_router(discord.router)
 
-# Include the meta router for additional endpoints
-app.include_router(
-    meta.router
-)
+# Scheduler setup
 
-from app.routers import discord  # Corrected import path for the Discord router
-
-# Ensure all imports are at the top of the file
-
-app.include_router(discord.router)  # Include the Discord router
+def some_task():
+    print("Scheduled task is running...")
 
 
 def start_scheduler():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(
-        func=lambda: export_all_to_sheets(
-            season_id=1, min_games=5, db=None
-        ),
-        trigger=CronTrigger(day_of_week="sun", hour=0, minute=0),
-        id="weekly_export",
-        replace_existing=True
-    )
+    scheduler.add_job(func=some_task, trigger=CronTrigger(hour=0))
     scheduler.start()
 
 
@@ -82,7 +69,7 @@ start_scheduler()
 
 @app.get("/")
 def root():
-    return {"message": "Backend is live"}
+    return {"message": "Welcome to the Bodega Esports Platform API!"}
 
 
 @app.get("/ping")
