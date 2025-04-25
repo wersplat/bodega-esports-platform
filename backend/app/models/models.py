@@ -50,3 +50,17 @@ class Player(Base):
 
 # Add relationship to Team
 Team.players = relationship("Player", back_populates="team")
+
+
+# Ensure proper spacing before the Season model
+
+class Season(Base):
+    __tablename__ = 'seasons'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    league_id = Column(Integer, ForeignKey('leagues.id'))
+    league = relationship("League", back_populates="seasons")
+
+
+# Add relationship to League
+League.seasons = relationship("Season", back_populates="league")
