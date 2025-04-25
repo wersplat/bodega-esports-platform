@@ -5,6 +5,7 @@ from app.models.models import Webhook
 
 router = APIRouter()
 
+
 @router.get("/api/webhooks")
 def get_webhooks(db: Session = Depends(get_db)):
     """Fetch all saved webhooks."""

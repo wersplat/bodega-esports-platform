@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import players, matches  #  must match filenames
+from app.routers import players, matches  # must match filenames
 from app.routers import player_stats
 from app.routers import match_submissions
 from app.utils import auth  # Updated to match the correct location of auth.py
@@ -20,6 +20,8 @@ from app.routers.exports import export_all_to_sheets
 # Add the workspace root to the Python path
 import sys
 from pathlib import Path
+
+from backend.app.routers import exports, meta
 workspace_root = Path(__file__).resolve().parents[2]
 sys.path.append(str(workspace_root))
 
