@@ -64,3 +64,50 @@ class Season(Base):
 
 # Add relationship to League
 League.seasons = relationship("Season", back_populates="league")
+
+
+# Define the Division model
+class Division(Base):
+    __tablename__ = 'divisions'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    season_id = Column(Integer, ForeignKey('seasons.id'))
+    season = relationship("Season", back_populates="divisions")
+
+
+# Add relationship to Season
+Season.divisions = relationship("Division", back_populates="season")
+
+
+# Define the Conference model
+class Conference(Base):
+    __tablename__ = 'conferences'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    divisions = relationship("Division", back_populates="conference")
+
+
+# Add relationship to Division
+Division.conference_id = Column(Integer, ForeignKey('conferences.id'))
+Division.conference = relationship("Conference", back_populates="divisions")
+
+
+# Define the Webhook model
+class Webhook(Base):
+    __tablename__ = 'webhooks'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    url = Column(String, nullable=False)
+
+
+# Ensure proper spacing before and after the MatchSubmission model
+
+class MatchSubmission(Base):
+    __tablename__ = 'match_submissions'
+    id = Column(Integer, primary_key=True)
+    match_id = Column(Integer, ForeignKey('matches.id'))
+    match = relationship("Match", back_populates="submissions")
+
+
+# Add relationship to Match
+Match.submissions = relationship("MatchSubmission", back_populates="match")
