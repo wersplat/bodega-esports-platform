@@ -21,7 +21,8 @@ from app.routers.exports import export_all_to_sheets
 import sys
 from pathlib import Path
 
-from backend.app.routers import exports, meta
+from app.routers import exports, meta  # Corrected import paths
+
 workspace_root = Path(__file__).resolve().parents[2]
 sys.path.append(str(workspace_root))
 
