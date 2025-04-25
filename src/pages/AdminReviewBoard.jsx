@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
+import { useNavigate } from 'react-router-dom';
 
 function AdminReviewBoard() {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchSubmissions();
@@ -64,7 +66,16 @@ function AdminReviewBoard() {
 
   return (
     <div className="main-content">
+      <button
+        onClick={() => navigate('/admin')}
+        className="form-button"
+        style={{ marginBottom: '20px' }}
+      >
+        ← Back to Admin Dashboard
+      </button>
+
       <h1 className="page-title">🛠️ Admin Review Board</h1>
+
       {errorMessage && <p style={{ color: '#f87171' }}>{errorMessage}</p>}
 
       {submissions.length === 0 ? (

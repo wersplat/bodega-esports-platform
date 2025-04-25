@@ -124,8 +124,12 @@ export default function AdminRosterLock() {
     <div className="main-content">
       <h1 className="page-title">Roster‑Lock Manager</h1>
 
-      <button onClick={() => nav('/admin')} className="form-button" style={{ marginBottom: 24 }}>
-        ← Back
+      <button
+        onClick={() => nav('/admin')}
+        className="form-button"
+        style={{ marginBottom: '20px' }}
+      >
+        ← Back to Admin Dashboard
       </button>
 
       <div className="form-container">

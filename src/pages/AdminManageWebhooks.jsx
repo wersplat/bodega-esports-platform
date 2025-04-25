@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
+import { useNavigate } from 'react-router-dom';
 
 function AdminManageWebhooks() {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [webhooks, setWebhooks] = useState([]);
   const [newName, setNewName] = useState('');
@@ -62,7 +64,16 @@ function AdminManageWebhooks() {
 
   return (
     <div className="main-content">
+      <button
+        onClick={() => navigate('/admin')}
+        className="form-button"
+        style={{ marginBottom: '20px' }}
+      >
+        ← Back to Admin Dashboard
+      </button>
+
       <h1 className="page-title">🛠 Manage Webhooks</h1>
+
       <form onSubmit={handleAdd} className="form" style={{ maxWidth: 500, margin: 'auto', background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
         <input
           type="text"

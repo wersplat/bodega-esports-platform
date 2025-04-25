@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
+import { useNavigate } from 'react-router-dom';
 
 function AdminReviewStats() {
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [edited, setEdited] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPending();
@@ -90,6 +92,15 @@ function AdminReviewStats() {
   return (
     <div className="main-content">
       <h1 className="page-title">Admin: Review Player Stats</h1>
+
+      <button
+        onClick={() => navigate('/admin')}
+        className="form-button"
+        style={{ marginBottom: '20px' }}
+      >
+        ← Back to Admin Dashboard
+      </button>
+
       <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 16, background: '#1e293b', color: '#f8fafc', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
         <thead>
           <tr style={{ background: '#273449', color: '#f8fafc' }}>

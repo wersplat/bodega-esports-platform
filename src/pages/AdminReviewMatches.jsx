@@ -60,6 +60,14 @@ function AdminReviewMatches() {
     <div className="main-content">
       <h1 className="page-title">Admin: Review Match Results</h1>
 
+      <button
+        onClick={() => navigate('/admin')}
+        className="form-button"
+        style={{ marginBottom: '20px' }}
+      >
+        ← Back to Admin Dashboard
+      </button>
+
       {matches.length === 0 ? (
         <p style={{ color: '#cbd5e1' }}>No pending match results.</p>
       ) : (

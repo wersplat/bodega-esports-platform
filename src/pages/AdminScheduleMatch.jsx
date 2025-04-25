@@ -89,6 +89,14 @@ function AdminScheduleMatch() {
     <div className="main-content">
       <h1 className="page-title">Admin: Schedule a Match</h1>
 
+      <button
+        onClick={() => navigate('/admin')}
+        className="form-button"
+        style={{ marginBottom: '20px' }}
+      >
+        ← Back to Admin Dashboard
+      </button>
+
       <form onSubmit={handleSchedule} style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '30px', background: '#1e293b', borderRadius: 12, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.25)', maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}>
         <select
           value={selectedLeague}

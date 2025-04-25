@@ -9,6 +9,7 @@ from app.api import (
     seasons,
     teams,
     divisions,  # Updated to use the new API structure
+    webhooks,  # Import the new webhooks API
 )
 from app.routers import stats  # Importing stats router
 from app.routers import stats_charts  # Importing stats_charts router
@@ -40,6 +41,7 @@ app.include_router(standings.router)
 app.include_router(leaderboard.router)  # Updated to use the new API router
 app.include_router(stats.router)
 app.include_router(stats_charts.router)
+app.include_router(webhooks.router)  # Include the webhooks router
 
 
 def start_scheduler():

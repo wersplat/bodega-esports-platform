@@ -180,6 +180,14 @@ function LeagueSettings() {
     <div className="main-content">
       <h1 className="page-title">League Settings</h1>
 
+      <button
+        onClick={() => navigate('/admin')}
+        className="form-button"
+        style={{ marginBottom: '20px' }}
+      >
+        ← Back to Admin Dashboard
+      </button>
+
       <div className="form-container">
         <label htmlFor="league" className="block font-bold mb-2">Select League</label>
         <select
