@@ -15,6 +15,14 @@ services:
         value: postgresql://postgres:7Rkv9NHoMcgqfx7@db.kvkmepmsloyekfqwdcgq.supabase.co:5432/postgres
       - key: PORT
         value: 10000
-buildFilters:
-    ignoredPaths:
-      - OCR
+  - type: web
+    name: bodega-esports-frontend
+    runtime: node
+    plan: free
+    region: virginia
+    rootDir: frontend
+    buildCommand: npm run build
+    startCommand: npx serve -s dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://bodega-esports-backend.onrender.com
