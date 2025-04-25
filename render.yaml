@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     region: oregon
-    rootDir: .                     # <- use repo root now
+    rootDir: .  # <== deploy from repo root
     buildCommand: |
       pip install -r requirements.txt
       npm install
