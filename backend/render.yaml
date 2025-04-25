@@ -3,7 +3,7 @@ services:
     name: bodega-esports-backend
     env: python
     plan: free
-    region: oregon
+    region: virginia
     rootDir: .  # deploying from repo root
     buildCommand: |
       pip install -r requirements.txt
