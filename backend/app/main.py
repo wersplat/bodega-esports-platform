@@ -55,6 +55,12 @@ app.include_router(
     meta.router
 )
 
+from routers import discord  # Import the new Discord router
+
+# Ensure all imports are at the top of the file
+
+app.include_router(discord.router)  # Include the Discord router
+
 
 def start_scheduler():
     scheduler = BackgroundScheduler()
