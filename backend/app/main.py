@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import players, matches  # must match filenames
+from .routers import players, matches  # must match filenames
 from app.routers import player_stats
 from app.routers import match_submissions
 from app.utils import auth  # Updated to match the correct location of auth.py
@@ -16,6 +16,7 @@ from app.routers import stats_charts  # Importing stats_charts router
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from app.routers.exports import export_all_to_sheets
+
 
 # Add the workspace root to the Python path
 import sys
