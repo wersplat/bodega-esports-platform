@@ -1,15 +1,2 @@
-python-jose==3.3.0
-fastapi
-uvicorn[standard]
-sqlalchemy
-psycopg2-binary
-python-dotenv
-gspread
-pandas
-axios
-apscheduler
-pillow
-numpy
-requests
-oauth2client
+python-multipart
 
