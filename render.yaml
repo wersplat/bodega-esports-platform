@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: bodega-esports-backend
+    env: python
+    plan: free
+    region: oregon
+    rootDir: backend               # <- important!
+    buildCommand: pip install -r requirements.txt
+    startCommand: ./start.sh
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://postgres:7Rkv9NHoMcgqfx7@db.kvkmepmsloyekfqwdcgq.supabase.co:5432/postgres
+      - key: PORT
+        value: 10000
