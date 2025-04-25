@@ -55,7 +55,7 @@ app.include_router(
     meta.router
 )
 
-from routers import discord  # Import the new Discord router
+from app.routers import discord  # Corrected import path for the Discord router
 
 # Ensure all imports are at the top of the file
 
