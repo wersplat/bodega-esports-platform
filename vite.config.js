@@ -7,16 +7,17 @@ export default defineConfig({
     react(),
     visualizer({
       filename: 'bundle-analysis.html',
-      open: true, // Automatically open the report in the browser after build
+      open: true,
     }),
   ],
   build: {
+    outDir: 'dist', // ✅ Add this to ensure correct output location
     sourcemap: true,
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          supabase: ['@supabase/supabase-js', '@supabase/postgrest-js'], // Split Supabase-related libraries into a separate chunk
+          supabase: ['@supabase/supabase-js', '@supabase/postgrest-js'],
         },
       },
     },

@@ -19558,3 +19558,4 @@ dist-ssr
 .venv/Scripts/watchfiles.exe
 .venv/Scripts/websockets.exe
 .venv/share/man/man1/isympy.1
+.OCR/
