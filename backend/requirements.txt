@@ -6,7 +6,6 @@ psycopg2-binary
 python-dotenv
 gspread
 pandas
-axios
 apscheduler
 pillow
 numpy
