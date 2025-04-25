@@ -23,12 +23,8 @@ from app.routers import (
 from app.api import leaderboard, seasons, teams, divisions, webhooks
 from app.utils import auth
 
-# Add the workspace root to the Python path
-workspace_root = Path(__file__).resolve().parents[2]
-sys.path.append(str(workspace_root))
-
 # Add the backend directory to the Python path
-backend_path = workspace_root / 'backend'
+backend_path = Path(__file__).resolve().parents[1]
 sys.path.append(str(backend_path))
 
 app = FastAPI()
@@ -50,6 +46,7 @@ app.include_router(webhooks.router)
 app.include_router(exports.router)
 app.include_router(meta.router)
 app.include_router(discord.router)
+
 
 # Scheduler setup
 
