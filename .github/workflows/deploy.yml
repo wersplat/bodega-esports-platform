@@ -26,15 +26,12 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      - name: Upload frontend using SSH and rsync
-        uses: appleboy/ssh-action@master
+      - name: Upload frontend using RSYNC over SSH
+        uses: burnett01/rsync-deployments@5.2
         with:
-          host: ${{ secrets.CLOUDWAYS_SSH_HOST }}
-          username: ${{ secrets.CLOUDWAYS_SSH_USER }}
-          port: ${{ secrets.CLOUDWAYS_SSH_PORT }}
-          key: ${{ secrets.CLOUDWAYS_SSH_KEY }}
-          script: |
-            echo "Cleaning public_html first..."
-            rm -rf /home/master/applications/5455430/public_html/*
-            echo "Uploading new frontend build..."
-            rsync -avz frontend/dist/ /home/master/applications/5455430/public_html/
+          switches: -avz --delete
+          path: frontend/dist/
+          remote_path: /home/master/applications/5455430/public_html/
+          remote_host: ${{ secrets.CLOUDWAYS_SSH_HOST }}
+          remote_user: ${{ secrets.CLOUDWAYS_SSH_USER }}
+          remote_key: ${{ secrets.CLOUDWAYS_SSH_KEY }}
