@@ -34,9 +34,7 @@ jobs:
           port: ${{ secrets.CLOUDWAYS_SSH_PORT }}
           key: ${{ secrets.CLOUDWAYS_SSH_KEY }}
           source: "frontend/dist/*"
-          target: ${{
-            secret: CLOUDWAYS_DEPLOY_PATH
-          }}
+          target: ${{ secret: CLOUDWAYS_DEPLOY_PATH }}
           overwrite: true
           rm: false
           debug: true
