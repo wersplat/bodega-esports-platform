@@ -25,16 +25,16 @@ jobs:
       - name: Build Frontend
         working-directory: frontend
         run: npm run build
-      
-      - name: Deploy to Cloudways
-        uses: appleboy/scp-action@master
+
+      - name: Upload frontend using SSH and rsync
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.CLOUDWAYS_SSH_HOST }}
           username: ${{ secrets.CLOUDWAYS_SSH_USER }}
           port: ${{ secrets.CLOUDWAYS_SSH_PORT }}
           key: ${{ secrets.CLOUDWAYS_SSH_KEY }}
-          source: "frontend/dist/*"
-          target: ${{ secrets.CLOUDWAYS_DEPLOY_PATH }}
-          overwrite: true
-          rm: false
-          debug: true
+          script: |
+            echo "Cleaning public_html first..."
+            rm -rf /home/master/applications/5455430/public_html/*
+            echo "Uploading new frontend build..."
+            rsync -avz frontend/dist/ /home/master/applications/5455430/public_html/
