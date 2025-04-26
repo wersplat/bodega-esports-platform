@@ -12,9 +12,11 @@ function Leaderboard() {
   const [selectedTeam, setSelectedTeam] = useState('');
   const [selectedStat, setSelectedStat] = useState('points');
 
+  const API_BASE = import.meta.env.VITE_API_BASE_URL; // 🛠 ADD THIS once at the top
+
   const fetchSeasons = async () => {
     try {
-      const { data } = await axios.get('/api/seasons');
+      const { data } = await axios.get(`${API_BASE}/api/seasons`);
       if (Array.isArray(data)) {
         setSeasons(data);
         if (data.length > 0) setSelectedSeason(data[0].id);
@@ -28,7 +30,7 @@ function Leaderboard() {
 
   const fetchTeams = async () => {
     try {
-      const { data } = await axios.get('/api/teams');
+      const { data } = await axios.get(`${API_BASE}/api/teams`); // 🛠 FIXED
       if (Array.isArray(data)) {
         setTeams(data);
       } else {
@@ -42,7 +44,7 @@ function Leaderboard() {
   const fetchLeaderboard = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/api/leaderboard', {
+      const res = await axios.get(`${API_BASE}/api/leaderboard`, { // 🛠 FIXED
         params: {
           season_id: selectedSeason,
           team_id: selectedTeam || undefined,
@@ -56,7 +58,7 @@ function Leaderboard() {
     } finally {
       setLoading(false);
     }
-  }, [selectedSeason, selectedTeam, selectedStat]);
+  }, [API_BASE, selectedSeason, selectedTeam, selectedStat]);
 
   useEffect(() => {
     fetchSeasons();

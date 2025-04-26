@@ -16,11 +16,12 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 export default function TopScorersChart({ seasonId }) {
   const [chartData, setChartData] = useState(null);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;  // 🛠 Add base url
 
   useEffect(() => {
     if (!seasonId) return;
     axios
-      .get(`/api/stats/top-scorers?season_id=${seasonId}`)
+      .get(`${API_BASE}/api/stats/top-scorers?season_id=${seasonId}`)  // 🛠 Fix here
       .then((res) => {
         const labels = res.data.map((p) => p.username);
         const data = res.data.map((p) => p.avg_points);
