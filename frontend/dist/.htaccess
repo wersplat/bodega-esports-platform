@@ -1,5 +1,0 @@
-# Force index.html to be used as fallback
-DirectoryIndex index.html
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.html [QSA,L]
