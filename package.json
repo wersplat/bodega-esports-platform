@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && git add frontend/dist && git commit -m \"🚀 Deploy build\" && git push origin mono"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
