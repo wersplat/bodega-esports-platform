@@ -56,7 +56,7 @@ function App() {
     link.rel = 'stylesheet';
     link.href = location.pathname.startsWith('/alt')
       ? '/styles-alt.css'
-      : '/styles.css';
+      : '/theme.css';
 
     document.head.appendChild(link);
   }, [location.pathname]);

@@ -67,6 +67,7 @@ function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="form-input"
+            autoComplete="current-password"
             style={{
               padding: '12px',
               borderRadius: '8px',
