@@ -30,7 +30,7 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.CLOUDWAYS_SSH_HOST }}
-          username: ${{ secrets.CLOUDWAYS_SSH_USERNAME }}
+          username: ${{ secrets.CLOUDWAYS_SSH_USER }}
           port: ${{ secrets.CLOUDWAYS_SSH_PORT }}
           key: ${{ secrets.CLOUDWAYS_SSH_KEY }}
           source: "frontend/dist/*"
