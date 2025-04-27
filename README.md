@@ -1,7 +1,11 @@
 # 🏆 Bodega Esports Platform
 
-[![Frontend Build Status](https://github.com/wersplat/bodega-esports-platform/actions/workflows/frontend-build.yml/badge.svg)](https://github.com/wersplat/bodega-esports-platform/actions/workflows/frontend-build.yml)
-[![Backend Build Status](https://github.com/wersplat/bodega-esports-platform/actions/workflows/backend-build.yml/badge.svg)](https://github.com/wersplat/bodega-esports-platform/actions/workflows/backend-build.yml)
+## Build Status
+
+| Frontend | Backend |
+|:--------:|:-------:|
+| [![Frontend Build Check](https://github.com/wersplat/bodega-esports-platform/actions/workflows/check-builds.yml/badge.svg?branch=mono)](https://github.com/wersplat/bodega-esports-platform/actions/workflows/check-builds.yml) | [![Backend Build Check](https://github.com/wersplat/bodega-esports-platform/actions/workflows/check-builds.yml/badge.svg?branch=mono)](https://github.com/wersplat/bodega-esports-platform/actions/workflows/check-builds.yml) |
+
 
 ---
 
