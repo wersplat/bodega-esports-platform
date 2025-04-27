@@ -1,0 +1,31 @@
+# Ignore virtual environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore local settings
+.env
+*.env
+.env.*
+
+# Ignore IDE/editor stuff
+.vscode/
+.idea/
+
+# Ignore Docker files not needed for Cloudways
+docker-compose.yml
+Dockerfile
+Dockerfile.*
+
+# Ignore compiled output
+dist/
+build/
+
+# Ignore git stuff
+.git/
+.gitignore
+
+# Node modules if you ever add frontend builds
+node_modules/

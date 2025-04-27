@@ -1,5 +1,10 @@
 # 🏆 Bodega Esports Platform
 
+[![Frontend Build Status](https://github.com/wersplat/bodega-esports-platform/actions/workflows/frontend-build.yml/badge.svg)](https://github.com/wersplat/bodega-esports-platform/actions/workflows/frontend-build.yml)
+[![Backend Build Status](https://github.com/wersplat/bodega-esports-platform/actions/workflows/backend-build.yml/badge.svg)](https://github.com/wersplat/bodega-esports-platform/actions/workflows/backend-build.yml)
+
+---
+
 A full-stack esports tournament management platform built with React, Supabase, and Vite.
 
 Manage leagues, teams, players, brackets, and championships — fully self-hosted and tournament-organizer ready.

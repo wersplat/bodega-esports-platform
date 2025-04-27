@@ -25,3 +25,20 @@ dist-ssr
 .env
 /backend/credentials/service_account.json
 
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+instance/
+.env
+venv/
+start.sh.bak # if you edit and save a backup
+
+# System junk
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
