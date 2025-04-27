@@ -13,7 +13,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: frontend
+        working-directory: bodega-esports-platform/frontend
 
     steps:
       - name: Checkout Repo
@@ -28,7 +28,7 @@ jobs:
         run: npm install
 
       - name: Build Frontend
-        run: npx vite build
+        run: npm run build
 
   backend:
     name: Backend Build Check
@@ -36,7 +36,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend
+        working-directory: bodega-esports-platform/backend
 
     steps:
       - name: Checkout Repo
