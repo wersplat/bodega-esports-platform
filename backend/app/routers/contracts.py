@@ -14,7 +14,6 @@ async def send_contract():
     # TODO: Fetch webhook for contract offers
     # webhook_url = fetch_webhook_url(webhook_type="contract_sent")
     # send_discord_webhook(content="New contract offer sent!", webhook_url=webhook_url)
-
     pass
 
 @router.post("/{contract_id}/accept")
@@ -34,6 +33,6 @@ async def reject_contract(contract_id: str):
 @router.post("/{contract_id}/buyout")
 async def buyout_contract(contract_id: str):
     """
-    Trigger a contract buyout.
+    Buyout an existing contract.
     """
     pass

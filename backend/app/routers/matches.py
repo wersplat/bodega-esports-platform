@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.utils.discord import send_discord_webhook  # Assuming you have this
+from app.utils.discord import send_discord_webhook
 
 router = APIRouter(
     prefix="/matches",
@@ -14,29 +14,34 @@ async def create_match():
     # TODO: Fetch appropriate webhook URL for match creation
     # webhook_url = fetch_webhook_url(webhook_type="match_created")
     # send_discord_webhook(content="New match scheduled!", webhook_url=webhook_url)
+    pass
 
+@router.get("/{match_id}")
+async def get_match(match_id: str):
+    """
+    Fetch match details.
+    """
     pass
 
 @router.post("/{match_id}/submit-result")
-async def submit_match_result(match_id: str):
+async def submit_result(match_id: str):
     """
     Submit final match result.
     """
-    # TODO: Fetch webhook for match results
+    # TODO: Fetch webhook URL for match result submission
     # webhook_url = fetch_webhook_url(webhook_type="match_result")
     # send_discord_webhook(content=f"Result submitted for match {match_id}", webhook_url=webhook_url)
-
     pass
 
 @router.post("/{match_id}/dispute")
 async def dispute_match(match_id: str):
     """
-    Dispute a match result.
+    Submit a match dispute.
     """
     pass
 
 @router.post("/{match_id}/admin-verify")
-async def verify_match(match_id: str):
+async def admin_verify_result(match_id: str):
     """
     Admin manually verifies match result.
     """
