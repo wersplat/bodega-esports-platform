@@ -18,3 +18,4 @@ def get_teams(db: Session = Depends(get_db)):
         }
         for team in teams
     ]
+

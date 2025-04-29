@@ -109,3 +109,4 @@ def export_to_sheets(season_id: int, db: Session = Depends(get_db)):
     stats = leaderboard(season_id, db=db)
     success = append_leaderboard_to_sheet(season_id, stats)
     return {"status": "success" if success else "error"}
+

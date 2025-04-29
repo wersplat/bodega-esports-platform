@@ -18,3 +18,4 @@ def get_seasons(db: Session = Depends(get_db)):
         }
         for season in seasons
     ]
+

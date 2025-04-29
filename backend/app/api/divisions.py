@@ -18,3 +18,4 @@ def get_divisions(db: Session = Depends(get_db)):
         }
         for division in divisions
     ]
+
