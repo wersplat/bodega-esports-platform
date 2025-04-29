@@ -22,6 +22,18 @@ function Login() {
     }
   };
 
+  const handleDiscordLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'discord',
+      options: {
+        redirectTo: 'https://dashboard.bodegacatsgc.gg/auth/callback'
+      }
+    });
+    if (error) {
+      console.error('Discord login error:', error.message);
+    }
+  };
+
   return (
     <div style={{
       paddingTop: '100px',
@@ -84,9 +96,25 @@ function Login() {
             Login
           </button>
         </form>
+
         <div style={{ marginTop: '12px', textAlign: 'center' }}>
           <span style={{ color: '#fff' }}>Don't have an account? </span>
           <Link to="/register" style={{ color: '#60a5fa', textDecoration: 'underline' }}>Register here</Link>
+        </div>
+
+        <div style={{ marginTop: '24px', textAlign: 'center' }}>
+          <button onClick={handleDiscordLogin} style={{
+            backgroundColor: '#5865F2',
+            color: '#fff',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            fontSize: '16px',
+            border: 'none',
+            cursor: 'pointer'
+          }}>
+            Sign in with Discord
+          </button>
         </div>
       </div>
     </div>
