@@ -113,7 +113,7 @@ function Login() {
             border: 'none',
             cursor: 'pointer'
           }}>
-            Sign in witha Discord
+            Sign in with Discord
           </button>
         </div>
 
