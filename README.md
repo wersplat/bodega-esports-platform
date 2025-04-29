@@ -1,4 +1,4 @@
-# 🏆 Bodega Esports Platform
+# Bodega Esports Platform
 
 ## Build Status
 
@@ -6,216 +6,116 @@
 |:--------:|:-------:|
 | [![Frontend Build Check](https://github.com/wersplat/bodega-esports-platform/actions/workflows/check-builds.yml/badge.svg?branch=mono)](https://github.com/wersplat/bodega-esports-platform/actions/workflows/check-builds.yml) | [![Backend Build Check](https://github.com/wersplat/bodega-esports-platform/actions/workflows/check-builds.yml/badge.svg?branch=mono)](https://github.com/wersplat/bodega-esports-platform/actions/workflows/check-builds.yml) |
 
+---
+
+
+[![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
+[![Discord](https://img.shields.io/discord/roadto25k?label=Discord&logo=discord)](https://discord.gg/roadto25k)
+
+A full-stack, modular platform for managing competitive NBA 2K leagues. Features OCR-based stat tracking, player/team management, automated leaderboards, Discord and Google Sheets integration, and robust admin tooling. Built to power the "Road to $25K" league.
 
 ---
 
-A full-stack esports tournament management platform built with React, Supabase, and Vite.
+## 🚀 Features
 
-Manage leagues, teams, players, brackets, and championships — fully self-hosted and tournament-organizer ready.
+- 🏀 OCR stat parsing from NBA 2K box score images
+- 📊 Leaderboards with division, stat type, and season filters
+- 🔁 Google Sheets + CSV export with webhook sync
+- 🔐 Supabase-based user authentication and RLS policies
+- ⚙️ Admin dashboard for match submission, standings, and team control
+- 🧠 MVP and game winner auto-detection
+- 🖥️ Modern React frontend (Vite, Tailwind)
+- 🐍 FastAPI backend with PostgreSQL (via Supabase)
+- 📡 Discord webhook integration
+- 🛠️ Virtualenv + systemd deployment (no Docker required)
 
 ---
 
-## 🚀 Tech Stack
+## 🛠️ Tech Stack
 
-- **Frontend:** React + Vite
-- **Auth & Database:** Supabase
-- **Styling:** Vanilla CSS (responsive, mobile-first)
-- **State Management:** Lightweight React hooks
-- **Backend:** Python (FastAPI)
+- **Frontend:** React, TailwindCSS, Vite
+- **Backend:** FastAPI, Python 3.11
+- **Database:** Supabase (PostgreSQL)
+- **OCR Engine:** PaddleOCR, PIL, fallback to Tesseract
+- **DevOps:** GitHub Actions, systemd, Render, Cloudways
 
 ---
 
-## 📂 Project Structure
+## 📁 Folder Structure
 
-```
-/public
-  - index.html
-  - img/
-    - rt25k-bg.png
-  - vite.svg
-
-/src
-  /components
-    - Navbar.jsx
-    - NotificationsBell.jsx
-    - PrivateRoute.jsx
-  /pages
-    - Dashboard.jsx
-    - Admin.jsx
-    - PublicBracket.jsx
-    - Champion.jsx
-    - Matches.jsx
-    - Login.jsx
-    - Register.jsx
-    - AdminCreateLeague.jsx
-    - AdminAddTeam.jsx
-    - LeagueBrowser.jsx
-    - Standings.jsx
-    - PlayerProfile.jsx
-  - App.jsx
-  - main.jsx
-  - index.css
-  - supabaseClient.js
-  - theme.css
-
-/backend
-  /app
-    - main.py
-    - database.py
-    /models
-      - models.py
-    /routers
-      - players.py
-      - teams.py
-      - matches.py
-      - standings.py
-    /schemas
-      - player.py
-      - team.py
-      - match.py
-    /utils
-      - auth.py
-      - hash.py
-      - sheets.py
-  - requirements.txt
-  - render.yaml
-
-/supabase
-  /functions
-    /send-discord
-      - index.ts
-      - deno.json
-  - config.toml
-
-package.json
-vite.config.js
-vercel.json
-README.md
+```text
+bodega-esports-platform/
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   ├── models/
+│   │   ├── services/
+│   │   └── main.py
+│   ├── tests/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   └── App.jsx
+├── .github/
+│   └── workflows/
+├── .env.example
+├── setup-move-off-docker.sh
+├── README.md
+└── CHANGELOG.md
 ```
 
 ---
 
-## 🛠️ Setup Instructions
+## ⚡ Installation
 
-### 1. Clone the Project
+### Backend Setup (FastAPI)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/bodega-esports-platform.git
-cd bodega-esports-platform
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-### 2. Install Dependencies
+### Frontend Setup (React + Vite)
 
 ```bash
+cd src
 npm install
-```
-
-For the backend:
-
-```bash
-pip install -r backend/requirements.txt
-```
-
-### 3. Configure Environment Variables
-
-Create a `.env` file based on the provided `.env.example`:
-
-```bash
-VITE_SUPABASE_URL=your-supabase-url
-VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
-```
-
-Your Supabase project URL and anon key can be found under [Supabase Project Settings](https://app.supabase.com/).
-
-### 4. Run Locally
-
-Frontend:
-
-```bash
 npm run dev
 ```
 
-Backend:
+---
+
+### 🐳 Optional: Docker (Legacy)
+
+If you still want to use Docker (deprecated):
 
 ```bash
-python backend/app/main.py
+docker-compose up --build
 ```
 
-Default server:
-
-```bash
-Frontend: http://localhost:5173
-Backend: http://localhost:8000
-```
+> **Note:** Virtualenv + systemd deployments are now recommended.  
+> Use `setup-move-off-docker.sh` to migrate off Docker.
 
 ---
 
-## 🔑 Core Features
+## 🚀 Deployment Notes
 
-| Feature | Status |
-|---|---|
-| Player Registration & Login | ✅ |
-| Team Creation & Management | ✅ |
-| League Creation & Admin Panel | ✅ |
-| Team Registration into Leagues | ✅ |
-| Randomized Bracket Generator | ✅ |
-| Match Winner Selection & Advancement | ✅ |
-| Auto-Advance Tournament Rounds | ✅ |
-| Public Bracket Viewer | ✅ |
-| Champion Detection | ✅ |
-| Dynamic Theme Switching (`/` and `/alt`) | ✅ |
-| Admin Dynamic Button Routing | ✅ |
-| Full Mobile-First Responsive UI | ✅ |
-| Notifications System | ✅ |
-| Player Profiles | ✅ |
-| Stats Tracking System | 🚧 In Progress |
-| Public Pages Expansion | 🚧 In Progress |
+- Runs great on VPS environments (Cloudways, bare metal NAS, etc.)
+- See `setup-move-off-docker.sh` for Docker migration.
 
 ---
 
-## 🛠 Planned Features
+## 📄 License
 
-| Feature | Description |
-|---|---|
-| Tournament Bracket System | Dynamic bracket generation, live updates, and match scheduling |
-| Advanced Analytics | Player and team performance insights, heatmaps, and trends |
-| Anti-Cheat System | Integration with third-party anti-cheat tools |
-| Multi-Language Support | Localization for global audiences |
-| Marketplace | In-app purchases for team branding, player perks, and more |
-| Mobile App | Companion app for match updates, notifications, and stats |
-| Google Sheets Auto-Sync | Automate export of stats and standings to Google Sheets |
-| Player Profile Stats Endpoint | Provide players access to individual statistics |
-| Full Table Exports | Enable comprehensive backups of player stats and match submissions |
+GPLv3 license – open-source and modifiable with attribution.
 
 ---
 
-## 📜 Notes
+## 👤 Author & Community
 
-- Requires an active [Supabase](https://supabase.com/) project (free tier works)
-- Database tables needed: `teams`, `players`, `matches`, `leagues`, `registrations`, `profiles`
-- Supabase `auth` module handles user login/session management securely
-- Manual winner selection and tournament advancement are controlled via Admin dashboard
-- Supports clean deployment on free platforms or self-hosting
-
----
-
-## 🌐 Deployment
-
-Ready for easy deployment to:
-
-- [Vercel](https://vercel.com/) (via `vercel.json`)
-- [Netlify](https://www.netlify.com/)
-- [Render](https://render.com/) (via `render.yaml`)
-- Any custom server (Docker, Nginx, Apache)
-
----
-
-## 🧐 Credits
-
-Developed by **Cager**  
-With systems design, live QA testing, and real TO-level optimization 🔥
-
----
-
-## 🏋️‍♂️ Road to $25K Ready
-a
+**Bodega Cats Gaming Club**  
+🌐 [bodegacatsgc.gg](https://bodegacatsgc.gg)  
+💬 [Discord: Road to $25K](https://discord.gg/roadto25k)
