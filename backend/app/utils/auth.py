@@ -1,21 +1,19 @@
 from functools import wraps
-from fastapi import Depends, HTTPException, status, APIRouter
+from fastapi import Depends, HTTPException, status, APIRouter, Request
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from app.database import get_db
+from app.database import get_db, supabase_client
 from sqlalchemy.orm import Session
-
 from app.models.models import Profile
 
-
-# Replace with your actual secret key and algorithm
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["Auth"])
 
+# AUTH HELPERS
 
 def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -51,7 +49,7 @@ def admin_required(get_current_user):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             user = await get_current_user()
-            if not user.is_admin:  # Assuming `is_admin` is a property of the user model
+            if not user.is_admin:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Not authorized",
@@ -59,6 +57,62 @@ def admin_required(get_current_user):
             return await func(*args, **kwargs)
         return wrapper
     return decorator
+
+
+# ROUTES
+
+@router.post("/signup")
+async def signup(request: Request):
+    data = await request.json()
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        raise HTTPException(status_code=400, detail="Email and password are required.")
+
+    result = supabase_client.auth.sign_up({"email": email, "password": password})
+
+    if result.get("error"):
+        raise HTTPException(status_code=400, detail=result["error"]["message"])
+
+    return {"message": "Signup successful. Check your email to verify your account."}
+
+
+@router.post("/login")
+async def login(request: Request):
+    data = await request.json()
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        raise HTTPException(status_code=400, detail="Email and password are required.")
+
+    result = supabase_client.auth.sign_in_with_password({"email": email, "password": password})
+
+    if result.get("error"):
+        raise HTTPException(status_code=401, detail=result["error"]["message"])
+
+    return {
+        "access_token": result["session"]["access_token"],
+        "refresh_token": result["session"]["refresh_token"],
+        "user": result["user"]
+    }
+
+
+@router.post("/password-reset")
+async def password_reset(request: Request):
+    data = await request.json()
+    email = data.get("email")
+
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required.")
+
+    result = supabase_client.auth.reset_password_email(email)
+
+    if result.get("error"):
+        raise HTTPException(status_code=400, detail=result["error"]["message"])
+
+    return {"message": "Password reset email sent."}
 
 
 @router.get("/me")
