@@ -1,0 +1,45 @@
+{
+  "output": "CHANGELOG.md",
+  "unreleased": true,
+  "template": "keepachangelog",
+  "sort-commits": true,
+  "commit-limit": false,
+  "types": {
+    "feat": "Added",
+    "fix": "Fixed",
+    "perf": "Changed",
+    "refactor": "Changed",
+    "docs": "Documentation",
+    "style": "Changed",
+    "test": "Testing",
+    "chore": "Chores"
+  },
+  "groups": [
+    {
+      "title": "Added",
+      "types": ["feat"]
+    },
+    {
+      "title": "Changed",
+      "types": ["perf", "refactor", "style"]
+    },
+    {
+      "title": "Fixed",
+      "types": ["fix"]
+    },
+    {
+      "title": "Documentation",
+      "types": ["docs"]
+    },
+    {
+      "title": "Testing",
+      "types": ["test"]
+    },
+    {
+      "title": "Chores",
+      "types": ["chore"]
+    }
+  ],
+  "tag-prefix": "v",
+  "hide-empty-sections": true
+}
