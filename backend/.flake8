@@ -1,0 +1,4 @@
+# Inside backend folder
+echo "[flake8]
+max-line-length = 100
+extend-ignore = E501, W292" > .flake8
