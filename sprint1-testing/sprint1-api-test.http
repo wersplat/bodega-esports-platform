@@ -1,0 +1,69 @@
+### Signup
+POST https://api.bodegacatsgc.com/auth/signup
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "TestPassword123"
+}
+
+### Login
+POST https://api.bodegacatsgc.com/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "TestPassword123"
+}
+
+### Get Profile
+GET https://api.bodegacatsgc.com/profile/me
+Authorization: Bearer {{access_token}}
+
+### Update Profile
+PUT https://api.bodegacatsgc.com/profile/update
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "display_name": "TestUser123",
+  "platform": "PlayStation",
+  "preferred_positions": ["PG", "SG"]
+}
+
+### Create Team
+POST https://api.bodegacatsgc.com/teams/create
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "name": "Test Team Alpha",
+  "logo_url": "https://via.placeholder.com/150"
+}
+
+### Get Team
+GET https://api.bodegacatsgc.com/teams/{{team_id}}
+Authorization: Bearer {{access_token}}
+
+### Update Team
+PUT https://api.bodegacatsgc.com/teams/{{team_id}}/update
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "description": "Updated team description here",
+  "banner_url": "https://via.placeholder.com/600x200"
+}
+
+### Invite Player
+POST https://api.bodegacatsgc.com/teams/{{team_id}}/invite
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "player_id": "{{player_id_from_player_team_view}}"
+}
+
+### List Team Members
+GET https://api.bodegacatsgc.com/teams/{{team_id}}/members
+Authorization: Bearer {{access_token}}
