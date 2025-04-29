@@ -19,6 +19,15 @@ from app.routers import (
     exports,
     meta,
     discord,
+    contracts,
+    payments,
+    notifications,
+    seasons,
+    events,
+    teams,
+    divisions,
+    leagues,
+
 )
 from app.api import leaderboard, seasons, teams, divisions, webhooks
 from app.utils import auth
@@ -46,7 +55,14 @@ app.include_router(webhooks.router)
 app.include_router(exports.router)
 app.include_router(meta.router)
 app.include_router(discord.router)
-
+app.include_router(matches.router)
+app.include_router(contracts.router)
+app.include_router(payments.router)
+app.include_router(notifications.router)
+app.include_router(seasons.router)
+app.include_router(leagues.router)
+app.include_router(events.router)
+app.include_router(standings.router)
 
 # Scheduler setup
 
