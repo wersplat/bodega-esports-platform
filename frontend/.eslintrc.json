@@ -1,0 +1,15 @@
+{
+  "extends": "next/core-web-vitals",
+  "plugins": ["react"],
+  "rules": {
+    "react/jsx-key": "warn",
+    "@next/next/no-img-element": "off",
+    "no-console": "warn",
+    "prefer-const": "warn"
+  },
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  }
+}
