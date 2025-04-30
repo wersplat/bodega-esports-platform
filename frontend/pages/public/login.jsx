@@ -1,125 +1,55 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
-function Login() {
+export default function Login() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [magicSent, setMagicSent] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     try {
       const res = await fetch('https://api.bodegacatsgc.gg/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // assumes cookies/session handling
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email }),
       });
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.detail || 'Login failed');
-      }
+      if (!res.ok) throw new Error('Failed to send magic link');
 
-      router.push('/dashboard');
+      setMagicSent(true);
     } catch (err) {
-      alert(err.message);
+      console.error('Login error:', err);
     }
   };
 
-  const handleDiscordLogin = () => {
-    window.location.href = 'https://api.bodegacatsgc.gg/auth/discord/login';
-  };
-
   return (
-    <div style={{
-      paddingTop: '100px',
-      paddingLeft: '24px',
-      paddingRight: '24px',
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'rgba(0,0,0,0.4)'
-    }}>
-      <div style={{
-        background: 'rgba(30, 41, 59, 0.85)',
-        borderRadius: '16px',
-        boxShadow: '0 4px 32px rgba(0,0,0,0.3)',
-        padding: '32px 24px',
-        maxWidth: '400px',
-        width: '100%'
-      }}>
-        <h1 className="page-title" style={{ color: '#fff', textAlign: 'center', marginBottom: '16px' }}>Login</h1>
-        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+    <div className="main-content">
+      <h1 className="text-4xl font-bold text-white mb-6">🔐 Login</h1>
+
+      {magicSent ? (
+        <p className="text-green-400">✅ Magic link sent to your email!</p>
+      ) : (
+        <form onSubmit={handleLogin} className="form" style={{ maxWidth: 400 }}>
           <input
             type="email"
-            placeholder="Email"
             value={email}
+            placeholder="Enter your email"
             onChange={(e) => setEmail(e.target.value)}
             className="form-input"
             required
-            style={{
-              padding: '12px',
-              borderRadius: '8px',
-              border: '1.5px solid #3b82f6',
-              background: '#fff',
-              color: '#1e293b',
-              fontWeight: 500
-            }}
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="form-input"
-            required
-            autoComplete="current-password"
-            style={{
-              padding: '12px',
-              borderRadius: '8px',
-              border: '1.5px solid #3b82f6',
-              background: '#fff',
-              color: '#1e293b',
-              fontWeight: 500
-            }}
-          />
-          <button type="submit" className="form-button" style={{
-            backgroundColor: '#3b82f6',
-            color: '#fff',
-            padding: '12px',
-            borderRadius: '8px',
-            fontWeight: 'bold',
-            fontSize: '16px',
-            border: 'none'
-          }}>
-            Login
+
+          <button type="submit" className="form-button" style={{ marginTop: 12 }}>
+            Send Magic Link
           </button>
+
+          <p className="text-sm text-slate-400 mt-4">
+            Don&apos;t have an account? Check Discord for an invite or register during onboarding.
+          </p>
         </form>
-
-        <div style={{ marginTop: '12px', textAlign: 'center' }}>
-          <span style={{ color: '#fff' }}>Don't have an account? </span>
-          <a href="/register" style={{ color: '#60a5fa', textDecoration: 'underline' }}>Register here</a>
-        </div>
-
-        <div style={{ marginTop: '24px', textAlign: 'center' }}>
-          <button onClick={handleDiscordLogin} style={{
-            backgroundColor: '#5865F2',
-            color: '#fff',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            fontWeight: 'bold',
-            fontSize: '16px',
-            border: 'none',
-            cursor: 'pointer'
-          }}>
-            Sign in with Discord
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
-
-export default Login;
