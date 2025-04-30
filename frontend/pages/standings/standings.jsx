@@ -16,6 +16,19 @@ function Standings() {
   }, []);
 
   useEffect(() => {
+    const fetchDivisions = async () => {
+      try {
+        const divisions = await supabase.from('divisions').select('*');
+        setDivisions(divisions.data);
+      } catch (error) {
+        console.error('Error fetching divisions:', error);
+      }
+    };
+
+    fetchDivisions();
+  }, []); // Ensure dependencies are correct
+
+  useEffect(() => {
     if (selectedSeason) {
       fetchDivisions();
     }

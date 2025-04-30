@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import TopScorersChart from '../components/TopScorersChart';
+import TopScorersChart from '../components/TopScorersChart'; // Ensure the import path matches the file name's case
 
 function Leaderboard() {
   const [seasons, setSeasons] = useState([]);
   const [teams, setTeams] = useState([]);
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [chartData, setChartData] = useState({ labels: [], datasets: [] });
 
   const [selectedSeason, setSelectedSeason] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('');
@@ -70,6 +71,28 @@ function Leaderboard() {
       fetchLeaderboard();
     }
   }, [fetchLeaderboard, selectedSeason]);
+
+  useEffect(() => {
+    if (!selectedSeason) return;
+    axios
+      .get(`${API_BASE}/api/stats/top-scorers?season_id=${selectedSeason}`)
+      .then((res) => {
+        const labels = res.data.map((p) => p.username);
+        const data = res.data.map((p) => p.avg_points);
+
+        setChartData({
+          labels,
+          datasets: [
+            {
+              label: 'Avg Points',
+              data,
+              backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            },
+          ],
+        });
+      })
+      .catch((err) => console.error('Chart fetch error:', err));
+  }, [selectedSeason, API_BASE]);
 
   return (
     <div className="main-content">

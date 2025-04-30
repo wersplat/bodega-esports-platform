@@ -20,14 +20,15 @@ function Admin() {
         const data = await res.json();
         if (!data.is_admin) throw new Error("Access denied");
         setIsAdmin(true);
-      } catch {
+      } catch (error) {
+        console.error("Error fetching profile:", error); // Retain meaningful error logging
         router.push('/');
       } finally {
         setLoading(false);
       }
     };
     fetchProfile();
-  }, [router]);
+  }, [router]); // Ensure dependencies are correct
 
   if (loading) return <div>Loading...</div>;
   if (!isAdmin) return null;

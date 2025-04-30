@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseClient'; // Ensure the import path matches the file name's case
 
 function ViewRegisteredTeams() {
   const [leagues, setLeagues] = useState([]);
@@ -21,6 +21,19 @@ function ViewRegisteredTeams() {
       setSelectedSeason('');
     }
   }, [selectedLeague]);
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const teams = await supabase.from('teams').select('*');
+        setTeams(teams.data);
+      } catch (error) {
+        console.error('Error fetching teams:', error);
+      }
+    };
+
+    fetchTeams();
+  }, []); // Ensure dependencies are correct
 
   const fetchLeagues = async () => {
     setLoading(true);
