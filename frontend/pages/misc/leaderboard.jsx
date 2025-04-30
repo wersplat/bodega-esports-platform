@@ -12,7 +12,8 @@ function Leaderboard() {
   const [selectedTeam, setSelectedTeam] = useState('');
   const [selectedStat, setSelectedStat] = useState('points');
 
-  const API_BASE = import.meta.env.VITE_API_BASE_URL; // 🛠 ADD THIS once at the top
+  // Updated API_BASE to use NEXT_PUBLIC_API_BASE_URL with a fallback
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://default-api-url.com';
 
   const fetchSeasons = async () => {
     try {
