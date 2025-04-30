@@ -1,20 +1,19 @@
-// vite.config.js
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
-import path from 'path';
 
 export default defineConfig({
-  root: path.resolve(__dirname, 'frontend'), // 🔥 ADD THIS
+  root: 'frontend', // project source lives here
   plugins: [
     react(),
     visualizer({
       filename: 'bundle-analysis.html',
-      open: true,
+      open: false, // set to true locally if you want to visualize bundle
     }),
   ],
   build: {
-    outDir: path.resolve(__dirname, 'frontend/dist'), // 🔥 update outDir properly
+    outDir: 'dist',          // outputs to frontend/dist
+    emptyOutDir: true,       // clean dist/ before building
     sourcemap: true,
     rollupOptions: {
       output: {

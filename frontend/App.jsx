@@ -55,7 +55,7 @@ function App() {
     link.id = 'dynamic-theme';
     link.rel = 'stylesheet';
     link.href = location.pathname.startsWith('/alt')
-      ? '/styles-alt.css'
+      ? '/alt-theme.css'
       : '/theme.css';
 
     document.head.appendChild(link);
