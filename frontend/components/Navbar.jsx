@@ -10,7 +10,7 @@ function Navbar() {
   const location = useLocation();
   const menuRef = useRef(null);
 
-  const logo = "https://drive.google.com/uc?export=view&id=1KcnUumzzRDfmjtgAjttZPPIAFG_vRQLh";
+  const logo = "hhttps://i0.wp.com/bodegacatsgc.gg/wp-content/uploads/2024/06/CIRCULAR-LOGO-1000-e1717667152868.png?fit=80%2C80&ssl=1";
 
   useEffect(() => {
     const fetchUser = async () => {
