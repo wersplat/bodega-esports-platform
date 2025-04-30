@@ -10,7 +10,7 @@
 
 
 [![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
-[![Discord](https://img.shields.io/discord/bodegacatsgc label=Discord&logo=discord)](https://discord.gg/roadto25k)
+[![Discord](https://img.shields.io/discord/854734760877752330?label=Discord&logo=discord)](https://discord.gg/bodegacatsgc)
 
 A full-stack, modular platform for managing competitive NBA 2K leagues. Features OCR-based stat tracking, player/team management, automated leaderboards, Discord and Google Sheets integration, and robust admin tooling. Built to power the "Road to $25K" league.
 
@@ -118,4 +118,4 @@ GPLv3 license – open-source and modifiable with attribution.
 
 **Bodega Cats Gaming Club**  
 🌐 [bodegacatsgc.gg](https://bodegacatsgc.gg)  
-💬 [Discord: Road to $25K](https://discord.com/invite/bodegacatsgc)
+💬 [Discord: Bodega Cats Gaming Club](https://discord.gg/bodegacatsgc)
