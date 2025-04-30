@@ -6,7 +6,6 @@
 .DS_Store
 Thumbs.db
 .venv/
-OCR/node_modules/.package-lock.json
 OCR/
-backend/
+node_modules/
 node_modules/

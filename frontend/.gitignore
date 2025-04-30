@@ -27,3 +27,6 @@ node_modules
 /backend
 frontend/hooks/pre-push.sh
 frontend/dist
+OCR/
+node_modules/
+dist/
