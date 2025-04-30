@@ -26,3 +26,4 @@ node_modules
 # Build directories
 /backend
 frontend/hooks/pre-push.sh
+frontend/dist
