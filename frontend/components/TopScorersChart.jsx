@@ -16,7 +16,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 export default function TopScorersChart({ seasonId }) {
   const [chartData, setChartData] = useState(null);
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;  // 🛠 Add base url
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://default-api-url.com'; // Updated API_BASE with a fallback for development
 
   useEffect(() => {
     if (!seasonId) return;

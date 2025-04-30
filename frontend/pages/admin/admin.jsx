@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import AdminNavButton from '../components/AdminNavButton';
+import AdminNavButton from '../../components/AdminNavButton'; // Updated import path
 import {
   PlusCircleIcon, UserGroupIcon, CalendarDaysIcon, ClipboardDocumentListIcon,
   EyeIcon, ChartBarIcon, Cog6ToothIcon, MegaphoneIcon, LockClosedIcon,
