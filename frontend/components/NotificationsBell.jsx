@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
-import toast from 'react-hot-toast';
+
+// Hardcoded values for development
+const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
+const SUPABASE_ANON_KEY = 'your-anon-key';
 
 export default function NotificationsBell() {
   const [count, setCount] = useState(0);
@@ -12,45 +14,33 @@ export default function NotificationsBell() {
   // 1. Load current unread count
   // 2. Subscribe to realtime INSERTS on notifications
   // ───────────────────────────────────────────────
+  const getUnread = async () => {
+    try {
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/notifications?is_read=eq.false`,
+        {
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+        }
+      );
+      const data = await response.json();
+      setCount(data.length);
+    } catch (error) {
+      console.error('Error fetching unread notifications:', error);
+    }
+  };
+
   useEffect(() => {
-    // initial count
-    const getUnread = async () => {
-      const { count } = await supabase
-        .from('notifications')
-        .select('id', { count: 'exact', head: true })
-        .eq('is_read', false);
-      setCount(count);
-    };
     getUnread();
 
-    // realtime listener
-    const channel = supabase
-      .channel('user:notifications')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'notifications' },
-        ({ new: n }) => {
-          setCount((prev) => prev + 1);
+    // Simulate real-time updates (replace with actual WebSocket or polling logic if needed)
+    const interval = setInterval(() => {
+      getUnread();
+    }, 10000); // Poll every 10 seconds
 
-          // toast message based on type
-          const msg =
-            n.type === 'contract_offer'
-              ? '📑  New contract offer!'
-              : n.type === 'contract_accepted'
-              ? '✅  Your contract was accepted!'
-              : n.type === 'result_approved'
-              ? '🏆  Match result approved!'
-              : '🔔  New notification';
-
-          toast(msg);
-        }
-      )
-      .subscribe();
-
-    // cleanup
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   return (

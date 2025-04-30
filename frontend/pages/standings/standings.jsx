@@ -1,7 +1,10 @@
 // src/pages/Standings.jsx
 
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+
+// Hardcoded values for development
+const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
+const SUPABASE_ANON_KEY = 'your-anon-key';
 
 function Standings() {
   const [seasons, setSeasons] = useState([]);
@@ -13,20 +16,7 @@ function Standings() {
 
   useEffect(() => {
     fetchSeasons();
-  }, []);
-
-  useEffect(() => {
-    const fetchDivisions = async () => {
-      try {
-        const divisions = await supabase.from('divisions').select('*');
-        setDivisions(divisions.data);
-      } catch (error) {
-        console.error('Error fetching divisions:', error);
-      }
-    };
-
-    fetchDivisions();
-  }, []); // Ensure dependencies are correct
+  }, [fetchSeasons]);
 
   useEffect(() => {
     if (selectedSeason) {
@@ -41,83 +31,88 @@ function Standings() {
   }, [selectedDivision, fetchStandings]);
 
   const fetchSeasons = async () => {
-    const { data, error } = await supabase.from('seasons').select('id, name').order('created_at', { ascending: false });
-    if (error) {
-      console.error('Error fetching seasons:', error.message);
-    } else {
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/seasons`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+      const data = await response.json();
       setSeasons(data);
       if (data.length > 0) {
         setSelectedSeason(data[0].id); // default to most recent season
       }
+    } catch (error) {
+      console.error('Error fetching seasons:', error);
     }
   };
 
-  const fetchDivisions = async () => {
-    const { data, error } = await supabase
-      .from('divisions')
-      .select('id, name')
-      .eq('season_id', selectedSeason);
-
-    if (error) {
-      console.error('Error fetching divisions:', error.message);
-    } else {
+  const fetchDivisions = React.useCallback(async () => {
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/divisions?season_id=eq.${selectedSeason}`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+      const data = await response.json();
       setDivisions(data);
       if (data.length > 0) {
         setSelectedDivision(data[0].id); // default to first division
       }
+    } catch (error) {
+      console.error('Error fetching divisions:', error);
     }
-  };
+  }, [selectedSeason]);
 
-  const fetchStandings = async () => {
+  const fetchStandings = React.useCallback(async () => {
     setLoading(true);
+    try {
+      const teamsResponse = await fetch(`${SUPABASE_URL}/rest/v1/teams?division_id=eq.${selectedDivision}`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+      const teams = await teamsResponse.json();
 
-    const { data: teams, error: teamsError } = await supabase
-      .from('teams')
-      .select('id, name')
-      .eq('division_id', selectedDivision);
+      const matchesResponse = await fetch(`${SUPABASE_URL}/rest/v1/matches?season_id=eq.${selectedSeason}`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+      const matches = await matchesResponse.json();
 
-    if (teamsError) {
-      console.error('Error fetching teams:', teamsError.message);
+      const teamRecords = {};
+      teams.forEach(team => {
+        teamRecords[team.id] = { name: team.name, wins: 0, losses: 0 };
+      });
+
+      matches.forEach(match => {
+        if (match.winner_team_id && teamRecords[match.winner_team_id]) {
+          teamRecords[match.winner_team_id].wins += 1;
+        }
+        if (match.loser_team_id && teamRecords[match.loser_team_id]) {
+          teamRecords[match.loser_team_id].losses += 1;
+        }
+      });
+
+      const formattedStandings = Object.values(teamRecords).map(record => ({
+        ...record,
+        winPct: record.wins + record.losses > 0 ? (record.wins / (record.wins + record.losses)).toFixed(3) : '0.000',
+      }));
+
+      formattedStandings.sort((a, b) => parseFloat(b.winPct) - parseFloat(a.winPct));
+
+      setStandings(formattedStandings);
+    } catch (error) {
+      console.error('Error fetching standings:', error);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const { data: matches, error: matchesError } = await supabase
-      .from('matches')
-      .select('winner_team_id, loser_team_id, season_id')
-      .eq('season_id', selectedSeason);
-
-    if (matchesError) {
-      console.error('Error fetching matches:', matchesError.message);
-      setLoading(false);
-      return;
-    }
-
-    const teamRecords = {};
-
-    teams.forEach(team => {
-      teamRecords[team.id] = { name: team.name, wins: 0, losses: 0 };
-    });
-
-    matches.forEach(match => {
-      if (match.winner_team_id && teamRecords[match.winner_team_id]) {
-        teamRecords[match.winner_team_id].wins += 1;
-      }
-      if (match.loser_team_id && teamRecords[match.loser_team_id]) {
-        teamRecords[match.loser_team_id].losses += 1;
-      }
-    });
-
-    const formattedStandings = Object.values(teamRecords).map(record => ({
-      ...record,
-      winPct: record.wins + record.losses > 0 ? (record.wins / (record.wins + record.losses)).toFixed(3) : '0.000',
-    }));
-
-    formattedStandings.sort((a, b) => parseFloat(b.winPct) - parseFloat(a.winPct));
-
-    setStandings(formattedStandings);
-    setLoading(false);
-  };
+  }, [selectedDivision, selectedSeason]);
 
   return (
     <div className="main-content">

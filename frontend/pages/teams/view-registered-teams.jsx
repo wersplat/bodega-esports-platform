@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient'; // Ensure the import path matches the file name's case
+
+// Hardcoded values for development
+const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
+const SUPABASE_ANON_KEY = 'your-anon-key';
 
 function ViewRegisteredTeams() {
   const [leagues, setLeagues] = useState([]);
@@ -8,6 +11,58 @@ function ViewRegisteredTeams() {
   const [loading, setLoading] = useState(false);
   const [seasons, setSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState('');
+
+  const fetchLeagues = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/leagues`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+      const data = await response.json();
+      setLeagues(data);
+    } catch (error) {
+      console.error('Error fetching leagues:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSeasons = async (leagueId) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/seasons?league_id=eq.${leagueId}`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+      const data = await response.json();
+      setSeasons(data);
+      setSelectedSeason(data[0]?.id || '');
+    } catch (error) {
+      console.error('Error fetching seasons:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchTeams = async () => {
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/teams`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+      const data = await response.json();
+      setTeams(data);
+    } catch (error) {
+      console.error('Error fetching teams:', error);
+    }
+  };
 
   useEffect(() => {
     fetchLeagues();
@@ -23,43 +78,8 @@ function ViewRegisteredTeams() {
   }, [selectedLeague]);
 
   useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        const teams = await supabase.from('teams').select('*');
-        setTeams(teams.data);
-      } catch (error) {
-        console.error('Error fetching teams:', error);
-      }
-    };
-
     fetchTeams();
-  }, []); // Ensure dependencies are correct
-
-  const fetchLeagues = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.from('leagues').select('id, name');
-    if (error) {
-      console.error('Error fetching leagues:', error.message);
-    } else {
-      setLeagues(data);
-    }
-    setLoading(false);
-  };
-
-  const fetchSeasons = async (leagueId) => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('seasons')
-      .select('id, name')
-      .eq('league_id', leagueId);
-    if (error) {
-      console.error('Error fetching seasons:', error.message);
-    } else {
-      setSeasons(data);
-      setSelectedSeason(data[0]?.id || '');
-    }
-    setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (selectedSeason) {
@@ -68,21 +88,6 @@ function ViewRegisteredTeams() {
       setTeams([]);
     }
   }, [selectedSeason, selectedLeague]);
-
-  const fetchTeams = async (leagueId, seasonId) => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('registrations')
-      .select('id, teams ( name, description )')
-      .eq('league_id', leagueId)
-      .eq('season_id', seasonId);
-    if (error) {
-      console.error('Error fetching teams:', error.message);
-    } else {
-      setTeams(data.map((registration) => registration.teams));
-    }
-    setLoading(false);
-  };
 
   return (
     <div className="main-content">

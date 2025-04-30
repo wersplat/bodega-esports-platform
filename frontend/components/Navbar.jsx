@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
-import NotificationsBell from './NotificationsBell';
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,18 +10,44 @@ function Navbar() {
 
   const logo = "hhttps://i0.wp.com/bodegacatsgc.gg/wp-content/uploads/2024/06/CIRCULAR-LOGO-1000-e1717667152868.png?fit=80%2C80&ssl=1";
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+  // Hardcoded values for development
+  const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
+  const SUPABASE_ANON_KEY = 'your-anon-key';
+
+  // Updated fetch calls to use hardcoded values
+  const fetchUser = async () => {
+    try {
+      const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+      const user = await response.json();
       setUser(user);
-    };
-    fetchUser();
-  }, []);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+    }
+  };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
+    try {
+      await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   useEffect(() => setIsMenuOpen(false), [location]);
 
@@ -68,7 +92,7 @@ function Navbar() {
         </div>
 
         <div className="upa-nav-actions">
-          <NotificationsBell />
+          {/* <NotificationsBell /> */}
           {user ? (
             <button onClick={handleLogout} className="upa-logout">Logout</button>
           ) : (
