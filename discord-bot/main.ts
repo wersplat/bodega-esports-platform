@@ -8,6 +8,13 @@ import { createLogger, transports, format } from 'winston';
 import { registerCommands } from './utils/registerCommands';
 import { startScheduler } from './utils/scheduler';
 
+// Extend the Client class to include a commands property
+declare module 'discord.js' {
+  interface Client {
+    commands: Collection<string, any>;
+  }
+}
+
 // Configure Winston logger
 const logger = createLogger({
   level: 'info',
@@ -23,9 +30,7 @@ const logger = createLogger({
 
 // Create Discord client
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-
-// Command collection
-client.commands = new Collection<string, any>();
+client.commands = new Collection();
 
 // Dynamically load all command modules
 const commandsPath = join(__dirname, 'commands');
