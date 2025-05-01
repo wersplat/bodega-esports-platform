@@ -17,11 +17,11 @@ _05/01/2025_
 
 Bodega Platform monitoring via [UptimeRobot Public Dashboard](https://stats.uptimerobot.com/d061trTIVy):
 
-| Service         | Type        | Status Badge                                                                 |
+| Service          | Type        | Status Badge                                                                 |
 |------------------|-------------|------------------------------------------------------------------------------|
-| **Frontend**     | HTTP(s)     | ![Frontend](https://img.shields.io/uptimerobot/status/m800447789-74d2d86574933346aaa3b6cc0?label=dashboard%20uptime) |
-| **Backend**      | HTTP(s)     | ![Backend](https://img.shields.io/uptimerobot/status/m800447858-35b48c2610c0c12087ce60fb?label=api%20uptime) |
-| **Discord Bot**  | Heartbeat   | ![Bot](https://img.shields.io/uptimerobot/status/m800447867-6863cbd32f0761f2e5b3b358?label=bot%20uptime) |
+| **Frontend**    | HTTP(s)   | ![Frontend](https://img.shields.io/uptimerobot/status/m800447789-74d2d86574933346aa3b6cc0?label=Frontend%20uptime) |
+| **Backend**     | HTTP(s)   | ![Backend](https://img.shields.io/uptimerobot/status/m800447858-35b48c2610c0c12087ce60fb?label=api%20uptime) |
+| **Discord Bot** | Heartbeat | ![Bot](https://img.shields.io/uptimerobot/status/m800447867-6863cbd32f0761f2e5b3b358?label=bot%20uptime) |
 
 🔗 View live status: [uptime dashboard](https://stats.uptimerobot.com/d061trTIVy)
 
