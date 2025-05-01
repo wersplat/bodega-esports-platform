@@ -1,6 +1,8 @@
 # Bodega Esports Platform  
+
 _05/01/2025_
 ---
+
 ![Node.js](https://img.shields.io/badge/node-18.x-blue?logo=node.js)
 ![TypeScript](https://img.shields.io/badge/type-checked-blue?logo=typescript)
 ![Discord.js](https://img.shields.io/npm/v/discord.js?label=discord.js&color=blueviolet)
@@ -132,6 +134,7 @@ npm run dev
 ```
 
 Add a `.env` based on `.env.example` with:
+
 - `DISCORD_TOKEN`
 - `CLIENT_ID`
 - `GUILD_ID`
