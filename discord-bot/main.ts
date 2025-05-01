@@ -86,9 +86,9 @@ client.on('interactionCreate', async (interaction: Interaction) => {
 });
 
 // --- Uptime Ping (UptimeRobot) ---
-if (process.env.UPTIMMEERBOT_HEARTBEAT_URL) {
+if (process.env.UPTIMEROBOT_HEARTBEAT_URL) {
   setInterval(() => {
-    fetch(process.env.UPTIMMEERBOT_HEARTBEAT_URL!)
+    fetch(process.env.UPTIMEROBOT_HEARTBEAT_URL!)
       .then(() => logger.info('📡 UptimeRobot ping sent'))
       .catch(err => logger.warn('⚠️ UptimeRobot ping failed:', err));
   }, 60_000); // every 1 minute
