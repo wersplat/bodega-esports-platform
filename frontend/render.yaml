@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: bodega-frontend
+    env: node
+    plan: starter
+    region: virginia
+    branch: react
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    autoDeploy: true
+    envVars:
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: https://bodega-api.onrender.com
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://dashboard.bodegacatsgc.gg
