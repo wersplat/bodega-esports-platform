@@ -1,0 +1,22 @@
+{
+  "name": "discord_bot",
+  "version": "0.1.0",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "dev": "ts-node-dev main.ts",
+    "register": "ts-node scripts/deploy-commands.ts"
+  },
+  "dependencies": {
+    "discord.js": "^14.0.0",
+    "dotenv": "^16.0.0",
+    "node-fetch": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0",
+    "ts-node-dev": "^2.0.0",
+    "@types/node-fetch": "^2.6.2"
+  }
+}
