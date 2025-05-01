@@ -24,7 +24,7 @@ A full-stack, modular platform for managing competitive NBA 2K leagues. Features
 - 🔐 Supabase-based user authentication and RLS policies
 - ⚙️ Admin dashboard for match submission, standings, and team control
 - 🧠 MVP and game winner auto-detection
-- 🖥️ Modern React frontend (Vite, Tailwind)
+- 🖥️ Modern React frontend (Next.js, Tailwind)
 - 🐍 FastAPI backend with PostgreSQL (via Supabase)
 - 📡 Discord webhook integration
 - 🛠️ Virtualenv + systemd deployment (no Docker required)
@@ -33,7 +33,7 @@ A full-stack, modular platform for managing competitive NBA 2K leagues. Features
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** React, TailwindCSS, Vite
+- **Frontend:** React, TailwindCSS, Next.js
 - **Backend:** FastAPI, Python 3.11
 - **Database:** Supabase (PostgreSQL)
 - **OCR Engine:** PaddleOCR, PIL, fallback to Tesseract
@@ -78,7 +78,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-### Frontend Setup (React + Vite)
+### Frontend Setup (React + Next.js)
 
 ```bash
 cd src
@@ -105,6 +105,7 @@ docker-compose up --build
 
 - Runs great on VPS environments (Cloudways, bare metal NAS, etc.)
 - See `setup-move-off-docker.sh` for Docker migration.
+- **Frontend**: Now uses Next.js for server-side rendering and static site generation.
 
 ---
 
