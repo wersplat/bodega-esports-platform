@@ -1,4 +1,6 @@
-// frontend/tailwind.config.js
+/* eslint-env node */
+/* global module */
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [

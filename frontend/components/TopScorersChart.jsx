@@ -1,3 +1,7 @@
+/* eslint-env node */
+/* eslint-env browser */
+/* global process */
+
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
@@ -16,12 +20,12 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 export default function TopScorersChart({ seasonId }) {
   const [chartData, setChartData] = useState(null);
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://default-api-url.com'; // Updated API_BASE with a fallback for development
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''; // Use process.env for Next.js public environment variables
 
   useEffect(() => {
     if (!seasonId) return;
     axios
-      .get(`${API_BASE}/api/stats/top-scorers?season_id=${seasonId}`)  // 🛠 Fix here
+      .get(`${API_BASE}/api/stats/top-scorers?season_id=${seasonId}`) // 🛠 Fix here
       .then((res) => {
         const labels = res.data.map((p) => p.username);
         const data = res.data.map((p) => p.avg_points);
@@ -38,7 +42,7 @@ export default function TopScorersChart({ seasonId }) {
         });
       })
       .catch((err) => console.error('Chart fetch error:', err));
-  }, [seasonId]);
+  }, [seasonId, API_BASE]); // Include API_BASE in the dependency array
 
   if (!chartData) return <p>Loading chart...</p>;
 
