@@ -6,9 +6,8 @@ _05/01/2025_
 ![Discord.js](https://img.shields.io/npm/v/discord.js?label=discord.js&color=blueviolet)
 ![License](https://img.shields.io/github/license/wersplat/bodega-esports-platform)
 ![Render](https://img.shields.io/badge/deployed-on%20render-3c4dff?logo=render)
-![Uptime](https://healthchecks.io/b/2/fea01ded-a4aa-40bb-9373-7ddf9aab132c.svg)
+!![Bodega Discord Bot](https://img.shields.io/endpoint?url=https%3A%2F%2Fhealthchecks.io%2Fb%2F2%2Ffea01ded-a4aa-40bb-9373-7ddf9aab132c.shields)
 ![CI](https://github.com/wersplat/bodega-esports-platform/actions/workflows/ci.yml/badge.svg?branch=react)
-
 [![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
 [![Discord](https://img.shields.io/discord/854734760877752330?label=Discord&logo=discord)](https://discord.gg/bodegacatsgc)
 
