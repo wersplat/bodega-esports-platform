@@ -100,3 +100,10 @@ process.on('uncaughtException', err => {
   logger.error('Uncaught Exception:', err);
   process.exit(1);
 });
+
+// Extend the Client class to include a commands property
+declare module 'discord.js' {
+  interface Client {
+    commands: Collection<string, any>;
+  }
+}
