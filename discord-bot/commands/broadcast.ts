@@ -1,22 +1,39 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, PermissionsBitField } from 'discord.js';
+import {
+  SlashCommandBuilder,
+  ChatInputCommandInteraction,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  ActionRowBuilder,
+} from 'discord.js';
 
 export default {
   data: new SlashCommandBuilder()
     .setName('broadcast')
-    .setDescription('Send a message to this channel (admin only)')
-    .addStringOption(opt =>
-      opt.setName('message')
-         .setDescription('The message to broadcast')
-         .setRequired(true)
-    ),
+    .setDescription('Send scoped announcement via modal'),
 
   async execute(interaction: ChatInputCommandInteraction) {
-    if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
-      return interaction.reply({ content: '❌ You need admin permissions.', ephemeral: true });
-    }
+    const modal = new ModalBuilder()
+      .setCustomId('broadcastModal')
+      .setTitle('Create Broadcast');
 
-    const msg = interaction.options.getString('message', true);
-    await interaction.reply({ content: '✔️ Broadcast sent!', ephemeral: true });
-    await interaction.channel?.send(`📢 **Broadcast:** ${msg}`);
+    const channelInput = new TextInputBuilder()
+      .setCustomId('channel')
+      .setLabel('Channel ID')
+      .setStyle(TextInputStyle.Short)
+      .setRequired(true);
+
+    const messageInput = new TextInputBuilder()
+      .setCustomId('message')
+      .setLabel('Message')
+      .setStyle(TextInputStyle.Paragraph)
+      .setRequired(true);
+
+    modal.addComponents(
+      new ActionRowBuilder<TextInputBuilder>().addComponents(channelInput),
+      new ActionRowBuilder<TextInputBuilder>().addComponents(messageInput),
+    );
+
+    await interaction.showModal(modal);
   }
 };

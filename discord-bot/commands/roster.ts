@@ -1,6 +1,15 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 import { fetchRoster } from '../utils/api';
 
+type Player = {
+  gamertag: string;
+  role: string;
+};
+
+type RosterData = {
+  players: Player[];
+};
+
 export default {
   data: new SlashCommandBuilder()
     .setName('roster')
@@ -15,12 +24,12 @@ export default {
     const team = interaction.options.getString('team_name', true);
     await interaction.deferReply();
     try {
-      const data = await fetchRoster(team);
+      const data: RosterData = await fetchRoster(team);
       const embed = new EmbedBuilder()
         .setTitle(`${team} Roster`)
         .setColor('Blue');
 
-      data.players.forEach((p: any) =>
+      data.players.forEach((p) =>
         embed.addFields({ name: p.gamertag, value: p.role, inline: false })
       );
 
