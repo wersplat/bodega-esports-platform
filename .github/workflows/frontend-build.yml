@@ -27,4 +27,4 @@ jobs:
 
       - name: Build Frontend
         working-directory: frontend
-        run: npx vite build
+        run: npm run build
