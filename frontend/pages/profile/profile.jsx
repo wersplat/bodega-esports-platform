@@ -14,8 +14,6 @@ export default function Profile() {
       const res = await fetch('https://api.bodegacatsgc.gg/profile/me');
       const data = await res.json();
       setForm(data);
-    } catch (err) {
-      console.error('Error fetching profile:', err);
     } finally {
       setLoading(false);
     }

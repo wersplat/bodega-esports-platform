@@ -1,7 +1,9 @@
-// frontend/postcss.config.js
+/* eslint-env node */
+/* global module */
+
 module.exports = {
   plugins: {
     tailwindcss: {},
-    autoprefixer: {}
-  }
-}
+    autoprefixer: {},
+  },
+};
