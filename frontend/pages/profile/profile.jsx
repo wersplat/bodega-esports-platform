@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 export default function Profile() {
-  const [profile, setProfile] = useState(null);
   const [form, setForm] = useState({});
   const [msg, setMsg] = useState('');
   const [loading, setLoading] = useState(true);
@@ -14,7 +13,6 @@ export default function Profile() {
     try {
       const res = await fetch('https://api.bodegacatsgc.gg/profile/me');
       const data = await res.json();
-      setProfile(data);
       setForm(data);
     } catch (err) {
       console.error('Error fetching profile:', err);

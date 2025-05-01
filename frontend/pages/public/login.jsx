@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [magicSent, setMagicSent] = useState(false);
-  const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();
