@@ -1,10 +1,6 @@
 # Bodega Esports Platform  
 _05/01/2025_
 ---
-![Frontend Uptime](https://img.shields.io/uptimerobot/status/m123456789-yourid)
-![Backend Uptime](https://img.shields.io/uptimerobot/status/m987654321-yourid)
-![Discord Bot Uptime](https://img.shields.io/uptimerobot/status/m192837465-yourid)
----
 ![Node.js](https://img.shields.io/badge/node-18.x-blue?logo=node.js)
 ![TypeScript](https://img.shields.io/badge/type-checked-blue?logo=typescript)
 ![Discord.js](https://img.shields.io/npm/v/discord.js?label=discord.js&color=blueviolet)
@@ -13,6 +9,20 @@ _05/01/2025_
 ![CI](https://github.com/wersplat/bodega-esports-platform/actions/workflows/ci.yml/badge.svg?branch=react)
 [![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
 [![Discord](https://img.shields.io/discord/854734760877752330?label=Discord&logo=discord)](https://discord.gg/bodegacatsgc)
+---
+
+## 📊 Monitoring Status
+
+Bodega Platform monitoring via [UptimeRobot Public Dashboard](https://stats.uptimerobot.com/d061trTIVy):
+
+| Service         | Type        | Status Badge                                                                 |
+|------------------|-------------|------------------------------------------------------------------------------|
+| **Frontend**     | HTTP(s)     | ![Frontend](https://img.shields.io/uptimerobot/status/m800447789-74d2d86574933346aaa3b6cc0?label=dashboard%20uptime) |
+| **Backend**      | HTTP(s)     | ![Backend](https://img.shields.io/uptimerobot/status/m800447858-35b48c2610c0c12087ce60fb?label=api%20uptime) |
+| **Discord Bot**  | Heartbeat   | ![Bot](https://img.shields.io/uptimerobot/status/m800447867-6863cbd32f0761f2e5b3b358?label=bot%20uptime) |
+
+🔗 View live status: [uptime dashboard](https://stats.uptimerobot.com/d061trTIVy)
+
 ---
 
 ## 🎯 Overview

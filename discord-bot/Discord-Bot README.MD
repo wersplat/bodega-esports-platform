@@ -3,7 +3,7 @@
 ![Discord.js](https://img.shields.io/npm/v/discord.js?label=discord.js&color=blueviolet)
 ![License](https://img.shields.io/github/license/wersplat/bodega-esports-platform)
 ![Render](https://img.shields.io/badge/deployed-on%20render-3c4dff?logo=render)
-![Uptime](https://healthchecks.io/b/2/fea01ded-a4aa-40bb-9373-7ddf9aab132c.svg)
+![Discord Bot Uptime](https://img.shields.io/uptimerobot/status/m800447867-6863cbd32f0761f2e5b3b358?label=bot%20uptime)
 ![CI](https://github.com/wersplat/bodega-esports-platform/actions/workflows/ci.yml/badge.svg?branch=react)
 
 # Bodega Discord Bot
