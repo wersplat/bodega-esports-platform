@@ -54,11 +54,19 @@ function App() {
     const link = document.createElement('link');
     link.id = 'dynamic-theme';
     link.rel = 'stylesheet';
-    link.href = location.pathname.startsWith('/alt')
-      ? '/alt-theme.css'
-      : '/theme.css';
+    link.href = '/combined-theme.css'; // Updated to use the combined theme file
 
     document.head.appendChild(link);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const themeClass = location.pathname.startsWith('/alt')
+      ? 'theme-alt-dark'
+      : location.pathname.startsWith('/roadto24k')
+      ? 'theme-roadto24k'
+      : 'theme-dark';
+
+    document.body.className = themeClass; // Dynamically set the theme class on the body element
   }, [location.pathname]);
 
   return (

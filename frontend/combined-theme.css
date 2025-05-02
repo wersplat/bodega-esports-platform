@@ -1,11 +1,89 @@
-/* ======================
-   Universal Background
-====================== */
+/* ================================
+   Combined Theme for Bodega Esports Platform
+   Includes: alt-theme.css, theme.css, and index.css
+================================== */
+
+/* ================================
+   Alternative Theme (alt-theme.css)
+================================== */
+:root {
+  /* Alternative Light Theme */
+  --color-bg: #ffffff;
+  --color-card: #f3f4f6;
+  --color-text: #111827;
+  --color-accent: #3b82f6;
+  --color-hover: #2563eb;
+  --color-muted: #6b7280;
+  --color-white: #ffffff;
+  --color-navbar-bg: #f9fafb;
+  --color-navbar-text: #1f2937;
+  --color-navbar-accent: #3b82f6;
+  --color-accent-strong: #9333ea; /* Alternative Purple */
+}
+
+.theme-alt-dark {
+  --color-bg: #1f2937;
+  --color-card: #374151;
+  --color-text: #e5e7eb;
+  --color-accent: #3b82f6;
+  --color-hover: #2563eb;
+  --color-muted: #9ca3af;
+  --color-white: #ffffff;
+  --color-navbar-bg: #111827;
+  --color-navbar-text: #f9fafb;
+  --color-navbar-accent: #3b82f6;
+  --color-accent-strong: #9333ea;
+}
+
+/* ================================
+   Main Theme (theme.css)
+================================== */
+:root {
+  /* Light theme (default) */
+  --color-bg: #f8fafc;
+  --color-card: #ffffff;
+  --color-text: #1f2937;
+  --color-accent: #60a5fa;
+  --color-hover: #f43f5e;
+  --color-muted: #94a3b8;
+  --color-white: #ffffff;
+  --color-navbar-bg: #1f2937;
+  --color-navbar-text: #ffffff;
+  --color-navbar-accent: #60a5fa;
+  --color-accent-strong: #b22234; /* Road to $25K Red */
+}
+
+.theme-dark {
+  --color-bg: #0f172a;
+  --color-card: #1f2937;
+  --color-text: #f8fafc;
+  --color-accent: #60a5fa;
+  --color-hover: #f43f5e;
+  --color-muted: #94a3b8;
+  --color-white: #ffffff;
+  --color-navbar-bg: #111827;
+  --color-navbar-text: #e5e7eb;
+  --color-navbar-accent: #60a5fa;
+  --color-accent-strong: #b22234;
+}
+
+.theme-roadto24k {
+  --color-bg: #0f172a;
+  --color-card: #1e293b;
+  --color-text: #f8fafc;
+  --color-accent: #e11d48;
+  --color-hover: #f43f5e;
+  --color-muted: #94a3b8;
+}
+
+/* ================================
+   Global Styles (index.css)
+================================== */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', Arial, Helvetica, sans-serif;
-  background-image: url('/img/BG.png'); /* Updated to use the existing BG.png file */
+  background-image: url('/img/BG.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -26,9 +104,6 @@ body::before {
   z-index: -1;
 }
 
-/* ======================
-   Global Layout
-====================== */
 .main-content {
   padding-top: 80px;
   padding-left: 20px;
@@ -37,9 +112,6 @@ body::before {
   background: transparent;
 }
 
-/* ======================
-   Form Container
-====================== */
 .form-container {
   background: #1e293b;
   color: #f8fafc;
@@ -78,9 +150,6 @@ body::before {
   opacity: 1;
 }
 
-/* ======================
-   Admin Dashboard Buttons
-====================== */
 .form-button, .form-button-primary {
   background-color: #273449;
   color: #f8fafc;
@@ -115,7 +184,6 @@ body::before {
   font-size: 14px;
 }
 
-/* Primary call-to-action button */
 .form-button-primary {
   transition: background-color 0.3s ease;
 }
@@ -124,9 +192,6 @@ body::before {
   background-color: var(--color-hover);
 }
 
-/* ======================
-   Navbar (UPA Style)
-====================== */
 .upa-navbar {
   background-color: #0c1424;
   padding: 12px 24px;
@@ -184,7 +249,6 @@ body::before {
   width: 100%;
 }
 
-/* Auth buttons */
 .upa-cta,
 .upa-logout {
   border: 1px solid var(--color-accent);
@@ -206,7 +270,6 @@ body::before {
   border: none;
 }
 
-/* Slide-in menu */
 .upa-slide-menu {
   position: fixed;
   top: 0;
@@ -236,7 +299,6 @@ body::before {
   cursor: pointer;
 }
 
-/* Responsive layout */
 @media (min-width: 768px) {
   .upa-hamburger {
     display: none;

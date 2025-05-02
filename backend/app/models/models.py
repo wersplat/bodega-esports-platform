@@ -21,7 +21,7 @@ class Team(Base):
 class Profile(Base):
     __tablename__ = 'profiles'
     id = Column(Integer, primary_key=True)
-    player_stats = relationship("PlayerStat", backref="profile")
+    player_stats = relationship("PlayerStat", back_populates="profile")
 
 
 class Notification(Base):
@@ -118,7 +118,10 @@ class PlayerStat(Base):
     __tablename__ = 'player_stats'
     id = Column(Integer, primary_key=True)
     player_id = Column(Integer, ForeignKey('players.id'))
+    # Foreign key to profiles
+    profile_id = Column(Integer, ForeignKey('profiles.id'))
     player = relationship("Player", back_populates="player_stats")
+    profile = relationship("Profile", back_populates="player_stats")
     stat_type = Column(String, nullable=False)
     value = Column(Integer, nullable=False)
 
