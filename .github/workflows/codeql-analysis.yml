@@ -22,19 +22,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ "javascript", "python", "typescript" ]
+        language: [ "python", "typescript" ] # Removed duplicate 'javascript'
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3 # Updated to v3
       with:
         languages: ${{ matrix.language }}
 
     - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
+      uses: github/codeql-action/autobuild@v3 # Updated to v3
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3 # Updated to v3
