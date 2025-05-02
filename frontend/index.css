@@ -1,3 +1,8 @@
+:root {
+  --color-accent: #60a5fa;
+  --color-hover: #2563eb;
+}
+
 /* ======================
    Universal Background
 ====================== */

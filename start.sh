@@ -4,8 +4,8 @@ set -e
 # Build the frontend
 cd frontend
 npm install
-npx vite build
-npx serve -s dist &
+npm run build
+npm run start &
 
 # Start the backend
 cd ../backend

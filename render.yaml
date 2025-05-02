@@ -2,27 +2,29 @@ services:
   - type: web
     name: bodega-esports-backend
     env: python
-    plan: free
+    plan: starter
     region: virginia
-    rootDir: .  # deploying from repo root
+    rootDir: backend  # Backend service is rooted at the backend folder
     buildCommand: |
+      # Install Python dependencies and cache them
+      if [ ! -d ".venv" ]; then python -m venv .venv; fi
+      . .venv/bin/activate
       pip install -r requirements.txt
-      npm install
-      npm run build
     startCommand: ./start.sh
     envVars:
       - key: DATABASE_URL
-        value: postgresql://postgres:7Rkv9NHoMcgqfx7@db.kvkmepmsloyekfqwdcgq.supabase.co:5432/postgres
+        value: ${DATABASE_URL}
       - key: PORT
-        value: 10000
+        value: ${PORT:-10000}
   - type: web
     name: bodega-esports-frontend
     runtime: node
-    plan: free
+    plan: starter
     region: virginia
-    rootDir: frontend
+    rootDir: frontend  # Frontend service is rooted at the frontend folder
     buildCommand: npm run build
-    startCommand: npx serve -s dist
+    startCommand: npm run start
     envVars:
-      - key: VITE_API_URL
+      - key: NEXT_PUBLIC_API_URL
         value: https://bodega-esports-backend.onrender.com
+        # Each service is run out of its respective folder to ensure dependencies, environment, and build artifacts are isolated.

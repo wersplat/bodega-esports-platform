@@ -3,12 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bodega Esports Platform</title>
+    <!-- The title will be dynamically set using React Helmet -->
   </head>
   <body>
+    <!-- Mounting point for the React application -->
     <div id="root"></div>
 
-    <footer>
+      <p>&copy; <span id="current-year"></span> Bodega Esports Platform. All rights reserved.</p>
+      <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+      </script>
       <p>&copy; 2023 Bodega Esports Platform. All rights reserved.</p>
     </footer>
   </body>

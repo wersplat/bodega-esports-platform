@@ -45,3 +45,71 @@
   --color-navbar-accent: #e11d48;
   --color-accent-strong: #e11d48;
 }
+
+/* Consolidated styles from alt-theme.css */
+:root.theme-alt-light {
+  --color-bg: #ffffff;
+  --color-card: #f3f4f6;
+  --color-text: #111827;
+  --color-accent: #3b82f6;
+  --color-hover: #2563eb;
+  --color-muted: #6b7280;
+  --color-white: #ffffff;
+  --color-navbar-bg: #f9fafb;
+  --color-navbar-text: #1f2937;
+  --color-navbar-accent: #3b82f6;
+  --color-accent-strong: #9333ea;
+}
+
+:root.theme-alt-dark {
+  --color-bg: #1f2937;
+  --color-card: #374151;
+  --color-text: #e5e7eb;
+  --color-accent: #3b82f6;
+  --color-hover: #2563eb;
+  --color-muted: #9ca3af;
+  --color-white: #ffffff;
+  --color-navbar-bg: #111827;
+  --color-navbar-text: #f9fafb;
+  --color-navbar-accent: #3b82f6;
+  --color-accent-strong: #9333ea;
+}
+
+/* Merged styles from combined-theme.css */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid var(--color-muted);
+  border-radius: 5px;
+  background-color: var(--color-card);
+}
+
+input, select, textarea {
+  padding: 10px;
+  border: 1px solid var(--color-muted);
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+button {
+  padding: 10px;
+  border: none;
+  border-radius: 3px;
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: var(--color-hover);
+}
+
+button:focus {
+  outline: 2px solid var(--color-hover);
+  outline-offset: 2px;
+}

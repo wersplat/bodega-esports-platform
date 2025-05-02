@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE } from '../../config';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -8,7 +9,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch('https://api.bodegacatsgc.gg/auth/login', {
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

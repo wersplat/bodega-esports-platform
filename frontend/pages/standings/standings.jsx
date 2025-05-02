@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 
 // Hardcoded values for development
-const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
-const SUPABASE_ANON_KEY = 'your-anon-key';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 function Standings() {
   const [seasons, setSeasons] = useState([]);
@@ -15,38 +15,26 @@ function Standings() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchSeasons();
-  }, [fetchSeasons]);
-
-  useEffect(() => {
-    if (selectedSeason) {
-      fetchDivisions();
-    }
-  }, [selectedSeason, fetchDivisions]);
-
-  useEffect(() => {
-    if (selectedDivision) {
-      fetchStandings();
-    }
-  }, [selectedDivision, fetchStandings]);
-
-  const fetchSeasons = async () => {
-    try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/seasons`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+    const fetchSeasons = async () => {
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/seasons`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        });
+        const data = await response.json();
+        setSeasons(data);
+        if (data.length > 0) {
+          setSelectedSeason(data[0].id); // default to most recent season
         }
-      });
-      const data = await response.json();
-      setSeasons(data);
-      if (data.length > 0) {
-        setSelectedSeason(data[0].id); // default to most recent season
+      } catch (error) {
+        console.error('Error fetching seasons:', error);
       }
-    } catch (error) {
-      console.error('Error fetching seasons:', error);
-    }
-  };
+    };
+
+    fetchSeasons();
+  }, []);
 
   const fetchDivisions = React.useCallback(async () => {
     try {

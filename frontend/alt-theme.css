@@ -18,7 +18,7 @@
   --color-accent-strong: #9333ea; /* Alternative Purple */
 }
 
-.theme-alt-dark {
+:root.theme-alt-dark {
   --color-bg: #1f2937;
   --color-card: #374151;
   --color-text: #e5e7eb;

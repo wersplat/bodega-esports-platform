@@ -13,16 +13,22 @@ function Navbar() {
 
   const logo = "https://i0.wp.com/bodegacatsgc.gg/wp-content/uploads/2024/06/CIRCULAR-LOGO-1000-e1717667152868.png?fit=80%2C80&ssl=1";
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // Use process.env for Next.js public environment variables
-
-  // import { useCallback } from 'react'; // Moved to top-level imports
+  // Only use CRA and Next.js env variable prefixes
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const fetchUser = useCallback(async () => {
     try {
+      if (
+        !API_BASE_URL ||
+        (!process.env.REACT_APP_API_KEY && !process.env.NEXT_PUBLIC_API_KEY)
+      ) {
+        throw new Error('API_BASE_URL or API_KEY is not defined in environment variables.');
+      }
+      const API_KEY = process.env.REACT_APP_API_KEY || process.env.NEXT_PUBLIC_API_KEY;
       const response = await fetch(`${API_BASE_URL}/auth/v1/user`, {
         headers: {
-          'apikey': process.env.NEXT_PUBLIC_API_KEY,
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`, // Replace with a dynamic user token in production
+          'apikey': API_KEY,
+          'Authorization': `Bearer ${API_KEY}`, // Replace with a dynamic user token in production
         },
       });
       const userData = await response.json();
@@ -32,20 +38,27 @@ function Navbar() {
     }
   }, [API_BASE_URL]);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
+      if (
+        !API_BASE_URL ||
+        (!process.env.REACT_APP_API_KEY && !process.env.NEXT_PUBLIC_API_KEY)
+      ) {
+        throw new Error('API_BASE_URL or API_KEY is not defined in environment variables.');
+      }
+      const API_KEY = process.env.REACT_APP_API_KEY || process.env.NEXT_PUBLIC_API_KEY;
       await fetch(`${API_BASE_URL}/auth/v1/logout`, {
         method: 'POST',
         headers: {
-          'apikey': process.env.NEXT_PUBLIC_API_KEY,
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`, // Replace with a dynamic user token in production
+          'apikey': API_KEY,
+          'Authorization': `Bearer ${API_KEY}`, // Replace with a dynamic user token in production
         },
       });
       navigate('/');
     } catch (error) {
       console.error('Error logging out:', error);
     }
-  };
+  }, [API_BASE_URL, navigate]);
 
   useEffect(() => {
     fetchUser();

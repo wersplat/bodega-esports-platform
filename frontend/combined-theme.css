@@ -12,6 +12,21 @@ body {
   color: #000000;
 }
 
+/* Color Variables */
+:root {
+  --color-bg: #ffffff;
+  --color-card: #f3f4f6;
+  --color-text: #111827;
+  --color-accent: #3b82f6;
+  --color-hover: #2563eb;
+  --color-muted: #6b7280;
+  --color-white: #ffffff;
+  --color-navbar-bg: #f9fafb;
+  --color-navbar-text: #1f2937;
+  --color-navbar-accent: #3b82f6;
+  --color-accent-strong: #9333ea;
+}
+
 /* Form styles */
 form {
   display: flex;
@@ -20,14 +35,14 @@ form {
   max-width: 400px;
   margin: 20px auto;
   padding: 20px;
-  border: 1px solid #cccccc;
+  border: 1px solid var(--color-muted);
   border-radius: 5px;
-  background-color: #f9f9f9;
+  background-color: var(--color-card);
 }
 
 input, select, textarea {
   padding: 10px;
-  border: 1px solid #cccccc;
+  border: 1px solid var(--color-muted);
   border-radius: 3px;
   font-size: 14px;
 }
@@ -36,14 +51,19 @@ button {
   padding: 10px;
   border: none;
   border-radius: 3px;
-  background-color: #007bff;
-  color: #ffffff;
+  background-color: var(--color-accent);
+  color: var(--color-white);
   font-size: 14px;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: var(--color-hover);
+}
+
+button:focus {
+  outline: 2px solid var(--color-hover);
+  outline-offset: 2px;
 }
 
 /* Menu styles */
@@ -51,13 +71,13 @@ nav {
   display: flex;
   justify-content: space-between;
   padding: 10px 20px;
-  background-color: #f1f1f1;
+  background-color: #f9fafb;
   border-bottom: 1px solid #cccccc;
 }
 
 nav a {
   text-decoration: none;
-  color: #007bff;
+  color: var(--color-accent);
   font-size: 14px;
   margin-right: 10px;
 }

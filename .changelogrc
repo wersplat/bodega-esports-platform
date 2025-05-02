@@ -1,16 +1,17 @@
 {
   "output": "CHANGELOG.md",
   "unreleased": true,
-  "template": "keepachangelog",
+  "template": "keepAChangelog",
   "sort-commits": true,
+  // Setting commit-limit to false means there is no limit on the number of commits included in the changelog.
   "commit-limit": false,
   "types": {
     "feat": "Added",
-    "fix": "Fixed",
+    "perf": "Performance Improvements",
     "perf": "Changed",
     "refactor": "Changed",
     "docs": "Documentation",
-    "style": "Changed",
+    "style": "Code Style Updates",
     "test": "Testing",
     "chore": "Chores"
   },
@@ -40,6 +41,7 @@
       "types": ["chore"]
     }
   ],
+  // The tag-prefix is used to prefix version tags in the changelog, e.g., "v1.0.0".
   "tag-prefix": "v",
   "hide-empty-sections": true
 }

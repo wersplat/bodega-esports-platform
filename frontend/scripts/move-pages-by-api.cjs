@@ -47,6 +47,19 @@ async function movePages() {
     const from = path.join(sourceDir, file);
     const to = path.join(newDir, newName);
 
+    if (from === to) {
+      console.log(`⚠️  Skipping ${file}, source and destination are the same.`);
+      continue;
+    }
+
+    try {
+      await fs.access(to);
+      console.log(`⚠️  Skipping ${file}, destination ${path.join(targetFolder, newName)} already exists.`);
+      continue;
+    } catch {
+      // Destination does not exist, safe to move
+    }
+
     console.log(`🔁 Moving ${file} → ${path.join(targetFolder, newName)}`);
     await fs.rename(from, to);
   }
