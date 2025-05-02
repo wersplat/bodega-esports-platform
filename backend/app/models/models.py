@@ -125,3 +125,12 @@ class PlayerStat(Base):
 
 # Add relationship to Player
 Player.player_stats = relationship("PlayerStat", back_populates="player")
+
+
+class LeagueSettings(Base):
+    __tablename__ = 'league_settings'
+    id = Column(Integer, primary_key=True)
+    league_id = Column(Integer, ForeignKey('leagues.id'), nullable=False)
+    settings_json = Column(Text, nullable=True)  # Example field for settings
+
+    league = relationship("League", back_populates="settings")

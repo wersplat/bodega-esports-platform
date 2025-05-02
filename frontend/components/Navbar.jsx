@@ -1,4 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+/* eslint-env browser */
+/* global process */
+
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 function Navbar() {
@@ -8,36 +11,35 @@ function Navbar() {
   const location = useLocation();
   const menuRef = useRef(null);
 
-  const logo = "hhttps://i0.wp.com/bodegacatsgc.gg/wp-content/uploads/2024/06/CIRCULAR-LOGO-1000-e1717667152868.png?fit=80%2C80&ssl=1";
+  const logo = "https://i0.wp.com/bodegacatsgc.gg/wp-content/uploads/2024/06/CIRCULAR-LOGO-1000-e1717667152868.png?fit=80%2C80&ssl=1";
 
-  // Hardcoded values for development
-  const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
-  const SUPABASE_ANON_KEY = 'your-anon-key';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // Use process.env for Next.js public environment variables
 
-  // Updated fetch calls to use hardcoded values
-  const fetchUser = async () => {
+  // import { useCallback } from 'react'; // Moved to top-level imports
+
+  const fetchUser = useCallback(async () => {
     try {
-      const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      const response = await fetch(`${API_BASE_URL}/auth/v1/user`, {
         headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-        }
+          'apikey': process.env.NEXT_PUBLIC_API_KEY,
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`, // Replace with a dynamic user token in production
+        },
       });
-      const user = await response.json();
-      setUser(user);
+      const userData = await response.json();
+      setUser(userData);
     } catch (error) {
       console.error('Error fetching user:', error);
     }
-  };
+  }, [API_BASE_URL]);
 
   const handleLogout = async () => {
     try {
-      await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+      await fetch(`${API_BASE_URL}/auth/v1/logout`, {
         method: 'POST',
         headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-        }
+          'apikey': process.env.NEXT_PUBLIC_API_KEY,
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`, // Replace with a dynamic user token in production
+        },
       });
       navigate('/');
     } catch (error) {
@@ -47,7 +49,7 @@ function Navbar() {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [fetchUser]);
 
   useEffect(() => setIsMenuOpen(false), [location]);
 
@@ -92,7 +94,6 @@ function Navbar() {
         </div>
 
         <div className="upa-nav-actions">
-          {/* <NotificationsBell /> */}
           {user ? (
             <button onClick={handleLogout} className="upa-logout">Logout</button>
           ) : (
@@ -100,7 +101,6 @@ function Navbar() {
           )}
         </div>
 
-        {/* Slide-out menu */}
         <div ref={menuRef} className={`upa-slide-menu ${isMenuOpen ? 'open' : ''}`}>
           <button className="upa-close" onClick={() => setIsMenuOpen(false)}>×</button>
           {navLinks.map(({ label, path }) => (

@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - react
-      - main
 
 jobs:
   build-and-lint:

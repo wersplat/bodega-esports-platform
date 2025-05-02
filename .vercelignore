@@ -1,4 +1,5 @@
 # Ignore everything outside frontend
+
 backend/
 docs/
 scripts/
@@ -11,6 +12,7 @@ venv/
 *.zip
 
 # Optional: ignore test data or staging folders
+
 __tests__/
 tests/
 tmp/
