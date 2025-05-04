@@ -33,7 +33,7 @@ function Standings() {
           setSelectedSeason(data[0].id); // default to most recent season
         }
       } catch (error) {
-        console.error('Error fetching seasons:', error);
+        // console.error('Error fetching seasons:', error);
       }
     };
 
@@ -54,7 +54,7 @@ function Standings() {
         setSelectedDivision(data[0].id); // default to first division
       }
     } catch (error) {
-      console.error('Error fetching divisions:', error);
+      // console.error('Error fetching divisions:', error);
     }
   }, [selectedSeason]);
 
@@ -100,7 +100,7 @@ function Standings() {
 
       setStandings(formattedStandings);
     } catch (error) {
-      console.error('Error fetching standings:', error);
+      // console.error('Error fetching standings:', error);
     } finally {
       setLoading(false);
     }

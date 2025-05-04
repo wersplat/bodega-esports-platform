@@ -1,7 +1,7 @@
 // Logger utility for the frontend
 
 export function logError(message, error) {
-  console.error(`[Error]: ${message}`, error);
+  // console.error(`[Error]: ${message}`, error);
 }
 
 export function logInfo(message) {
@@ -9,5 +9,5 @@ export function logInfo(message) {
 }
 
 export function logWarning(message) {
-  console.warn(`[Warning]: ${message}`);
+  // console.warn(`[Warning]: ${message}`);
 }

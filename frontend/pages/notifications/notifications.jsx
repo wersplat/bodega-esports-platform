@@ -14,7 +14,7 @@ export default function Notifications() {
         // Mark all unread as read
         await fetch('https://api.bodegacatsgc.gg/notifications/mark-read', { method: 'POST' });
       } catch (err) {
-        console.error('Error loading notifications:', err);
+        // console.error('Error loading notifications:', err);
       }
     })();
   }, []);

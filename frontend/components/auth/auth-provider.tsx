@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } = await supabase.auth.getSession()
 
         if (error) {
-          console.error("Error fetching session:", error)
+          // console.error("Error fetching session:", error)
           setIsLoading(false)
           return
         }
@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session)
         setUser(session?.user ?? null)
       } catch (error) {
-        console.error("Error in auth provider:", error)
+        // console.error("Error in auth provider:", error)
       } finally {
         setIsLoading(false)
       }
@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         subscription.unsubscribe()
       }
     } catch (error) {
-      console.error("Error setting up auth listener:", error)
+      // console.error("Error setting up auth listener:", error)
       setIsLoading(false)
       return () => {}
     }
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       if (error) throw error
     } catch (error) {
-      console.error("Error logging in with Discord", error)
+      // console.error("Error logging in with Discord", error)
     } finally {
       setIsLoading(false)
     }
@@ -91,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error
       router.push("/auth/login")
     } catch (error) {
-      console.error("Error signing out", error)
+      // console.error("Error signing out", error)
     } finally {
       setIsLoading(false)
     }

@@ -52,7 +52,7 @@ export function AvatarUpload({ avatarUrl, onAvatarChange }: AvatarUploadProps) {
         throw new Error("Failed to upload image")
       }
     } catch (err: any) {
-      console.error("Error uploading avatar:", err)
+      // console.error('Error uploading avatar:', err);
       setError(err.message || "Failed to upload image")
     } finally {
       setIsUploading(false)

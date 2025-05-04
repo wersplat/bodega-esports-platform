@@ -59,7 +59,7 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
           setData(chartData)
         }
       } catch (error) {
-        console.error("Error fetching performance data:", error)
+        // console.error("Error fetching performance data:", error)
       } finally {
         setIsLoading(false)
       }

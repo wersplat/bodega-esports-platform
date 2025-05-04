@@ -59,7 +59,7 @@ export function TeamLogoUpload({ teamId, logoUrl, onLogoChange }: TeamLogoUpload
       const { data } = supabase.storage.from("teams").getPublicUrl(filePath)
       onLogoChange(data.publicUrl)
     } catch (err: any) {
-      console.error("Error uploading logo:", err)
+      // console.error('Error uploading logo:', err);
       setError(err.message || "Failed to upload image")
     } finally {
       setIsUploading(false)

@@ -16,7 +16,7 @@ export async function uploadAvatar(file: File, userId: string): Promise<string |
     const { data } = supabase.storage.from("profiles").getPublicUrl(filePath)
     return data.publicUrl
   } catch (error) {
-    console.error("Error uploading avatar:", error)
+    // console.error("Error uploading avatar:", error)
     return null
   }
 }
@@ -35,7 +35,7 @@ export async function deleteAvatar(avatarUrl: string): Promise<boolean> {
 
     return true
   } catch (error) {
-    console.error("Error deleting avatar:", error)
+    // console.error("Error deleting avatar:", error)
     return false
   }
 } 

@@ -24,7 +24,7 @@ export default function Admin() {
         if (!data.is_admin) throw new Error("Access denied");
         setIsAdmin(true);
       } catch (error) {
-        console.error("Error fetching profile:", error);
+        // console.error("Error fetching profile:", error);
         router.push('/');
       } finally {
         setLoading(false);

@@ -69,7 +69,7 @@ export function RecentMatches({ userId }: RecentMatchesProps) {
           setMatches(formattedMatches)
         }
       } catch (error) {
-        console.error("Error fetching recent matches:", error)
+        // console.error("Error fetching recent matches:", error)
       } finally {
         setIsLoading(false)
       }
