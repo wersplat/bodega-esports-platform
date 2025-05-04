@@ -5,7 +5,6 @@
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
-import { logError } from '../../utils/logger';
 
 import {
   Chart as ChartJS,
@@ -42,7 +41,7 @@ export default function TopScorersChart({ seasonId }) {
           ]
         });
       })
-      .catch((err) => logError('Chart fetch error:', err));
+      .catch((err) => console.error('Chart fetch error:', err));
   }, [seasonId, API_BASE]); // Include API_BASE in the dependency array
 
   if (!chartData) return <p>Loading chart...</p>;

@@ -1,7 +1,6 @@
-/* eslint-env node */
-/* global process, module */
+import path from 'path';
+import { env } from 'node:process';
 
-// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -10,10 +9,17 @@ const nextConfig = {
     domains: ['kvkmepmsloyekfqwdcgq.supabase.co'], // Add your Supabase domain or other image domains
   },
   env: {
-    SUPABASE_URL: typeof process !== 'undefined' ? process.env.SUPABASE_URL : '',
-    SUPABASE_ANON_KEY: typeof process !== 'undefined' ? process.env.SUPABASE_ANON_KEY : '',
-    API_BASE: process.env.API_BASE,
+    SUPABASE_URL: env.SUPABASE_URL || '',
+    SUPABASE_ANON_KEY: env.SUPABASE_ANON_KEY || '',
+    API_BASE: env.API_BASE,
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      '@': path.resolve('./'),
+    };
+    return config;
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
