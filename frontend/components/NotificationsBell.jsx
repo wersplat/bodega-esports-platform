@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { logError } from '../../utils/logger';
 
 // Hardcoded values for development
 const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
@@ -28,7 +29,7 @@ export default function NotificationsBell() {
       const data = await response.json();
       setCount(data.length);
     } catch (error) {
-      console.error('Error fetching unread notifications:', error);
+      logError('Error fetching unread notifications:', error);
     }
   };
 

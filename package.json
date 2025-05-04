@@ -1,22 +1,25 @@
 {
-  "name": "vite-project",
+  "name": "bodega-esports-platform",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "deploy": "npm run build && git add -f frontend/dist && git commit -m \"🚀 Auto Deploy build\" && git push origin mono"
+    "deploy": "npm run build && git add -f frontend/.next && git commit -m \"🚀 Auto Deploy build\" && git push origin mono"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@radix-ui/react-slot": "^1.2.0",
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
     "axios": "^1.8.4",
     "chart.js": "^4.4.9",
+    "class-variance-authority": "^0.7.1",
+    "next": "^13.4.0",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
@@ -28,15 +31,12 @@
     "@tailwindcss/postcss": "^4.1.4",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
-    "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.22.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
     "postcss": "^8.5.3",
-    "rollup-plugin-visualizer": "^5.14.0",
-    "tailwindcss": "^4.1.4",
-    "vite": "^5.4.18"
+    "tailwindcss": "^4.1.4"
   }
 }

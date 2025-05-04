@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { logError } from '../../utils/logger';
 
 // Hardcoded values for development
 const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
@@ -22,7 +23,7 @@ function PrivateRoute({ children, requireAdmin = false }) {
       setUser(session?.user ?? null);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching session:', error);
+      logError('Error fetching session:', error);
       setLoading(false);
     }
   };

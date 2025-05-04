@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { logError } from '../../utils/logger';
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,7 +35,7 @@ function Navbar() {
       const userData = await response.json();
       setUser(userData);
     } catch (error) {
-      console.error('Error fetching user:', error);
+      logError('Error fetching user:', error);
     }
   }, [API_BASE_URL]);
 
@@ -56,7 +57,7 @@ function Navbar() {
       });
       navigate('/');
     } catch (error) {
-      console.error('Error logging out:', error);
+      logError('Error logging out:', error);
     }
   }, [API_BASE_URL, navigate]);
 
