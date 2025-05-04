@@ -26,31 +26,34 @@ function LeagueTeams() {
   }, [selectedLeague, fetchTeams]);
 
   return (
-    <div className="main-content">
-      <h1 className="page-title">League Teams</h1>
-
-      <select value={selectedLeague} onChange={(e) => setSelectedLeague(e.target.value)} className="form-input" style={{ marginBottom: 20 }}>
+    <div className="space-y-6 max-w-3xl mx-auto p-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">League Teams</h1>
+          <p className="text-[#94a3b8]">View teams by league</p>
+        </div>
+      </div>
+      <select
+        value={selectedLeague}
+        onChange={(e) => setSelectedLeague(e.target.value)}
+        className="h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48] min-w-[200px] mb-6"
+      >
         <option value="">Select League</option>
         {leagues.map((l) => (
           <option key={l.id} value={l.id}>{l.name}</option>
         ))}
       </select>
-
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {teams.map((team) => (
-          <li key={team.id} style={{
-            background: '#222b3a',
-            color: '#f8fafc',
-            marginBottom: '20px',
-            padding: '20px',
-            borderRadius: '8px',
-            boxShadow: '0 0 6px rgba(0,0,0,0.18)'
-          }}>
-            <h3>{team.name}</h3>
-            <p>Wins: {team.wins} | Losses: {team.losses}</p>
-          </li>
+          <div
+            key={team.id}
+            className="bg-[#222b3a] text-[#f8fafc] rounded-xl p-6 shadow hover:shadow-lg transition flex flex-col"
+          >
+            <h3 className="text-xl font-semibold mb-2">{team.name}</h3>
+            <p className="text-sm text-[#cbd5e1]">Wins: {team.wins} | Losses: {team.losses}</p>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

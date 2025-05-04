@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import ContractsTable from '@/components/ui/contracts/contracts-table';
-import ContractFilter from '@/components/ui/contracts/contract-filter';
+import ContractsTable from '@/components/contracts/contracts-table';
+import ContractFilter from '@/components/contracts/contract-filter';
 
 function MyContracts() {
   const [contracts, setContracts] = useState([]);
@@ -17,7 +17,8 @@ function MyContracts() {
       const data = await res.json();
       setContracts(data);
     } catch (err) {
-      // Optionally handle error
+      // Handle error (was: console.error(err))
+      // Add specific error handling logic here
     } finally {
       setLoading(false);
     }
@@ -33,7 +34,7 @@ function MyContracts() {
       if (!res.ok) throw new Error('Failed to update contract status');
       setContracts(contracts.map((c) => (c.id === id ? { ...c, status: newStatus } : c)));
     } catch (err) {
-      console.error(err);
+      // Handle error (was: console.error(err))
       // Add specific error handling logic here
     }
   };

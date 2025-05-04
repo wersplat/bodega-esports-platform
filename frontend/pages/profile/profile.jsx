@@ -42,12 +42,12 @@ export default function Profile() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading profile...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-[#94a3b8] bg-[#0f172a]">Loading profile...</div>;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <Card className="p-8 w-full max-w-lg">
-        <h1 className="text-2xl font-bold mb-6 text-foreground">Edit Profile</h1>
+    <div className="min-h-screen flex items-center justify-center bg-[#0f172a] p-4">
+      <Card className="p-8 w-full max-w-lg bg-[#1e293b] rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold mb-6 text-[#f8fafc]">Edit Profile</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           {['display_name', 'platform', 'gamer_tag', 'positions', 'avatar_url', 'career_history'].map((field) => (
             <Input
@@ -56,11 +56,11 @@ export default function Profile() {
               value={form[field] || ''}
               onChange={handleChange}
               placeholder={field.replace('_', ' ').toUpperCase()}
-              className="w-full"
+              className="w-full bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]"
             />
           ))}
-          <Button type="submit" className="w-full mt-2">Save</Button>
-          {msg && <p className={`mt-2 text-center ${msg.startsWith('✅') ? 'text-green-400' : 'text-red-400'}`}>{msg}</p>}
+          <Button type="submit" className="w-full mt-2 bg-[#e11d48] text-[#f8fafc] hover:bg-[#be123c] transition-all duration-200">Save</Button>
+          {msg && <p className={`mt-2 text-center text-sm ${msg.startsWith('✅') ? 'text-[#10b981]' : 'text-[#ef4444]'}`}>{msg}</p>}
         </form>
       </Card>
     </div>

@@ -34,21 +34,21 @@ export default function SubmitPlayerStats() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <Card className="p-8 w-full max-w-lg">
-        <h1 className="text-2xl font-bold mb-6 text-foreground">Submit Player Stats</h1>
+    <div className="min-h-screen flex items-center justify-center bg-[#0f172a] p-4">
+      <Card className="p-8 w-full max-w-lg bg-[#1e293b] rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold mb-6 text-[#f8fafc]">Submit Player Stats</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input name="player" value={form.player} onChange={handleChange} placeholder="Player Name or ID" required />
-          <Input name="match" value={form.match} onChange={handleChange} placeholder="Match ID" required />
+          <Input name="player" value={form.player} onChange={handleChange} placeholder="Player Name or ID" required className="bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]" />
+          <Input name="match" value={form.match} onChange={handleChange} placeholder="Match ID" required className="bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]" />
           <div className="grid grid-cols-2 gap-4">
-            <Input name="points" value={form.points} onChange={handleChange} placeholder="Points" type="number" min="0" />
-            <Input name="assists" value={form.assists} onChange={handleChange} placeholder="Assists" type="number" min="0" />
-            <Input name="rebounds" value={form.rebounds} onChange={handleChange} placeholder="Rebounds" type="number" min="0" />
-            <Input name="steals" value={form.steals} onChange={handleChange} placeholder="Steals" type="number" min="0" />
-            <Input name="blocks" value={form.blocks} onChange={handleChange} placeholder="Blocks" type="number" min="0" />
+            <Input name="points" value={form.points} onChange={handleChange} placeholder="Points" type="number" min="0" className="bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]" />
+            <Input name="assists" value={form.assists} onChange={handleChange} placeholder="Assists" type="number" min="0" className="bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]" />
+            <Input name="rebounds" value={form.rebounds} onChange={handleChange} placeholder="Rebounds" type="number" min="0" className="bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]" />
+            <Input name="steals" value={form.steals} onChange={handleChange} placeholder="Steals" type="number" min="0" className="bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]" />
+            <Input name="blocks" value={form.blocks} onChange={handleChange} placeholder="Blocks" type="number" min="0" className="bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]" />
           </div>
-          <Button type="submit" className="w-full mt-2" disabled={loading}>{loading ? 'Submitting...' : 'Submit Stats'}</Button>
-          {msg && <p className={`mt-2 text-center ${msg.startsWith('✅') ? 'text-green-400' : 'text-red-400'}`}>{msg}</p>}
+          <Button type="submit" className="w-full mt-2 bg-[#e11d48] text-[#f8fafc] hover:bg-[#be123c] transition-all duration-200" disabled={loading}>{loading ? 'Submitting...' : 'Submit Stats'}</Button>
+          {msg && <p className={`mt-2 text-center text-sm ${msg.startsWith('✅') ? 'text-[#10b981]' : 'text-[#ef4444]'}`}>{msg}</p>}
         </form>
       </Card>
     </div>

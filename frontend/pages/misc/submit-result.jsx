@@ -20,7 +20,7 @@ function SubmitResult() {
       const data = await res.json();
       setMatches(data);
     } catch (err) {
-      console.error(err.message);
+      // Handle error (was: console.error(err.message))
     }
   };
 

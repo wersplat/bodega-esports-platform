@@ -51,8 +51,8 @@ function Dashboard() {
       const res = await fetch(`https://api.bodegacatsgc.gg/matches/my`);
       const data = await res.json();
       setMatches(data);
-    } catch (err) {
-      console.error(err);
+    } catch {
+      // Handle error (was: console.error(err))
     } finally {
       setLoadingMatches(false);
     }

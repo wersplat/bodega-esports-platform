@@ -18,7 +18,7 @@ function SendAnnouncement() {
       const data = await res.json();
       setWebhooks(data);
     } catch (err) {
-      console.error(err);
+      // Handle error (was: console.error(err))
       setMsg({ success: '', error: 'Failed to load webhooks' });
     }
   };
@@ -46,7 +46,7 @@ function SendAnnouncement() {
       setDesc('');
       setSelected('');
     } catch (err) {
-      console.error(err);
+      // Handle error (was: console.error(err))
       setMsg({ success: '', error: 'Failed to send.' });
     }
   };

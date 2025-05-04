@@ -11,6 +11,7 @@ function LeagueSettings() {
     auto_advance: true,
   });
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -26,25 +27,41 @@ function LeagueSettings() {
   }, [selectedSeasonId]);
 
   const fetchLeagues = async () => {
-    const res = await fetch('https://api.bodegacatsgc.gg/leagues');
-    const data = await res.json();
-    setLeagues(data);
+    setError('');
+    try {
+      const res = await fetch('https://api.bodegacatsgc.gg/leagues');
+      if (!res.ok) throw new Error('Failed to fetch leagues');
+      const data = await res.json();
+      setLeagues(data);
+    } catch (err) {
+      setError('Could not load leagues.');
+    }
   };
 
   const fetchSeasons = async () => {
-    const res = await fetch(`https://api.bodegacatsgc.gg/seasons?league_id=${selectedLeagueId}`);
-    const data = await res.json();
-    setSeasons(data);
+    setError('');
+    try {
+      const res = await fetch(`https://api.bodegacatsgc.gg/seasons?league_id=${selectedLeagueId}`);
+      if (!res.ok) throw new Error('Failed to fetch seasons');
+      const data = await res.json();
+      setSeasons(data);
+    } catch (err) {
+      setError('Could not load seasons.');
+    }
   };
 
   const fetchSettings = async () => {
-    const res = await fetch(`https://api.bodegacatsgc.gg/league-settings?league_id=${selectedLeagueId}&season_id=${selectedSeasonId}`);
-    if (res.ok) {
+    setError('');
+    try {
+      const res = await fetch(`https://api.bodegacatsgc.gg/league-settings?league_id=${selectedLeagueId}&season_id=${selectedSeasonId}`);
+      if (!res.ok) throw new Error('Failed to fetch settings');
       const data = await res.json();
       setSettings({
         roster_lock: !!data.roster_lock,
         auto_advance: !!data.auto_advance,
       });
+    } catch (err) {
+      setError('Could not load league settings.');
     }
   };
 
@@ -53,26 +70,31 @@ function LeagueSettings() {
   };
 
   const handleSave = async () => {
+    setError('');
     if (!selectedLeagueId || !selectedSeasonId) {
-      alert('Please select both league and season.');
+      setError('Please select both league and season.');
       return;
     }
 
-    const res = await fetch('https://api.bodegacatsgc.gg/league-settings/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        league_id: selectedLeagueId,
-        season_id: selectedSeasonId,
-        ...settings,
-      }),
-    });
+    try {
+      const res = await fetch('https://api.bodegacatsgc.gg/league-settings/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          league_id: selectedLeagueId,
+          season_id: selectedSeasonId,
+          ...settings,
+        }),
+      });
 
-    if (res.ok) {
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    } else {
-      alert('Failed to save settings');
+      if (res.ok) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      } else {
+        setError('Failed to save settings');
+      }
+    } catch (err) {
+      setError('Failed to save settings');
     }
   };
 
@@ -84,6 +106,7 @@ function LeagueSettings() {
       </button>
 
       <div className="form-container">
+        {error && <div style={{ color: '#f87171', marginBottom: 12 }}>{error}</div>}
         <select value={selectedLeagueId} onChange={(e) => setSelectedLeagueId(e.target.value)} className="form-input">
           <option value="">-- Select League --</option>
           {leagues.map((l) => (

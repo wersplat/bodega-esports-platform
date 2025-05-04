@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 function PublicBracket() {
   const [leagues, setLeagues] = useState([]);
@@ -10,10 +10,6 @@ function PublicBracket() {
     fetchLeagues();
     fetchTeams();
   }, []);
-
-  useEffect(() => {
-    if (selectedLeague) fetchMatches();
-  }, [selectedLeague]);
 
   const fetchLeagues = async () => {
     const res = await fetch('https://api.bodegacatsgc.gg/leagues');
@@ -27,11 +23,15 @@ function PublicBracket() {
     setTeams(data);
   };
 
-  const fetchMatches = async () => {
+  const fetchMatches = useCallback(async () => {
     const res = await fetch(`https://api.bodegacatsgc.gg/matches/bracket?league_id=${selectedLeague}`);
     const data = await res.json();
     setMatches(data);
-  };
+  }, [selectedLeague]);
+
+  useEffect(() => {
+    if (selectedLeague) fetchMatches();
+  }, [selectedLeague, fetchMatches]);
 
   const getTeamName = (id) => {
     if (!id) return 'BYE';

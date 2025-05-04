@@ -1,17 +1,24 @@
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
+// import { Card } from '@/components/ui/card'; // Uncomment if available
 
 export default function TeamListPage({ initialTeams, error }) {
   if (error) return <p className="p-4 text-red-500">Error: {error}</p>;
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-white">Teams</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="space-y-6 max-w-4xl mx-auto p-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">Teams</h1>
+          <p className="text-[#94a3b8]">Browse all registered teams</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {initialTeams.map((team) => (
+          // <Card key={team.id} className="bg-[#1e293b] rounded-xl p-6 shadow hover:shadow-lg transition">
           <div
             key={team.id}
-            className="bg-slate-800 rounded-xl p-4 shadow hover:shadow-lg transition"
+            className="bg-[#1e293b] rounded-xl p-6 shadow hover:shadow-lg transition flex flex-col"
           >
             <div className="flex items-center gap-3 mb-2">
               {team.logo_url && (
@@ -26,13 +33,13 @@ export default function TeamListPage({ initialTeams, error }) {
                   />
                 </div>
               )}
-              <h2 className="text-xl font-semibold">{team.name}</h2>
+              <h2 className="text-xl font-semibold text-[#f8fafc]">{team.name}</h2>
             </div>
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-[#cbd5e1] mb-2">
               {team.description || "No description yet."}
             </p>
-            <div className="mt-3 text-sm text-slate-400">
-              Record: {team.wins}–{team.losses}
+            <div className="mt-auto text-sm text-[#94a3b8]">
+              Record: {team.wins}&ndash;{team.losses}
               <br />
               PD: {team.point_difference}
             </div>

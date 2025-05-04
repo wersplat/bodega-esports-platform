@@ -14,7 +14,7 @@ function PublicMatches() {
       const data = await res.json();
       setMatches(data);
     } catch (err) {
-      console.error('Error fetching matches:', err);
+      // Handle error (was: console.error('Error fetching matches:', err))
     } finally {
       setLoading(false);
     }

@@ -36,19 +36,23 @@ function TeamCreation() {
   };
 
   return (
-    <div className="main-content">
-      <h1 className="page-title">Create a Team</h1>
+    <div className="min-h-screen flex items-center justify-center bg-[#0f172a] p-4">
+      <div className="w-full max-w-md space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-[#f8fafc] mb-2">Create a Team</h1>
+          <p className="text-[#94a3b8] mb-4">Start your journey by creating a new team</p>
+        </div>
+        <form onSubmit={handleSubmit} className="bg-[#1e293b] rounded-lg shadow-md p-6 space-y-4">
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Team Name" className="form-input w-full" required />
+          <input value={division} onChange={(e) => setDivision(e.target.value)} placeholder="Division" className="form-input w-full" />
+          <input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="Logo URL" className="form-input w-full" />
+          <input value={bannerUrl} onChange={(e) => setBannerUrl(e.target.value)} placeholder="Banner URL" className="form-input w-full" />
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Team Description" className="form-input w-full" />
 
-      <form onSubmit={handleSubmit} className="form" style={{ maxWidth: 500 }}>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Team Name" className="form-input" required />
-        <input value={division} onChange={(e) => setDivision(e.target.value)} placeholder="Division" className="form-input" />
-        <input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="Logo URL" className="form-input" />
-        <input value={bannerUrl} onChange={(e) => setBannerUrl(e.target.value)} placeholder="Banner URL" className="form-input" />
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Team Description" className="form-input" />
-
-        <button type="submit" className="form-button">Create Team</button>
-        {msg && <p style={{ marginTop: 10, color: msg.includes('✅') ? '#34d399' : '#f87171' }}>{msg}</p>}
-      </form>
+          <button type="submit" className="form-button w-full bg-[#e11d48] text-[#f8fafc] hover:bg-[#be123c] transition-all duration-200">Create Team</button>
+          {msg && <p className={`mt-2 text-center text-sm ${msg.includes('✅') ? 'text-[#10b981]' : 'text-[#ef4444]'}`}>{msg}</p>}
+        </form>
+      </div>
     </div>
   );
 }

@@ -48,42 +48,47 @@ function OwnerSendContract() {
   };
 
   return (
-    <div className="main-content flex flex-col items-center justify-center min-h-screen bg-[#0f172a]">
-      <h1 className="text-2xl font-bold text-[#f8fafc] mb-6">Send Contract Offer</h1>
-      <form onSubmit={handleSubmit} className="bg-[#1e293b] rounded-lg shadow-md p-6 w-full max-w-md space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#0f172a] p-4">
+      <div className="w-full max-w-md space-y-6">
         <div>
-          <label htmlFor="player" className="block text-sm font-medium text-[#f8fafc] mb-1">Player</label>
-          <Select value={selectedPlayer} onValueChange={setSelectedPlayer} required>
-            <SelectTrigger id="player" className="w-full">
-              <SelectValue placeholder="Select Player" />
-            </SelectTrigger>
-            <SelectContent>
-              {players.map((p) => (
-                <SelectItem key={p.id} value={p.id}>{p.username}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <h1 className="text-2xl font-bold text-[#f8fafc] mb-2">Send Contract Offer</h1>
+          <p className="text-[#94a3b8] mb-4">Invite a player to your team</p>
         </div>
-        <div>
-          <label htmlFor="team" className="block text-sm font-medium text-[#f8fafc] mb-1">Your Team</label>
-          <Select value={selectedTeam} onValueChange={setSelectedTeam} required>
-            <SelectTrigger id="team" className="w-full">
-              <SelectValue placeholder="Select Your Team" />
-            </SelectTrigger>
-            <SelectContent>
-              {teams.map((t) => (
-                <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <label htmlFor="termEnd" className="block text-sm font-medium text-[#f8fafc] mb-1">Contract End Date</label>
-          <Input id="termEnd" type="date" value={termEnd} onChange={e => setTermEnd(e.target.value)} required className="w-full" />
-        </div>
-        <Button type="submit" className="w-full bg-[#e11d48] text-[#f8fafc] hover:bg-[#be123c] transition-all duration-200">Send Offer</Button>
-        {message && <p className={`mt-2 text-center text-sm ${message.includes('sent') ? 'text-[#10b981]' : 'text-[#ef4444]'}`}>{message}</p>}
-      </form>
+        <form onSubmit={handleSubmit} className="bg-[#1e293b] rounded-lg shadow-md p-6 space-y-4">
+          <div>
+            <label htmlFor="player" className="block text-sm font-medium text-[#f8fafc] mb-1">Player</label>
+            <Select value={selectedPlayer} onValueChange={setSelectedPlayer} required>
+              <SelectTrigger id="player" className="w-full">
+                <SelectValue placeholder="Select Player" />
+              </SelectTrigger>
+              <SelectContent>
+                {players.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>{p.username}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label htmlFor="team" className="block text-sm font-medium text-[#f8fafc] mb-1">Your Team</label>
+            <Select value={selectedTeam} onValueChange={setSelectedTeam} required>
+              <SelectTrigger id="team" className="w-full">
+                <SelectValue placeholder="Select Your Team" />
+              </SelectTrigger>
+              <SelectContent>
+                {teams.map((t) => (
+                  <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label htmlFor="termEnd" className="block text-sm font-medium text-[#f8fafc] mb-1">Contract End Date</label>
+            <Input id="termEnd" type="date" value={termEnd} onChange={e => setTermEnd(e.target.value)} required className="w-full" />
+          </div>
+          <Button type="submit" className="w-full bg-[#e11d48] text-[#f8fafc] hover:bg-[#be123c] transition-all duration-200">Send Offer</Button>
+          {message && <p className={`mt-2 text-center text-sm ${message.includes('sent') ? 'text-[#10b981]' : 'text-[#ef4444]'}`}>{message}</p>}
+        </form>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,10 @@
 // src/pages/Standings.jsx
 
 import React, { useState, useEffect } from 'react';
+// If you have these components, import them. Otherwise, keep using native elements.
+// import { Card } from '@/components/ui/card';
+// import { Button } from '@/components/ui/button';
+// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 // Hardcoded values for development
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -102,33 +106,43 @@ function Standings() {
     }
   }, [selectedDivision, selectedSeason]);
 
-  return (
-    <div className="main-content">
-      <h1 className="page-title">🏆 Standings</h1>
+  useEffect(() => {
+    if (selectedSeason) fetchDivisions();
+  }, [selectedSeason, fetchDivisions]);
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+  useEffect(() => {
+    if (selectedDivision) fetchStandings();
+  }, [selectedDivision, fetchStandings]);
+
+  return (
+    <div className="space-y-6 max-w-4xl mx-auto p-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">🏆 Standings</h1>
+          <p className="text-[#94a3b8]">View team records by season and division</p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-4 mb-6">
         <select
           value={selectedSeason}
           onChange={(e) => setSelectedSeason(e.target.value)}
-          className="form-input"
-          style={{ minWidth: '200px', background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
+          className="h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48] min-w-[200px]"
         >
           {seasons.map((season) => (
-            <option key={season.id} value={season.id} style={{ background: '#1e293b', color: '#f8fafc' }}>
+            <option key={season.id} value={season.id} className="bg-[#1e293b] text-[#f8fafc]">
               {season.name}
             </option>
           ))}
         </select>
-
         {divisions.length > 0 && (
           <select
             value={selectedDivision}
             onChange={(e) => setSelectedDivision(e.target.value)}
-            className="form-input"
-            style={{ minWidth: '200px', background: '#273449', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '8px' }}
+            className="h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48] min-w-[200px]"
           >
             {divisions.map((division) => (
-              <option key={division.id} value={division.id} style={{ background: '#1e293b', color: '#f8fafc' }}>
+              <option key={division.id} value={division.id} className="bg-[#1e293b] text-[#f8fafc]">
                 {division.name}
               </option>
             ))}
@@ -136,32 +150,34 @@ function Standings() {
         )}
       </div>
 
-      {loading ? (
-        <div style={{ textAlign: 'center', color: '#cbd5e1' }}>Loading...</div>
-      ) : standings.length === 0 ? (
-        <p style={{ textAlign: 'center', color: '#cbd5e1' }}>No teams recorded yet.</p>
-      ) : (
-        <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse', background: '#1e293b', color: '#f8fafc', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.25)' }}>
-          <thead>
-            <tr style={{ background: '#273449', color: '#f8fafc' }}>
-              <th style={{ padding: '12px' }}>Team</th>
-              <th style={{ padding: '12px' }}>Wins</th>
-              <th style={{ padding: '12px' }}>Losses</th>
-              <th style={{ padding: '12px' }}>Win %</th>
-            </tr>
-          </thead>
-          <tbody>
-            {standings.map((team, index) => (
-              <tr key={index} style={{ borderBottom: '1px solid #334155' }}>
-                <td style={{ padding: '8px', color: '#cbd5e1' }}>{team.name}</td>
-                <td style={{ padding: '8px', color: '#f8fafc' }}>{team.wins}</td>
-                <td style={{ padding: '8px', color: '#f8fafc' }}>{team.losses}</td>
-                <td style={{ padding: '8px', color: '#f8fafc' }}>{team.winPct}</td>
+      <div className="bg-[#1e293b] rounded-lg shadow-md overflow-x-auto">
+        {loading ? (
+          <div className="text-center text-[#cbd5e1] py-8">Loading...</div>
+        ) : standings.length === 0 ? (
+          <p className="text-center text-[#cbd5e1] py-8">No teams recorded yet.</p>
+        ) : (
+          <table className="min-w-full border-collapse">
+            <thead>
+              <tr className="bg-[#273449] text-[#f8fafc]">
+                <th className="px-6 py-3 text-left">Team</th>
+                <th className="px-6 py-3 text-center">Wins</th>
+                <th className="px-6 py-3 text-center">Losses</th>
+                <th className="px-6 py-3 text-center">Win %</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {standings.map((team, index) => (
+                <tr key={index} className="border-b border-[#334155]">
+                  <td className="px-6 py-3 text-[#cbd5e1]">{team.name}</td>
+                  <td className="px-6 py-3 text-center">{team.wins}</td>
+                  <td className="px-6 py-3 text-center">{team.losses}</td>
+                  <td className="px-6 py-3 text-center">{team.winPct}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }

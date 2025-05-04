@@ -17,7 +17,7 @@ function Champion() {
       const data = await res.json();
       setLeagues(data);
     } catch (err) {
-      console.error('Error fetching leagues:', err);
+      // Handle error (was: console.error('Error fetching leagues:', err))
     }
   };
 
@@ -27,7 +27,7 @@ function Champion() {
       const data = await res.json();
       setTeams(data);
     } catch (err) {
-      console.error('Error fetching teams:', err);
+      // Handle error (was: console.error('Error fetching teams:', err))
     }
   };
 
@@ -44,7 +44,7 @@ function Champion() {
         setChampionTeamId(null);
       }
     } catch (err) {
-      console.error('Error fetching final round:', err);
+      // Handle error (was: console.error('Error fetching final round:', err))
     }
   };
 

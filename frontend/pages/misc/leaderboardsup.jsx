@@ -23,7 +23,7 @@ function LeaderboardStatic() {
       setSeasons(data);
       if (data.length > 0) setSelectedSeason(data[0].id);
     } catch (err) {
-      console.error('Error fetching seasons:', err);
+      // Handle error (was: console.error('Error fetching seasons:', err))
     }
   };
 
@@ -34,7 +34,7 @@ function LeaderboardStatic() {
       const data = await res.json();
       setPlayers(data);
     } catch (err) {
-      console.error('Error fetching leaderboard:', err);
+      // Handle error (was: console.error('Error fetching leaderboard:', err))
     } finally {
       setLoading(false);
     }

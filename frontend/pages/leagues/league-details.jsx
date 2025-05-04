@@ -14,7 +14,7 @@ function LeagueDetails() {
         await fetchLeague();
         await fetchRegistrations();
       } catch (err) {
-        console.error('Error fetching data:', err);
+        // Handle error (was: console.error('Error fetching data:', err))
       }
     };
     fetchData();
@@ -26,7 +26,7 @@ function LeagueDetails() {
       const data = await res.json();
       setLeague(data);
     } catch (err) {
-      console.error('Error fetching league:', err);
+      // Handle error (was: console.error('Error fetching league:', err))
       // Consider retrying the request or showing a user-friendly error message
     }
   };
@@ -37,7 +37,7 @@ function LeagueDetails() {
       const data = await res.json();
       setRegistrations(data);
     } catch (err) {
-      console.error('Error fetching registrations:', err);
+      // Handle error (was: console.error('Error fetching registrations:', err))
       // Consider retrying the request or showing a user-friendly error message
     }
   };

@@ -22,10 +22,10 @@ function Leaderboard() {
         setSeasons(data);
         if (data.length > 0) setSelectedSeason(data[0].id);
       } else {
-        console.error('Unexpected API response format for seasons');
+        // Handle error (was: console.error('Unexpected API response format for seasons'))
       }
     } catch (error) {
-      console.error('Error fetching seasons:', error);
+      // Handle error (was: console.error('Error fetching seasons:', error))
     }
   };
 
@@ -35,10 +35,10 @@ function Leaderboard() {
       if (Array.isArray(data)) {
         setTeams(data);
       } else {
-        console.error('Unexpected API response format for teams');
+        // Handle error (was: console.error('Unexpected API response format for teams'))
       }
     } catch (error) {
-      console.error('Error fetching teams:', error);
+      // Handle error (was: console.error('Error fetching teams:', error))
     }
   };
 
@@ -54,7 +54,7 @@ function Leaderboard() {
       });
       setPlayers(res.data || []);
     } catch (err) {
-      console.error('Error fetching leaderboard:', err);
+      // Handle error (was: console.error('Error fetching leaderboard:', err))
       setPlayers([]);
     } finally {
       setLoading(false);
