@@ -45,7 +45,12 @@ export default function ContractsPage() {
     if (error) {
       setContracts([])
     } else {
-      setContracts(data as Contract[])
+      const fixedContracts = (data as any[]).map((contract) => ({
+        ...contract,
+        player: Array.isArray(contract.player) ? contract.player[0] : contract.player,
+        team: Array.isArray(contract.team) ? contract.team[0] : contract.team,
+      }))
+      setContracts(fixedContracts as Contract[])
     }
     setLoading(false)
   }
