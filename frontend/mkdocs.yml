@@ -1,0 +1,6 @@
+site_name: Frontend Docs (internal)
+docs_dir: docs
+
+nav:
+  - Read Me: Frontend-README.md
+  - Changelog: Frontend-CHANGELOG.md

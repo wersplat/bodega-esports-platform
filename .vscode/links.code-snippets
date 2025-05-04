@@ -1,0 +1,122 @@
+{
+"Md - File: '4.23.25-NEXT%20STEPS.MD'": {
+    "prefix": "File.4_23_25-NEXT STEPS_MD",
+    "scope": "markdown",
+    "body": ["[${0:content}](++4_23_25-NEXT STEPS_MD)"],
+    "description": "VSC-REF"
+},
+"Md - Link: './'": {
+    "prefix": "Link._/",
+    "scope": "markdown",
+    "body": ["[${0:content}](--_/)"],
+    "description": "VSC-REF"
+},
+"Md - Link: 'Copilot%20Instructions/'": {
+    "prefix": "Link.Copilot%20Instructions/",
+    "scope": "markdown",
+    "body": ["[${0:content}](--Copilot%20Instructions/)"],
+    "description": "VSC-REF"
+},
+"Md - Link: 'Copilot%20TODO/'": {
+    "prefix": "Link.Copilot%20TODO/",
+    "scope": "markdown",
+    "body": ["[${0:content}](--Copilot%20TODO/)"],
+    "description": "VSC-REF"
+},
+"Md - Link: 'MANUAL/#overview_1'": {
+    "prefix": "Link.overview_1",
+    "scope": "markdown",
+    "body": ["[${0:content}](--overview_1)"],
+    "description": "VSC-REF"
+},
+"Md - Link: 'MANUAL/'": {
+    "prefix": "Link.MANUAL/",
+    "scope": "markdown",
+    "body": ["[${0:content}](--MANUAL/)"],
+    "description": "VSC-REF"
+},
+"Md - Link: 'NextSteps/'": {
+    "prefix": "Link.NextSteps/",
+    "scope": "markdown",
+    "body": ["[${0:content}](--NextSteps/)"],
+    "description": "VSC-REF"
+},
+"Md - Link: 'Phase%202%20Plan/'": {
+    "prefix": "Link.Phase%202%20Plan/",
+    "scope": "markdown",
+    "body": ["[${0:content}](--Phase%202%20Plan/)"],
+    "description": "VSC-REF"
+},
+"Md - Link: 'Phase%203%20Plan/'": {
+    "prefix": "Link.Phase%203%20Plan/",
+    "scope": "markdown",
+    "body": ["[${0:content}](--Phase%203%20Plan/)"],
+    "description": "VSC-REF"
+},
+"Md - Link: 'READMEv1.0/'": {
+    "prefix": "Link.READMEv1_0/",
+    "scope": "markdown",
+    "body": ["[${0:content}](--READMEv1_0/)"],
+    "description": "VSC-REF"
+},
+"Reference - File: '4.23.25-NEXT%20STEPS.MD'": {
+    "prefix": "++4_23_25-NEXT STEPS_MD",
+    "scope": "markdown",
+    "body": ["${0:++}4_23_25-NEXT STEPS_MD"],
+    "description": "VSC-REF"
+},
+"Reference - Link: './'": {
+    "prefix": "--_/",
+    "scope": "markdown",
+    "body": ["${0:--}_/"],
+    "description": "VSC-REF"
+},
+"Reference - Link: 'Copilot%20Instructions/'": {
+    "prefix": "--Copilot%20Instructions/",
+    "scope": "markdown",
+    "body": ["${0:--}Copilot%20Instructions/"],
+    "description": "VSC-REF"
+},
+"Reference - Link: 'Copilot%20TODO/'": {
+    "prefix": "--Copilot%20TODO/",
+    "scope": "markdown",
+    "body": ["${0:--}Copilot%20TODO/"],
+    "description": "VSC-REF"
+},
+"Reference - Link: 'MANUAL/#overview_1'": {
+    "prefix": "--overview_1",
+    "scope": "markdown",
+    "body": ["${0:--}overview_1"],
+    "description": "VSC-REF"
+},
+"Reference - Link: 'MANUAL/'": {
+    "prefix": "--MANUAL/",
+    "scope": "markdown",
+    "body": ["${0:--}MANUAL/"],
+    "description": "VSC-REF"
+},
+"Reference - Link: 'NextSteps/'": {
+    "prefix": "--NextSteps/",
+    "scope": "markdown",
+    "body": ["${0:--}NextSteps/"],
+    "description": "VSC-REF"
+},
+"Reference - Link: 'Phase%202%20Plan/'": {
+    "prefix": "--Phase%202%20Plan/",
+    "scope": "markdown",
+    "body": ["${0:--}Phase%202%20Plan/"],
+    "description": "VSC-REF"
+},
+"Reference - Link: 'Phase%203%20Plan/'": {
+    "prefix": "--Phase%203%20Plan/",
+    "scope": "markdown",
+    "body": ["${0:--}Phase%203%20Plan/"],
+    "description": "VSC-REF"
+},
+"Reference - Link: 'READMEv1.0/'": {
+    "prefix": "--READMEv1_0/",
+    "scope": "markdown",
+    "body": ["${0:--}READMEv1_0/"],
+    "description": "VSC-REF"
+}
+}

@@ -24,6 +24,9 @@ dist/
 build/
 
 # Ignore git stuff
+
+# Ignore MkDocs build output
+site/
 .git/
 .gitignore
 

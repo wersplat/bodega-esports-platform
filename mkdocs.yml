@@ -1,0 +1,30 @@
+site_name: Bodega Esports Platform
+repo_url: https://github.com/wersplat/bodega-esports-platform
+theme:
+  name: material
+plugins:
+  - search
+  - abs-to-rel
+  - monorepo
+
+nav:
+  - Home: index.md
+  - Project:
+    - Manual: Manual_react.md
+    - Installation: Installation-Manual.md
+  - Backend : '!include backend/mkdocs.yml'
+  - Frontend Docs: '!include frontend/mkdocs.yml'
+  - Discord Bot: '!include discord-bot/mkdocs.yml'
+  - OCR: '!include ocr/mkdocs.yml'
+
+validation:
+    absolute_links: ignore
+    unrecognized_links: ignore
+edit_uri: ''             # ← empty string disables all edit links
+ignore:
+  - Copilot Instructions.md
+  - Copilot TODO.md
+  - NextSteps.md
+  - Phase 2 Plan.md
+  - Phase 3 Plan.md
+  

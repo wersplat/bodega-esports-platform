@@ -12,3 +12,7 @@ node_modules/
 id_rsa_bodega
 id_rsa_bodega.pub
 /archive
+venv
+venv312
+# MkDocs build output
+site/

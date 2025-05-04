@@ -12,6 +12,7 @@ A TypeScript Discord.js bot for the Bodega Cats Esports Platform.
 Provides roster lookups, announcements, OCR‐driven stat parsing, moderation tools, and more.
 
 ## 🛠️ Features
+
 - `/roster <team_name>` — show a team’s roster  
 - `/broadcast <message>` — send announcements (admin only)  
 - `/submitstats` — OCR‐process a screenshot and display stats  
@@ -23,6 +24,7 @@ Provides roster lookups, announcements, OCR‐driven stat parsing, moderation to
 ## 🚀 Quick Start
 
 1. **Clone & install**  
+
    ```bash
    git clone git@github.com:wersplat/bodega-esports-platform.git
    cd bodega-esports-platform/discord-bot
@@ -30,23 +32,27 @@ Provides roster lookups, announcements, OCR‐driven stat parsing, moderation to
    ```
 
 2. **Configure**  
+
    ```bash
    cp .env.example .env
    # Edit .env with your values: DISCORD_TOKEN, CLIENT_ID, GUILD_ID, API_URL, etc.
    ```
 
 3. **Local development**  
+
    ```bash
    npm run dev
    ```
 
 4. **Build & run**  
+
    ```bash
    npm run build
    npm run start
    ```
 
 ## 📁 Folder Structure
+
 ```text
 discord-bot/
 ├── commands/          # Slash command handlers
@@ -60,10 +66,12 @@ discord-bot/
 ```
 
 ## 🤝 Contributing
+
 - Follow KISS: keep commands small & focused  
 - Add new commands under `commands/`  
 - Write tests alongside new features (TBD)  
 - Submit PR to the `react` branch
 
 ## 📄 License
+
 GPLv3 (see root `LICENSE`)
