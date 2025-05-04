@@ -1,74 +1,58 @@
 import React, { useState } from 'react';
+import { supabase } from '../../supabaseClient';
 
-function Register() {
+export default function Register() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [magicSent, setMagicSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
+    setError(null);
+    setIsLoading(true);
     try {
-      const res = await fetch('https://api.bodegacatsgc.gg/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.detail || 'Signup failed');
-      }
-
-      setSuccess('Registration successful! Check your email to verify your account.');
+      if (error) throw error;
+      setMagicSent(true);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'An error occurred during registration');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="form-container">
       <h1 className="page-title">Register</h1>
-      <form className="form" onSubmit={handleRegister}>
-        <input
-          type="email"
-          placeholder="Email"
-          className="form-input"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="form-input"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          className="form-input"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <button type="submit" className="form-button">Register</button>
-        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
-        {success && <p style={{ color: 'green', marginTop: '10px' }}>{success}</p>}
-      </form>
+      {magicSent ? (
+        <p className="text-green-400">✅ Magic link sent to your email!</p>
+      ) : (
+        <form className="form" onSubmit={handleRegister}>
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-500 text-sm">{error}</div>
+          )}
+          <input
+            type="email"
+            placeholder="Email"
+            className="form-input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <button type="submit" className="form-button" disabled={isLoading}>
+            {isLoading ? 'Sending...' : 'Send Magic Link'}
+          </button>
+          <p className="text-sm text-slate-400 mt-4">
+            Already have an account? <a href="/public/login" className="text-[#e11d48] hover:underline">Sign in</a>
+          </p>
+        </form>
+      )}
     </div>
   );
 }
-
-export default Register;

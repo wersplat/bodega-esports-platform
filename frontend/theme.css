@@ -16,6 +16,37 @@
   --color-navbar-text: #ffffff;
   --color-navbar-accent: #60a5fa;
   --color-accent-strong: #b22234; /* Road to $25K Red */
+
+  /* Aliases for bodega-esport2.0 compatibility */
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-card);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-card);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-accent);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-muted);
+  --secondary-foreground: var(--color-text);
+  --muted: var(--color-muted);
+  --muted-foreground: var(--color-bg);
+  --accent: var(--color-accent);
+  --accent-foreground: var(--color-white);
+  --destructive: #e11d48;
+  --destructive-foreground: var(--color-white);
+  --border: var(--color-muted);
+  --input: var(--color-muted);
+  --ring: var(--color-accent);
+  --radius: 0.5rem;
+  /* Sidebar and advanced theme variables for bodega-esport2.0 compatibility */
+  --sidebar-background: var(--color-card);
+  --sidebar-foreground: var(--color-text);
+  --sidebar-primary: var(--color-accent);
+  --sidebar-primary-foreground: var(--color-white);
+  --sidebar-accent: var(--color-muted);
+  --sidebar-accent-foreground: var(--color-text);
+  --sidebar-border: var(--color-muted);
+  --sidebar-ring: var(--color-accent);
 }
 
 .theme-dark {
@@ -30,6 +61,37 @@
   --color-navbar-text: #e5e7eb;
   --color-navbar-accent: #60a5fa;
   --color-accent-strong: #b22234;
+
+  /* Aliases for bodega-esport2.0 compatibility */
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-card);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-card);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-accent);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-muted);
+  --secondary-foreground: var(--color-text);
+  --muted: var(--color-muted);
+  --muted-foreground: var(--color-bg);
+  --accent: var(--color-accent);
+  --accent-foreground: var(--color-white);
+  --destructive: #e11d48;
+  --destructive-foreground: var(--color-white);
+  --border: var(--color-muted);
+  --input: var(--color-muted);
+  --ring: var(--color-accent);
+  --radius: 0.5rem;
+  /* Sidebar and advanced theme variables for bodega-esport2.0 compatibility */
+  --sidebar-background: var(--color-card);
+  --sidebar-foreground: var(--color-text);
+  --sidebar-primary: var(--color-accent);
+  --sidebar-primary-foreground: var(--color-white);
+  --sidebar-accent: var(--color-muted);
+  --sidebar-accent-foreground: var(--color-text);
+  --sidebar-border: var(--color-muted);
+  --sidebar-ring: var(--color-accent);
 }
 
 .theme-roadto24k {
@@ -44,6 +106,15 @@
   --color-navbar-text: #f8fafc;
   --color-navbar-accent: #e11d48;
   --color-accent-strong: #e11d48;
+  /* Sidebar and advanced theme variables for bodega-esport2.0 compatibility */
+  --sidebar-background: var(--color-card);
+  --sidebar-foreground: var(--color-text);
+  --sidebar-primary: var(--color-accent);
+  --sidebar-primary-foreground: var(--color-white);
+  --sidebar-accent: var(--color-muted);
+  --sidebar-accent-foreground: var(--color-text);
+  --sidebar-border: var(--color-muted);
+  --sidebar-ring: var(--color-accent);
 }
 
 /* Consolidated styles from alt-theme.css */
@@ -59,6 +130,15 @@
   --color-navbar-text: #1f2937;
   --color-navbar-accent: #3b82f6;
   --color-accent-strong: #9333ea;
+  /* Sidebar and advanced theme variables for bodega-esport2.0 compatibility */
+  --sidebar-background: var(--color-card);
+  --sidebar-foreground: var(--color-text);
+  --sidebar-primary: var(--color-accent);
+  --sidebar-primary-foreground: var(--color-white);
+  --sidebar-accent: var(--color-muted);
+  --sidebar-accent-foreground: var(--color-text);
+  --sidebar-border: var(--color-muted);
+  --sidebar-ring: var(--color-accent);
 }
 
 :root.theme-alt-dark {
@@ -73,6 +153,15 @@
   --color-navbar-text: #f9fafb;
   --color-navbar-accent: #3b82f6;
   --color-accent-strong: #9333ea;
+  /* Sidebar and advanced theme variables for bodega-esport2.0 compatibility */
+  --sidebar-background: var(--color-card);
+  --sidebar-foreground: var(--color-text);
+  --sidebar-primary: var(--color-accent);
+  --sidebar-primary-foreground: var(--color-white);
+  --sidebar-accent: var(--color-muted);
+  --sidebar-accent-foreground: var(--color-text);
+  --sidebar-border: var(--color-muted);
+  --sidebar-ring: var(--color-accent);
 }
 
 /* Merged styles from combined-theme.css */

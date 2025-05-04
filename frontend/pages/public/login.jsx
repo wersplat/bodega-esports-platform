@@ -1,36 +1,42 @@
 import React, { useState } from 'react';
-import { API_BASE } from '../../config';
+import { supabase } from '../../supabaseClient';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [magicSent, setMagicSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+    setError(null);
+    setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
-
-      if (!res.ok) throw new Error('Failed to send magic link');
-
+      if (error) throw error;
       setMagicSent(true);
     } catch (err) {
-      console.error('Login error:', err);
+      setError(err.message || 'An error occurred during sign in');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="main-content">
       <h1 className="text-4xl font-bold text-white mb-6">🔐 Login</h1>
-
       {magicSent ? (
         <p className="text-green-400">✅ Magic link sent to your email!</p>
       ) : (
         <form onSubmit={handleLogin} className="form" style={{ maxWidth: 400 }}>
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-500 text-sm">{error}</div>
+          )}
           <input
             type="email"
             value={email}
@@ -39,13 +45,11 @@ export default function Login() {
             className="form-input"
             required
           />
-
-          <button type="submit" className="form-button" style={{ marginTop: 12 }}>
-            Send Magic Link
+          <button type="submit" className="form-button" style={{ marginTop: 12 }} disabled={isLoading}>
+            {isLoading ? 'Sending...' : 'Send Magic Link'}
           </button>
-
           <p className="text-sm text-slate-400 mt-4">
-            Don&apos;t have an account? Check Discord for an invite or register during onboarding.
+            Don&apos;t have an account? <a href="/public/register" className="text-[#e11d48] hover:underline">Register</a>
           </p>
         </form>
       )}
