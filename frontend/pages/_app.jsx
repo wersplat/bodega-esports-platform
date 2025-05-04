@@ -1,14 +1,14 @@
 import '../styles/globals.css'
 // import { ThemeProvider } from '@/components/theme-provider'
-// import { AuthProvider } from '@/components/auth-provider'
+import { AuthProvider } from '@/components/auth/auth-provider'
 
 export default function App({ Component, pageProps }) {
   return (
-    // Uncomment if you add a ThemeProvider or AuthProvider in the future
+    // Uncomment if you add a ThemeProvider in the future
     // <ThemeProvider>
-    //   <AuthProvider>
+      <AuthProvider>
         <Component {...pageProps} />
-    //   </AuthProvider>
+      </AuthProvider>
     // </ThemeProvider>
   )
 }
