@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 function LeagueTeams() {
   const [leagues, setLeagues] = useState([]);
@@ -9,21 +9,21 @@ function LeagueTeams() {
     fetchLeagues();
   }, []);
 
-  useEffect(() => {
-    if (selectedLeague) fetchTeams();
-  }, [selectedLeague]);
-
   const fetchLeagues = async () => {
     const res = await fetch('https://api.bodegacatsgc.gg/leagues');
     const data = await res.json();
     setLeagues(data);
   };
 
-  const fetchTeams = async () => {
+  const fetchTeams = useCallback(async () => {
     const res = await fetch(`https://api.bodegacatsgc.gg/teams?league_id=${selectedLeague}`);
     const data = await res.json();
     setTeams(data);
-  };
+  }, [selectedLeague]);
+
+  useEffect(() => {
+    if (selectedLeague) fetchTeams();
+  }, [selectedLeague, fetchTeams]);
 
   return (
     <div className="main-content">

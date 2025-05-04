@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../../supabaseClient';
+import Link from 'next/link';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -49,7 +50,7 @@ export default function Login() {
             {isLoading ? 'Sending...' : 'Send Magic Link'}
           </button>
           <p className="text-sm text-slate-400 mt-4">
-            Don&apos;t have an account? <a href="/public/register" className="text-[#e11d48] hover:underline">Register</a>
+            Don&apos;t have an account? <Link href="/public/register" className="text-[#e11d48] hover:underline">Register</Link>
           </p>
         </form>
       )}
