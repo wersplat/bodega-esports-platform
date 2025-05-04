@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
-import { useAuth } from "@/components/auth-provider"
+import { useAuth } from "@/components/auth/auth-provider"
 import type { Team, TeamMember, TeamStats } from "@/types/team"
 
 export function useTeam(teamId?: string) {
@@ -105,7 +105,7 @@ export function useTeam(teamId?: string) {
         if (membersError) throw membersError
 
         // Transform the data to match our TeamMember interface
-        const formattedMembers = membersData.map((member) => ({
+        const formattedMembers = membersData.map((member: any) => ({
           ...member,
           user: member.users,
         })) as unknown as TeamMember[]
@@ -156,7 +156,7 @@ export function useTeam(teamId?: string) {
 
     try {
       // First, find the user by email
-      const { data: userData, error: userError } = await supabase
+      const { data: userDataResult, error: userError } = await supabase
         .from("users")
         .select("id, full_name, avatar_url, username")
         .eq("email", userData.email)
@@ -170,7 +170,7 @@ export function useTeam(teamId?: string) {
       const { data: existingMember, error: memberError } = await supabase
         .from("team_members")
         .select("id")
-        .eq("user_id", userData.id)
+        .eq("user_id", userDataResult.id)
         .eq("team_id", team.id)
         .single()
 
@@ -180,7 +180,7 @@ export function useTeam(teamId?: string) {
 
       // Add the user to the team
       const newMember = {
-        user_id: userData.id,
+        user_id: userDataResult.id,
         team_id: team.id,
         role: userData.role,
         position: userData.position || null,
@@ -198,15 +198,15 @@ export function useTeam(teamId?: string) {
       // Add the new member to the local state
       const addedMember = {
         ...insertData[0],
-        user: userData,
+        user: userDataResult,
       } as unknown as TeamMember
 
       setMembers((prev) => [...prev, addedMember])
 
-      return { success: true, message: "Team member added successfully" }
+      return { success: true, message: "Member added successfully" }
     } catch (err: any) {
       console.error("Error adding team member:", err)
-      return { success: false, message: err.message || "Failed to add team member" }
+      return { success: false, message: err.message || "Failed to add member" }
     }
   }
 
@@ -224,7 +224,7 @@ export function useTeam(teamId?: string) {
     }
 
     try {
-      const { error } = await supabase.from("team_members").update(updates).eq("id", memberId).eq("team_id", team.id)
+      const { error } = await supabase.from("team_members").update(updates).eq("id", memberId)
 
       if (error) {
         throw error
@@ -233,10 +233,10 @@ export function useTeam(teamId?: string) {
       // Update the member in local state
       setMembers((prev) => prev.map((member) => (member.id === memberId ? { ...member, ...updates } : member)))
 
-      return { success: true, message: "Team member updated successfully" }
+      return { success: true, message: "Member updated successfully" }
     } catch (err: any) {
       console.error("Error updating team member:", err)
-      return { success: false, message: err.message || "Failed to update team member" }
+      return { success: false, message: err.message || "Failed to update member" }
     }
   }
 
@@ -252,7 +252,7 @@ export function useTeam(teamId?: string) {
         return { success: false, message: "Cannot remove the team captain" }
       }
 
-      const { error } = await supabase.from("team_members").delete().eq("id", memberId).eq("team_id", team.id)
+      const { error } = await supabase.from("team_members").delete().eq("id", memberId)
 
       if (error) {
         throw error
@@ -261,26 +261,20 @@ export function useTeam(teamId?: string) {
       // Remove the member from local state
       setMembers((prev) => prev.filter((member) => member.id !== memberId))
 
-      return { success: true, message: "Team member removed successfully" }
+      return { success: true, message: "Member removed successfully" }
     } catch (err: any) {
       console.error("Error removing team member:", err)
-      return { success: false, message: err.message || "Failed to remove team member" }
+      return { success: false, message: err.message || "Failed to remove member" }
     }
   }
 
   async function updateTeam(updates: Partial<Team>): Promise<{ success: boolean; message: string }> {
     if (!team || !isTeamAdmin) {
-      return { success: false, message: "You don't have permission to update team details" }
+      return { success: false, message: "You don't have permission to update team" }
     }
 
     try {
-      const { error } = await supabase
-        .from("teams")
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", team.id)
+      const { error } = await supabase.from("teams").update(updates).eq("id", team.id)
 
       if (error) {
         throw error
@@ -302,7 +296,6 @@ export function useTeam(teamId?: string) {
     stats,
     isLoading,
     error,
-    userRole,
     isTeamAdmin,
     addTeamMember,
     updateTeamMember,
