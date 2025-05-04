@@ -1,8 +1,8 @@
 // Refactored from bodega-esport2.0/app/admin/page.tsx
-import { Card } from "../../components/card";
-import { Button } from "../../components/button";
-import { Input } from "../../components/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/table";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Check, Save, Settings, X } from "lucide-react";
 
 export default function BodegaAdminPanel() {

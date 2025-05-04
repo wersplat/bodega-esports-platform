@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from "@/components/ui/button";
 
 export default function TestRender() {
   return (
@@ -7,21 +8,16 @@ export default function TestRender() {
       <p style={{ fontSize: '1.2rem', color: '#fff' }}>
         This is a simple landing page to test rendering.
       </p>
-      <button
+      <Button
         style={{
           marginTop: '20px',
           padding: '10px 20px',
           fontSize: '1rem',
-          color: '#fff',
-          backgroundColor: '#007BFF',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
         }}
         onClick={() => alert('Rendering works!')}
       >
         Test Button
-      </button>
+      </Button>
     </div>
   );
 }

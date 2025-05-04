@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Skeleton } from "@/components/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function TeamListPage({ initialTeams, error }) {
   if (error) return <p className="p-4 text-red-500">Error: {error}</p>;

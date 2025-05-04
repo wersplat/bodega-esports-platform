@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export default function Profile() {
   const [form, setForm] = useState({});
@@ -39,27 +42,27 @@ export default function Profile() {
     }
   };
 
-  if (loading) return <div className="main-content">Loading profile...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading profile...</div>;
 
   return (
-    <div className="main-content">
-      <h1 className="page-title">Edit Profile</h1>
-
-      <form onSubmit={handleSubmit} className="form" style={{ maxWidth: 500, marginTop: 30 }}>
-        {['display_name', 'platform', 'gamer_tag', 'positions', 'avatar_url', 'career_history'].map((field) => (
-          <input
-            key={field}
-            name={field}
-            value={form[field] || ''}
-            onChange={handleChange}
-            placeholder={field.replace('_', ' ').toUpperCase()}
-            className="form-input"
-          />
-        ))}
-
-        <button type="submit" className="form-button" style={{ marginTop: '20px' }}>Save</button>
-        {msg && <p style={{ marginTop: 12, color: msg.startsWith('✅') ? '#34d399' : '#f87171' }}>{msg}</p>}
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <Card className="p-8 w-full max-w-lg">
+        <h1 className="text-2xl font-bold mb-6 text-foreground">Edit Profile</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {['display_name', 'platform', 'gamer_tag', 'positions', 'avatar_url', 'career_history'].map((field) => (
+            <Input
+              key={field}
+              name={field}
+              value={form[field] || ''}
+              onChange={handleChange}
+              placeholder={field.replace('_', ' ').toUpperCase()}
+              className="w-full"
+            />
+          ))}
+          <Button type="submit" className="w-full mt-2">Save</Button>
+          {msg && <p className={`mt-2 text-center ${msg.startsWith('✅') ? 'text-green-400' : 'text-red-400'}`}>{msg}</p>}
+        </form>
+      </Card>
     </div>
   );
 }

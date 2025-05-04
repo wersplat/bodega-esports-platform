@@ -12,42 +12,30 @@ export default function Document() {
         <link rel="dns-prefetch" href="https://api.bodegacatsgc.gg" />
         <link rel="preconnect" href="https://api.bodegacatsgc.gg" crossOrigin="anonymous" />
         
-        {/* Preload critical assets */}
-        <link
-          rel="preload"
-          href="/fonts/inter-var.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        
         {/* Inline critical CSS */}
         <style dangerouslySetInnerHTML={{ __html: `
           /* Reset */
           *, *::before, *::after { box-sizing: border-box; }
-          
           /* Base styles */
           body { 
             margin: 0;
             background: #0f172a;
             color: #f8fafc;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
             text-rendering: optimizeLegibility;
             -webkit-font-smoothing: antialiased;
           }
-          
           /* Layout */
           .main-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 1rem;
           }
-          
           /* Typography */
           h1 {
             margin: 0 0 1.5rem;
             line-height: 1.2;
           }
-          
           /* Skeleton loading animation */
           @keyframes pulse {
             0%, 100% { opacity: 1; }
