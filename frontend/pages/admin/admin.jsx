@@ -5,6 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Check, Save, Settings, X } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 export default function Admin() {
   const [loading, setLoading] = useState(true);
@@ -155,35 +159,35 @@ export default function Admin() {
           <div className="p-4 space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Season Name</label>
+                <Label className="text-sm font-medium">Season Name</Label>
                 <Input defaultValue="Road to $25K 2023" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Season Start Date</label>
+                <Label className="text-sm font-medium">Season Start Date</Label>
                 <Input type="date" defaultValue="2023-05-01" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Season End Date</label>
+                <Label className="text-sm font-medium">Season End Date</Label>
                 <Input type="date" defaultValue="2023-08-31" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Registration Deadline</label>
+                <Label className="text-sm font-medium">Registration Deadline</Label>
                 <Input type="date" defaultValue="2023-04-15" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Max Teams</label>
+                <Label className="text-sm font-medium">Max Teams</Label>
                 <Input type="number" defaultValue="16" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Max Players Per Team</label>
+                <Label className="text-sm font-medium">Max Players Per Team</Label>
                 <Input type="number" defaultValue="12" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Game Duration (minutes)</label>
+                <Label className="text-sm font-medium">Game Duration (minutes)</Label>
                 <Input type="number" defaultValue="40" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Divisions</label>
+                <Label className="text-sm font-medium">Divisions</Label>
                 <Input defaultValue="East, West, North, South" />
               </div>
             </div>
@@ -198,12 +202,12 @@ export default function Admin() {
         <Card title="Webhook Management" description="Configure external integrations">
           <div className="p-4 space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Discord Webhook URL</label>
+              <Label className="text-sm font-medium">Discord Webhook URL</Label>
               <Input defaultValue="https://discord.com/api/webhooks/123456789/abcdef" />
               <p className="text-xs text-[#94a3b8]">Notifications will be sent to this Discord channel</p>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Webhook Events</label>
+              <Label className="text-sm font-medium">Webhook Events</Label>
               <div className="space-y-2">
                 {[
                   "New team registration",
@@ -213,27 +217,31 @@ export default function Admin() {
                   "Team approval status changed",
                 ].map((event, index) => (
                   <div key={index} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       id={`event-${index}`}
                       defaultChecked={index < 3}
                       className="h-4 w-4 rounded border-[#94a3b8] bg-[#1e293b] text-[#e11d48] focus:ring-[#e11d48]"
                     />
-                    <label htmlFor={`event-${index}`} className="text-sm">
+                    <Label htmlFor={`event-${index}`} className="text-sm">
                       {event}
-                    </label>
+                    </Label>
                   </div>
                 ))}
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Test Webhook</label>
+              <Label className="text-sm font-medium">Test Webhook</Label>
               <div className="flex gap-2">
-                <select className="h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]">
-                  <option>New team registration</option>
-                  <option>Match scheduled</option>
-                  <option>Match results submitted</option>
-                </select>
+                <Select>
+                  <SelectTrigger className="h-10 w-full rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]">
+                    <SelectValue placeholder="Select event" />
+                    <SelectContent>
+                      <SelectItem value="New team registration">New team registration</SelectItem>
+                      <SelectItem value="Match scheduled">Match scheduled</SelectItem>
+                      <SelectItem value="Match results submitted">Match results submitted</SelectItem>
+                    </SelectContent>
+                  </SelectTrigger>
+                </Select>
                 <Button variant="outline">Send Test</Button>
               </div>
             </div>
@@ -249,51 +257,64 @@ export default function Admin() {
         <div className="p-4 space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Player</label>
-              <select className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]">
-                <option>Select Player</option>
-                <option>John Doe</option>
-                <option>Jane Smith</option>
-                <option>Mike Johnson</option>
-              </select>
+              <Label className="text-sm font-medium">Player</Label>
+              <Select>
+                <SelectTrigger className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]">
+                  <SelectValue placeholder="Select player" />
+                  <SelectContent>
+                    <SelectItem value="John Doe">John Doe</SelectItem>
+                    <SelectItem value="Jane Smith">Jane Smith</SelectItem>
+                    <SelectItem value="Mike Johnson">Mike Johnson</SelectItem>
+                  </SelectContent>
+                </SelectTrigger>
+              </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Match</label>
-              <select className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]">
-                <option>Select Match</option>
-                <option>Team Alpha vs Team Beta - May 10, 2023</option>
-                <option>Team Gamma vs Team Alpha - May 5, 2023</option>
-                <option>Team Alpha vs Team Delta - April 28, 2023</option>
-              </select>
+              <Label className="text-sm font-medium">Match</Label>
+              <Select>
+                <SelectTrigger className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]">
+                  <SelectValue placeholder="Select match" />
+                  <SelectContent>
+                    <SelectItem value="Team Alpha vs Team Beta - May 10, 2023">Team Alpha vs Team Beta - May 10, 2023</SelectItem>
+                    <SelectItem value="Team Gamma vs Team Alpha - May 5, 2023">Team Gamma vs Team Alpha - May 5, 2023</SelectItem>
+                    <SelectItem value="Team Alpha vs Team Delta - April 28, 2023">Team Alpha vs Team Delta - April 28, 2023</SelectItem>
+                  </SelectContent>
+                </SelectTrigger>
+              </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Stat Type</label>
-              <select className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]">
-                <option>Points</option>
-                <option>Assists</option>
-                <option>Rebounds</option>
-                <option>Steals</option>
-                <option>Blocks</option>
-              </select>
+              <Label className="text-sm font-medium">Stat Type</Label>
+              <Select>
+                <SelectTrigger className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]">
+                  <SelectValue placeholder="Select stat type" />
+                  <SelectContent>
+                    <SelectItem value="Points">Points</SelectItem>
+                    <SelectItem value="Assists">Assists</SelectItem>
+                    <SelectItem value="Rebounds">Rebounds</SelectItem>
+                    <SelectItem value="Steals">Steals</SelectItem>
+                    <SelectItem value="Blocks">Blocks</SelectItem>
+                  </SelectContent>
+                </SelectTrigger>
+              </Select>
             </div>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Current Value</label>
+              <Label className="text-sm font-medium">Current Value</Label>
               <Input type="number" defaultValue="18" disabled />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">New Value</label>
+              <Label className="text-sm font-medium">New Value</Label>
               <Input type="number" defaultValue="22" />
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Reason for Change</label>
-            <textarea
+            <Label className="text-sm font-medium">Reason for Change</Label>
+            <Textarea
               rows={3}
               placeholder="Explain why this stat is being adjusted..."
               className="w-full rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]"
-            ></textarea>
+            ></Textarea>
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="outline">Cancel</Button>

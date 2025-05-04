@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 export default function AdminRosterLock() {
   const router = useRouter();
@@ -99,31 +103,41 @@ export default function AdminRosterLock() {
       </button>
 
       <div className="form-container">
-        <label className="block font-bold mb-2">Select League</label>
-        <select value={selectedLeagueId} onChange={(e) => setSelectedLeagueId(e.target.value)} className="form-input">
-          <option value="">-- Select a League --</option>
-          {leagues.map((l) => (
-            <option key={l.id} value={l.id}>{l.name}</option>
-          ))}
-        </select>
+        <Label className="block font-bold mb-2">Select League</Label>
+        <Select value={selectedLeagueId} onValueChange={(value) => setSelectedLeagueId(value)}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a League" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">-- Select a League --</SelectItem>
+            {leagues.map((l) => (
+              <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         {selectedLeagueId && (
           <>
-            <label className="block font-bold mb-2 mt-4">Select Season</label>
-            <select value={selectedSeasonId} onChange={(e) => setSelectedSeasonId(e.target.value)} className="form-input">
-              <option value="">-- Select a Season --</option>
-              {seasons.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name} (Lock Date: {s.roster_lock_date || 'None'})
-                </option>
-              ))}
-            </select>
+            <Label className="block font-bold mb-2 mt-4">Select Season</Label>
+            <Select value={selectedSeasonId} onValueChange={(value) => setSelectedSeasonId(value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a Season" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">-- Select a Season --</SelectItem>
+                {seasons.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.name} (Lock Date: {s.roster_lock_date || 'None'})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </>
         )}
 
         {selectedSeasonId && (
           <>
-            <label className="block font-bold mb-2 mt-4">Set Roster Lock Date</label>
+            <Label className="block font-bold mb-2 mt-4">Set Roster Lock Date</Label>
             <input type="date" value={lockDate} onChange={(e) => setLockDate(e.target.value)} className="form-input" />
 
             <div className="mt-6">

@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 function AdminAdvanceRound() {
   const [leagues, setLeagues] = useState([]);
@@ -63,19 +67,23 @@ function AdminAdvanceRound() {
           margin: '0 auto',
         }}
       >
-        <select
+        <Select
           value={selectedLeague}
-          onChange={(e) => setSelectedLeague(e.target.value)}
+          onValueChange={(value) => setSelectedLeague(value)}
           className="form-input"
           style={{ marginBottom: '20px' }}
         >
-          <option value="">Select League</option>
-          {leagues.map((league) => (
-            <option key={league.id} value={league.id}>
-              {league.name}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger>
+            <SelectValue placeholder="Select League" />
+          </SelectTrigger>
+          <SelectContent>
+            {leagues.map((league) => (
+              <SelectItem key={league.id} value={league.id}>
+                {league.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         <button onClick={generateNextRound} className="form-button">
           Generate Next Round

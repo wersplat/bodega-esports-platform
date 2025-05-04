@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 function AdminScheduleMatch() {
   const router = useRouter();
@@ -104,26 +108,38 @@ function AdminScheduleMatch() {
         marginLeft: 'auto',
         marginRight: 'auto'
       }}>
-        <select value={selectedLeague} onChange={(e) => setSelectedLeague(e.target.value)} className="form-input" required>
-          <option value="">Select League</option>
-          {leagues.map((league) => (
-            <option key={league.id} value={league.id}>{league.name}</option>
-          ))}
-        </select>
+        <Select value={selectedLeague} onValueChange={(value) => setSelectedLeague(value)} className="form-input" required>
+          <SelectTrigger>
+            <SelectValue placeholder="Select League" />
+          </SelectTrigger>
+          <SelectContent>
+            {leagues.map((league) => (
+              <SelectItem key={league.id} value={league.id}>{league.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-        <select value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)} className="form-input" required disabled={!selectedLeague}>
-          <option value="">Select Home Team</option>
-          {teams.map((team) => (
-            <option key={team.id} value={team.id}>{team.name}</option>
-          ))}
-        </select>
+        <Select value={homeTeam} onValueChange={(value) => setHomeTeam(value)} className="form-input" required disabled={!selectedLeague}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Home Team" />
+          </SelectTrigger>
+          <SelectContent>
+            {teams.map((team) => (
+              <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-        <select value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)} className="form-input" required disabled={!selectedLeague}>
-          <option value="">Select Away Team</option>
-          {teams.map((team) => (
-            <option key={team.id} value={team.id}>{team.name}</option>
-          ))}
-        </select>
+        <Select value={awayTeam} onValueChange={(value) => setAwayTeam(value)} className="form-input" required disabled={!selectedLeague}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Away Team" />
+          </SelectTrigger>
+          <SelectContent>
+            {teams.map((team) => (
+              <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         <input type="date" value={matchDate} onChange={(e) => setMatchDate(e.target.value)} className="form-input" required />
 

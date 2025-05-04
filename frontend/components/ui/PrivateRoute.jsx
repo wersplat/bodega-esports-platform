@@ -3,8 +3,8 @@ import { Navigate } from 'react-router-dom';
 import { logError } from '../../utils/logger';
 
 // Hardcoded values for development
-const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
-const SUPABASE_ANON_KEY = 'your-anon-key';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 function PrivateRoute({ children, requireAdmin = false }) {
   const [user, setUser] = useState(null);

@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 function AdminSubmitResult() {
   const router = useRouter();
@@ -72,18 +76,22 @@ function AdminSubmitResult() {
         marginLeft: 'auto',
         marginRight: 'auto'
       }}>
-        <select value={selectedMatch} onChange={(e) => setSelectedMatch(e.target.value)} className="form-input" required>
-          <option value="">Select Match</option>
-          {matches.map((match) => (
-            <option key={match.id} value={match.id}>
-              {match.team_a_name} vs {match.team_b_name}
-            </option>
-          ))}
-        </select>
+        <Select value={selectedMatch} onValueChange={(value) => setSelectedMatch(value)} className="form-input" required>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Match" />
+          </SelectTrigger>
+          <SelectContent>
+            {matches.map((match) => (
+              <SelectItem key={match.id} value={match.id}>
+                {match.team_a_name} vs {match.team_b_name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         <input type="number" placeholder="Team A Score" value={teamAScore} onChange={(e) => setTeamAScore(e.target.value)} className="form-input" required />
         <input type="number" placeholder="Team B Score" value={teamBScore} onChange={(e) => setTeamBScore(e.target.value)} className="form-input" required />
-        <textarea placeholder="Notes (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} className="form-input" />
+        <Textarea placeholder="Notes (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} className="form-input" />
 
         <button type="submit" className="form-button">Submit Result</button>
         {message && <p style={{ marginTop: '10px', color: message.includes('success') ? '#34d399' : '#f87171' }}>{message}</p>}
