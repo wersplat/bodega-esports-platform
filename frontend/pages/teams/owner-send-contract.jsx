@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 function OwnerSendContract() {
   const [players, setPlayers] = useState([]);
@@ -45,28 +48,41 @@ function OwnerSendContract() {
   };
 
   return (
-    <div className="main-content">
-      <h1 className="page-title">Send Contract Offer</h1>
-
-      <form onSubmit={handleSubmit} className="form" style={{ maxWidth: 500, margin: '0 auto' }}>
-        <select className="form-input" value={selectedPlayer} onChange={(e) => setSelectedPlayer(e.target.value)} required>
-          <option value="">Select Player</option>
-          {players.map((p) => (
-            <option key={p.id} value={p.id}>{p.username}</option>
-          ))}
-        </select>
-
-        <select className="form-input" value={selectedTeam} onChange={(e) => setSelectedTeam(e.target.value)} required>
-          <option value="">Select Your Team</option>
-          {teams.map((t) => (
-            <option key={t.id} value={t.id}>{t.name}</option>
-          ))}
-        </select>
-
-        <input type="date" className="form-input" value={termEnd} onChange={(e) => setTermEnd(e.target.value)} required />
-
-        <button type="submit" className="form-button">Send Offer</button>
-        {message && <p style={{ marginTop: 12, color: message.includes('sent') ? '#34d399' : '#f87171' }}>{message}</p>}
+    <div className="main-content flex flex-col items-center justify-center min-h-screen bg-[#0f172a]">
+      <h1 className="text-2xl font-bold text-[#f8fafc] mb-6">Send Contract Offer</h1>
+      <form onSubmit={handleSubmit} className="bg-[#1e293b] rounded-lg shadow-md p-6 w-full max-w-md space-y-4">
+        <div>
+          <label htmlFor="player" className="block text-sm font-medium text-[#f8fafc] mb-1">Player</label>
+          <Select value={selectedPlayer} onValueChange={setSelectedPlayer} required>
+            <SelectTrigger id="player" className="w-full">
+              <SelectValue placeholder="Select Player" />
+            </SelectTrigger>
+            <SelectContent>
+              {players.map((p) => (
+                <SelectItem key={p.id} value={p.id}>{p.username}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label htmlFor="team" className="block text-sm font-medium text-[#f8fafc] mb-1">Your Team</label>
+          <Select value={selectedTeam} onValueChange={setSelectedTeam} required>
+            <SelectTrigger id="team" className="w-full">
+              <SelectValue placeholder="Select Your Team" />
+            </SelectTrigger>
+            <SelectContent>
+              {teams.map((t) => (
+                <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label htmlFor="termEnd" className="block text-sm font-medium text-[#f8fafc] mb-1">Contract End Date</label>
+          <Input id="termEnd" type="date" value={termEnd} onChange={e => setTermEnd(e.target.value)} required className="w-full" />
+        </div>
+        <Button type="submit" className="w-full bg-[#e11d48] text-[#f8fafc] hover:bg-[#be123c] transition-all duration-200">Send Offer</Button>
+        {message && <p className={`mt-2 text-center text-sm ${message.includes('sent') ? 'text-[#10b981]' : 'text-[#ef4444]'}`}>{message}</p>}
       </form>
     </div>
   );

@@ -4,6 +4,7 @@ import '../styles/globals.css'
 
 export default function App({ Component, pageProps }) {
   return (
+    // Uncomment if you add a ThemeProvider or AuthProvider in the future
     // <ThemeProvider>
     //   <AuthProvider>
         <Component {...pageProps} />

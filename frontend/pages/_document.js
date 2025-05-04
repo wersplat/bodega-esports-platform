@@ -12,7 +12,7 @@ export default function Document() {
         <link rel="dns-prefetch" href="https://api.bodegacatsgc.gg" />
         <link rel="preconnect" href="https://api.bodegacatsgc.gg" crossOrigin="anonymous" />
         
-        {/* Inline critical CSS */}
+        {/* Inline critical CSS for base design system */}
         <style dangerouslySetInnerHTML={{ __html: `
           /* Reset */
           *, *::before, *::after { box-sizing: border-box; }
@@ -21,7 +21,7 @@ export default function Document() {
             margin: 0;
             background: #0f172a;
             color: #f8fafc;
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
             text-rendering: optimizeLegibility;
             -webkit-font-smoothing: antialiased;
           }
