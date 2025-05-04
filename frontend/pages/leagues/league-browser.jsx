@@ -15,6 +15,7 @@ function LeagueBrowser() {
       setLeagues(data);
     } catch (err) {
       console.error('Error fetching leagues:', err);
+      // Consider retrying the request or showing a user-friendly error message
     }
   };
 

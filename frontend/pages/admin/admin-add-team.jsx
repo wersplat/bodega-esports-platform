@@ -23,6 +23,7 @@ function AdminAddTeam() {
       setLeagues(data);
     } catch (err) {
       console.error('Failed to fetch leagues:', err);
+      // Consider retrying the request or showing a user-friendly error message
     }
   };
 
@@ -33,6 +34,7 @@ function AdminAddTeam() {
       setSeasons(data);
     } catch (err) {
       console.error('Failed to fetch seasons:', err);
+      // Consider retrying the request or showing a user-friendly error message
     }
   };
 

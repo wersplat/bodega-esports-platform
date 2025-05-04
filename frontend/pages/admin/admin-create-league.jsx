@@ -23,6 +23,7 @@ function AdminCreateLeague() {
       setSeasons(data);
     } catch (err) {
       console.error(err);
+      // Add specific error handling logic here
     }
   };
 

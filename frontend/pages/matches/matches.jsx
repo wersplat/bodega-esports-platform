@@ -15,6 +15,7 @@ function Matches() {
       setMatches(data);
     } catch (err) {
       console.error('Error fetching matches:', err);
+      // Consider retrying the request or showing a user-friendly error message
     } finally {
       setLoading(false);
     }

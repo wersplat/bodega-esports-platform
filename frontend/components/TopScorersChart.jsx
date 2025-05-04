@@ -41,7 +41,10 @@ export default function TopScorersChart({ seasonId }) {
           ]
         });
       })
-      .catch((err) => console.error('Chart fetch error:', err));
+      .catch((err) => {
+        console.error('Chart fetch error:', err);
+        // Add additional error handling logic here if needed
+      });
   }, [seasonId, API_BASE]); // Include API_BASE in the dependency array
 
   if (!chartData) return <p>Loading chart...</p>;

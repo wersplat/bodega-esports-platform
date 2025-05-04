@@ -21,6 +21,7 @@ function AdminManageWebhooks() {
       setWebhooks(data);
     } catch (err) {
       console.error(err);
+      // Add specific error handling logic here
       setError(err.message);
     }
   };

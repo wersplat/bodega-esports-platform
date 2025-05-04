@@ -9,11 +9,16 @@ function LeagueDetails() {
   const [registrations, setRegistrations] = useState([]);
 
   useEffect(() => {
-    if (id) {
-      fetchLeague();
-      fetchRegistrations();
-    }
-  }, [id]);
+    const fetchData = async () => {
+      try {
+        await fetchLeague();
+        await fetchRegistrations();
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      }
+    };
+    fetchData();
+  }, [fetchLeague, fetchRegistrations]);
 
   const fetchLeague = async () => {
     try {
@@ -22,6 +27,7 @@ function LeagueDetails() {
       setLeague(data);
     } catch (err) {
       console.error('Error fetching league:', err);
+      // Consider retrying the request or showing a user-friendly error message
     }
   };
 
@@ -32,6 +38,7 @@ function LeagueDetails() {
       setRegistrations(data);
     } catch (err) {
       console.error('Error fetching registrations:', err);
+      // Consider retrying the request or showing a user-friendly error message
     }
   };
 

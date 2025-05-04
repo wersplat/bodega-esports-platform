@@ -17,6 +17,7 @@ function AdminBracketGenerator() {
       setLeagues(data);
     } catch (err) {
       console.error(err);
+      // Add specific error handling logic here
     }
   };
 
@@ -37,6 +38,7 @@ function AdminBracketGenerator() {
       setMessage('Bracket generated successfully!');
     } catch (err) {
       console.error(err);
+      // Add specific error handling logic here
       setMessage('Error creating bracket.');
     }
   };

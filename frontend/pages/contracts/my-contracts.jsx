@@ -16,6 +16,7 @@ function MyContracts() {
       setContracts(data);
     } catch (err) {
       console.error(err);
+      // Add specific error handling logic here
     } finally {
       setLoading(false);
     }
@@ -32,6 +33,7 @@ function MyContracts() {
       setContracts(contracts.map((c) => (c.id === id ? { ...c, status: newStatus } : c)));
     } catch (err) {
       console.error(err);
+      // Add specific error handling logic here
     }
   };
 
