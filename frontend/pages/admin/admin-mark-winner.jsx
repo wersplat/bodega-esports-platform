@@ -26,7 +26,7 @@ function AdminMarkWinner() {
       setTeams(t);
       setLeagues(l);
     } catch (err) {
-      console.error('Failed to fetch data', err);
+      // console.error('Failed to fetch data', err);
     }
   };
 
@@ -51,7 +51,7 @@ function AdminMarkWinner() {
       setMessage('Winner updated successfully!');
       fetchData();
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       setMessage('Error setting winner.');
     }
   };

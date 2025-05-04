@@ -22,7 +22,7 @@ function AdminReviewMatches() {
       const data = await res.json();
       setMatches(data);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     } finally {
       setLoading(false);
     }
@@ -35,7 +35,7 @@ function AdminReviewMatches() {
       });
       fetchMatches();
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
 
@@ -46,7 +46,7 @@ function AdminReviewMatches() {
       });
       fetchMatches();
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
 

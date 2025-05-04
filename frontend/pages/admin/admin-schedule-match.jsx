@@ -34,7 +34,7 @@ function AdminScheduleMatch() {
       const data = await res.json();
       setLeagues(data);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
 
@@ -44,7 +44,7 @@ function AdminScheduleMatch() {
       const data = await res.json();
       setTeams(data);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
 

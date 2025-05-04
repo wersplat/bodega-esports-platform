@@ -5,80 +5,15 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Edit, AlertTriangle, FileText } from "lucide-react"
 import Image from "next/image"
+import type { Contract } from "@/types/contract"
 
 interface ContractsTableProps {
-  onEditContract: (contract: any) => void
+  contracts: Contract[]
+  onEditContract?: (contract: Contract) => void
+  onDeleteContract?: (contractId: string) => void
 }
 
-export function ContractsTable({ onEditContract }: ContractsTableProps) {
-  // Sample data - would come from API in real implementation
-  const contracts = [
-    {
-      id: "CTR-2023-001",
-      player: {
-        name: "John Doe",
-        avatar: "/placeholder.svg?height=40&width=40",
-        tag: "JDoe23",
-      },
-      team: {
-        name: "Team Alpha",
-        logo: "/placeholder.svg?height=32&width=32",
-      },
-      startDate: "2023-01-15",
-      endDate: "2023-12-31",
-      salary: "$25,000",
-      status: "active",
-    },
-    {
-      id: "CTR-2023-002",
-      player: {
-        name: "Jane Smith",
-        avatar: "/placeholder.svg?height=40&width=40",
-        tag: "JSmith10",
-      },
-      team: {
-        name: "Team Beta",
-        logo: "/placeholder.svg?height=32&width=32",
-      },
-      startDate: "2023-02-01",
-      endDate: "2023-11-30",
-      salary: "$22,500",
-      status: "active",
-    },
-    {
-      id: "CTR-2023-003",
-      player: {
-        name: "Mike Johnson",
-        avatar: "/placeholder.svg?height=40&width=40",
-        tag: "MikeJ42",
-      },
-      team: {
-        name: "Team Gamma",
-        logo: "/placeholder.svg?height=32&width=32",
-      },
-      startDate: "2023-03-15",
-      endDate: "2023-10-15",
-      salary: "$18,000",
-      status: "pending",
-    },
-    {
-      id: "CTR-2022-015",
-      player: {
-        name: "Sarah Williams",
-        avatar: "/placeholder.svg?height=40&width=40",
-        tag: "SWill21",
-      },
-      team: {
-        name: "Team Delta",
-        logo: "/placeholder.svg?height=32&width=32",
-      },
-      startDate: "2022-05-01",
-      endDate: "2023-04-30",
-      salary: "$20,000",
-      status: "expired",
-    },
-  ]
-
+export function ContractsTable({ contracts, onEditContract, onDeleteContract }: ContractsTableProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
@@ -154,14 +89,18 @@ export function ContractsTable({ onEditContract }: ContractsTableProps) {
             </TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end gap-2">
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => onEditContract(contract)}>
-                  <Edit className="h-4 w-4" />
-                  <span className="sr-only">Edit</span>
-                </Button>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-yellow-500">
-                  <AlertTriangle className="h-4 w-4" />
-                  <span className="sr-only">Terminate</span>
-                </Button>
+                {onEditContract && (
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => onEditContract(contract)}>
+                    <Edit className="h-4 w-4" />
+                    <span className="sr-only">Edit</span>
+                  </Button>
+                )}
+                {onDeleteContract && (
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-yellow-500" onClick={() => onDeleteContract(contract.id)}>
+                    <AlertTriangle className="h-4 w-4" />
+                    <span className="sr-only">Terminate</span>
+                  </Button>
+                )}
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-[#94a3b8]">
                   <FileText className="h-4 w-4" />
                   <span className="sr-only">Download PDF</span>

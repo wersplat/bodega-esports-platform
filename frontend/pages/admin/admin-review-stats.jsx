@@ -24,7 +24,7 @@ function AdminReviewStats() {
       const data = await res.json();
       setStats(data);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,7 @@ function AdminReviewStats() {
       setEditingId(null);
       fetchPending();
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
 
@@ -69,7 +69,7 @@ function AdminReviewStats() {
       });
       setStats((prev) => prev.filter((r) => r.id !== id));
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   };
 

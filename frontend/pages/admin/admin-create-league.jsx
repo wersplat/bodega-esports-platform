@@ -26,7 +26,6 @@ function AdminCreateLeague() {
       const data = await res.json();
       setSeasons(data);
     } catch (err) {
-      console.error(err);
       // Add specific error handling logic here
     }
   };

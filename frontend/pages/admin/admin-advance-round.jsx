@@ -20,7 +20,6 @@ function AdminAdvanceRound() {
       const data = await res.json();
       setLeagues(data);
     } catch (err) {
-      console.error(err);
       // Add specific error handling logic here
     }
   };
@@ -41,7 +40,6 @@ function AdminAdvanceRound() {
       if (!res.ok) throw new Error('Error creating next round');
       setMessage('Next round created successfully!');
     } catch (err) {
-      console.error(err);
       // Add specific error handling logic here
       setMessage('Error creating next round.');
     }

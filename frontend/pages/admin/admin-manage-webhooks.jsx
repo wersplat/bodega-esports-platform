@@ -24,7 +24,7 @@ function AdminManageWebhooks() {
       const data = await res.json();
       setWebhooks(data);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       // Add specific error handling logic here
       setError(err.message);
     }

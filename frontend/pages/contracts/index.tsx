@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { supabase } from "@/lib/supabase"
+import type { Contract } from "@/types/contract"
 import { ContractsTable } from "@/components/contracts/contracts-table"
 import { ContractModal } from "@/components/contracts/contract-modal"
 import { ContractFilter } from "@/components/contracts/contract-filter"
@@ -9,17 +11,81 @@ import { Plus } from "lucide-react"
 
 export default function ContractsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingContract, setEditingContract] = useState<any>(null)
+  const [editingContract, setEditingContract] = useState<Contract | null>(null)
+  const [contracts, setContracts] = useState<Contract[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchContracts()
+  }, [])
+
+  async function fetchContracts() {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from("contracts")
+      .select(`
+        id,
+        player:player_id (
+          id,
+          name,
+          avatar,
+          tag
+        ),
+        team:team_id (
+          id,
+          name,
+          logo
+        ),
+        startDate,
+        endDate,
+        salary,
+        status,
+        fileUrl
+      `)
+    if (error) {
+      setContracts([])
+    } else {
+      setContracts(data as Contract[])
+    }
+    setLoading(false)
+  }
+
+  async function handleSaveContract(contractData: Partial<Contract>) {
+    let result
+    if (editingContract) {
+      result = await supabase
+        .from("contracts")
+        .update(contractData)
+        .eq("id", editingContract.id)
+        .select()
+    } else {
+      result = await supabase
+        .from("contracts")
+        .insert([contractData])
+        .select()
+    }
+    setIsModalOpen(false)
+    setEditingContract(null)
+    fetchContracts()
+    return result
+  }
+
+  async function handleDeleteContract(contractId: string) {
+    await supabase.from("contracts").delete().eq("id", contractId)
+    fetchContracts()
+  }
 
   const handleNewContract = () => {
     setEditingContract(null)
     setIsModalOpen(true)
   }
 
-  const handleEditContract = (contract: any) => {
+  const handleEditContract = (contract: Contract) => {
     setEditingContract(contract)
     setIsModalOpen(true)
   }
+
+  if (loading) return <div className="text-[#cbd5e1]">Loading contracts…</div>
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-[#f8fafc] p-4 md:p-6">
@@ -37,11 +103,23 @@ export default function ContractsPage() {
             <ContractFilter />
           </div>
           <div className="overflow-x-auto">
-            <ContractsTable onEditContract={handleEditContract} />
+            <ContractsTable
+              contracts={contracts}
+              onEditContract={handleEditContract}
+              onDeleteContract={handleDeleteContract}
+            />
           </div>
         </div>
 
-        <ContractModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} contract={editingContract} />
+        <ContractModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false)
+            setEditingContract(null)
+          }}
+          contract={editingContract}
+          onSave={handleSaveContract}
+        />
       </div>
     </div>
   )

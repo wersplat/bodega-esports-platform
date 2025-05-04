@@ -20,7 +20,6 @@ function AdminBracketGenerator() {
       const data = await res.json();
       setLeagues(data);
     } catch (err) {
-      console.error(err);
       // Add specific error handling logic here
     }
   };
@@ -41,7 +40,6 @@ function AdminBracketGenerator() {
       if (!res.ok) throw new Error('Error generating bracket');
       setMessage('Bracket generated successfully!');
     } catch (err) {
-      console.error(err);
       // Add specific error handling logic here
       setMessage('Error creating bracket.');
     }

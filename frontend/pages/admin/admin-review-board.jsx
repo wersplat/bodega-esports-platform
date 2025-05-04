@@ -23,7 +23,7 @@ function AdminReviewBoard() {
       const data = await res.json();
       setSubmissions(data);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       setErrorMessage(err.message);
     } finally {
       setLoading(false);

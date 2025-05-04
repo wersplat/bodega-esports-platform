@@ -41,7 +41,7 @@ export default function AdminRosterLock() {
       const data = await res.json();
       setLeagues(data);
     } catch (err) {
-      console.error('Failed to load leagues', err);
+      // console.error('Failed to load leagues', err);
     }
   };
 
@@ -51,7 +51,7 @@ export default function AdminRosterLock() {
       const data = await res.json();
       setSeasons(data);
     } catch (err) {
-      console.error('Failed to load seasons', err);
+      // console.error('Failed to load seasons', err);
     }
   };
 

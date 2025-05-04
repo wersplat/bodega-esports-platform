@@ -1,21 +1,22 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Upload } from "lucide-react"
+import type { Contract } from "@/types/contract"
 
 interface ContractModalProps {
   isOpen: boolean
   onClose: () => void
-  contract?: any
+  contract?: Contract | null
+  onSave: (contractData: Partial<Contract>) => Promise<any>
 }
 
-export function ContractModal({ isOpen, onClose, contract }: ContractModalProps) {
+export function ContractModal({ isOpen, onClose, contract, onSave }: ContractModalProps) {
   const [formData, setFormData] = useState({
     player: "",
     team: "",
@@ -28,8 +29,8 @@ export function ContractModal({ isOpen, onClose, contract }: ContractModalProps)
   useEffect(() => {
     if (contract) {
       setFormData({
-        player: contract.player.name,
-        team: contract.team.name,
+        player: contract.player.id,
+        team: contract.team.id,
         startDate: contract.startDate,
         endDate: contract.endDate,
         salary: contract.salary.replace("$", ""),
@@ -58,10 +59,25 @@ export function ContractModal({ isOpen, onClose, contract }: ContractModalProps)
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission logic here
-    console.log(formData)
+    await onSave({
+      player: {
+        id: formData.player,
+        name: "TODO: Fetch name", // TODO: Replace with real player name
+        avatar: "", // TODO: Replace with real avatar
+        tag: "", // TODO: Replace with real tag
+      },
+      team: {
+        id: formData.team,
+        name: "TODO: Fetch name", // TODO: Replace with real team name
+        logo: "", // TODO: Replace with real logo
+      },
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+      salary: `$${formData.salary}`,
+      // TODO: handle file upload and set fileUrl
+    })
     onClose()
   }
 
@@ -86,10 +102,11 @@ export function ContractModal({ isOpen, onClose, contract }: ContractModalProps)
               required
             >
               <option value="">Select Player</option>
-              <option value="John Doe">John Doe</option>
-              <option value="Jane Smith">Jane Smith</option>
-              <option value="Mike Johnson">Mike Johnson</option>
-              <option value="Sarah Williams">Sarah Williams</option>
+              {/* TODO: Dynamically load player options */}
+              <option value="1">John Doe</option>
+              <option value="2">Jane Smith</option>
+              <option value="3">Mike Johnson</option>
+              <option value="4">Sarah Williams</option>
             </select>
           </div>
 
@@ -106,10 +123,11 @@ export function ContractModal({ isOpen, onClose, contract }: ContractModalProps)
               required
             >
               <option value="">Select Team</option>
-              <option value="Team Alpha">Team Alpha</option>
-              <option value="Team Beta">Team Beta</option>
-              <option value="Team Gamma">Team Gamma</option>
-              <option value="Team Delta">Team Delta</option>
+              {/* TODO: Dynamically load team options */}
+              <option value="1">Team Alpha</option>
+              <option value="2">Team Beta</option>
+              <option value="3">Team Gamma</option>
+              <option value="4">Team Delta</option>
             </select>
           </div>
 

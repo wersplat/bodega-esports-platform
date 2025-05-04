@@ -24,7 +24,7 @@ function AdminSubmitResult() {
       const data = await res.json();
       setMatches(data);
     } catch (err) {
-      console.error('Failed to load matches', err);
+      // console.error('Failed to load matches', err);
     }
   };
 

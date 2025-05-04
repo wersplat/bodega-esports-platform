@@ -26,8 +26,7 @@ function AdminAddTeam() {
       const data = await res.json();
       setLeagues(data);
     } catch (err) {
-      console.error('Failed to fetch leagues:', err);
-      // Consider retrying the request or showing a user-friendly error message
+      // console.error('Failed to fetch leagues:', err);
     }
   };
 
@@ -37,8 +36,7 @@ function AdminAddTeam() {
       const data = await res.json();
       setSeasons(data);
     } catch (err) {
-      console.error('Failed to fetch seasons:', err);
-      // Consider retrying the request or showing a user-friendly error message
+      // console.error('Failed to fetch seasons:', err);
     }
   };
 
