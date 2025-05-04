@@ -22,12 +22,12 @@ export default function VerifyEmailPage() {
           </svg>
           <h2 className="mt-6 text-2xl font-bold">Check your email</h2>
           <p className="mt-2 text-[#94a3b8]">
-            We've sent a verification link to your email address. Please check your inbox and click the link to verify
+            We&apos;ve sent a verification link to your email address. Please check your inbox and click the link to verify
             your account.
           </p>
           <div className="mt-6">
             <p className="text-sm text-[#94a3b8]">
-              If you don't receive an email within a few minutes, check your spam folder or request a new verification
+              If you don&apos;t receive an email within a few minutes, check your spam folder or request a new verification
               link.
             </p>
           </div>
