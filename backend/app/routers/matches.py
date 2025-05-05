@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from app.utils.discord import send_discord_webhook
 from app.database import get_db
 from app.models.models import Match
+from app.schemas.match import MatchRead
+from typing import List
 
 router = APIRouter(
     prefix="/matches",
@@ -19,8 +21,7 @@ async def create_match():
     # send_discord_webhook(content="New match scheduled!", webhook_url=webhook_url)
     pass
 
-@router.get("/")
-# (Optional) response_model=List[MatchRead]
+@router.get("/", response_model=List[MatchRead])
 async def list_matches(db: Session = Depends(get_db)):
     """
     List all matches.
