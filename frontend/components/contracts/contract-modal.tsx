@@ -15,9 +15,10 @@ interface ContractModalProps {
   onClose: () => void
   contract?: Contract | null
   onSave: (contractData: Partial<Contract>) => Promise<any>
+  isContractAdmin?: boolean
 }
 
-export function ContractModal({ isOpen, onClose, contract, onSave }: ContractModalProps) {
+export function ContractModal({ isOpen, onClose, contract, onSave, isContractAdmin }: ContractModalProps) {
   const [formData, setFormData] = useState({
     player: "",
     team: "",
@@ -103,47 +104,68 @@ export function ContractModal({ isOpen, onClose, contract, onSave }: ContractMod
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="player" className="text-sm font-medium">
-              Player
-            </Label>
-            <select
-              id="player"
-              name="player"
-              value={formData.player}
-              onChange={handleInputChange}
-              className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]"
-              required
-            >
-              <option value="">Select Player</option>
-              {/* TODO: Dynamically load player options */}
-              <option value="1">John Doe</option>
-              <option value="2">Jane Smith</option>
-              <option value="3">Mike Johnson</option>
-              <option value="4">Sarah Williams</option>
-            </select>
-          </div>
+          {/* Admin-only fields: Player and Team selection */}
+          {isContractAdmin ? (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="player" className="text-sm font-medium">
+                  Player
+                </Label>
+                <select
+                  id="player"
+                  name="player"
+                  value={formData.player}
+                  onChange={handleInputChange}
+                  className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]"
+                  required
+                >
+                  <option value="">Select Player</option>
+                  {/* TODO: Dynamically load player options */}
+                  <option value="1">John Doe</option>
+                  <option value="2">Jane Smith</option>
+                  <option value="3">Mike Johnson</option>
+                  <option value="4">Sarah Williams</option>
+                </select>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="team" className="text-sm font-medium">
-              Team
-            </Label>
-            <select
-              id="team"
-              name="team"
-              value={formData.team}
-              onChange={handleInputChange}
-              className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]"
-              required
-            >
-              <option value="">Select Team</option>
-              {/* TODO: Dynamically load team options */}
-              <option value="1">Team Alpha</option>
-              <option value="2">Team Beta</option>
-              <option value="3">Team Gamma</option>
-              <option value="4">Team Delta</option>
-            </select>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="team" className="text-sm font-medium">
+                  Team
+                </Label>
+                <select
+                  id="team"
+                  name="team"
+                  value={formData.team}
+                  onChange={handleInputChange}
+                  className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]"
+                  required
+                >
+                  <option value="">Select Team</option>
+                  {/* TODO: Dynamically load team options */}
+                  <option value="1">Team Alpha</option>
+                  <option value="2">Team Beta</option>
+                  <option value="3">Team Gamma</option>
+                  <option value="4">Team Delta</option>
+                </select>
+              </div>
+            </>
+          ) : (
+            // Non-admins: show player/team as read-only (or hide)
+            <>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Player</Label>
+                <div className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] flex items-center">
+                  {contract?.player?.name || "-"}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Team</Label>
+                <div className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] flex items-center">
+                  {contract?.team?.name || "-"}
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
