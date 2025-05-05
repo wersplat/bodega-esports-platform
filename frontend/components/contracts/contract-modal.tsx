@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Upload } from "lucide-react"
 import type { Contract } from "@/types/contract"
+import { supabase } from "@/lib/supabase"
 
 interface ContractModalProps {
   isOpen: boolean
@@ -25,6 +26,7 @@ export function ContractModal({ isOpen, onClose, contract, onSave }: ContractMod
     salary: "",
     file: null as File | null,
   })
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     if (contract) {
@@ -61,22 +63,34 @@ export function ContractModal({ isOpen, onClose, contract, onSave }: ContractMod
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setUploading(true)
+    let fileUrl = contract?.fileUrl || ""
+    if (formData.file) {
+      const fileExt = formData.file.name.split('.').pop()
+      const filePath = `contract-${Date.now()}.${fileExt}`
+      const { error: uploadError } = await supabase.storage.from("contracts").upload(filePath, formData.file)
+      if (!uploadError) {
+        const { data: publicUrlData } = supabase.storage.from("contracts").getPublicUrl(filePath)
+        fileUrl = publicUrlData.publicUrl
+      }
+    }
+    setUploading(false)
     await onSave({
       player: {
         id: formData.player,
-        name: "TODO: Fetch name", // TODO: Replace with real player name
-        avatar: "", // TODO: Replace with real avatar
-        tag: "", // TODO: Replace with real tag
+        name: "TODO: Fetch name",
+        avatar: "",
+        tag: "",
       },
       team: {
         id: formData.team,
-        name: "TODO: Fetch name", // TODO: Replace with real team name
-        logo: "", // TODO: Replace with real logo
+        name: "TODO: Fetch name",
+        logo: "",
       },
       startDate: formData.startDate,
       endDate: formData.endDate,
       salary: `$${formData.salary}`,
-      // TODO: handle file upload and set fileUrl
+      fileUrl,
     })
     onClose()
   }
@@ -213,8 +227,8 @@ export function ContractModal({ isOpen, onClose, contract, onSave }: ContractMod
             >
               Cancel
             </Button>
-            <Button type="submit" className="bg-[#e11d48] hover:bg-[#e11d48]/90 text-white">
-              {contract ? "Update Contract" : "Create Contract"}
+            <Button type="submit" className="bg-[#e11d48] hover:bg-[#e11d48]/90 text-white" disabled={uploading}>
+              {uploading ? "Uploading..." : contract ? "Update Contract" : "Create Contract"}
             </Button>
           </DialogFooter>
         </form>

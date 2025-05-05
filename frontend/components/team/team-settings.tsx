@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card } from "../ui/card"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
@@ -10,6 +10,8 @@ import { Label } from "../ui/label"
 import { Save } from "lucide-react"
 import { TeamLogoUpload } from "./team-logo-upload"
 import type { Team } from "@/types/team"
+import { useTeam } from "@/hooks/use-team"
+import { supabase } from "@/lib/supabase"
 
 interface TeamSettingsProps {
   team: Team
@@ -29,6 +31,50 @@ export function TeamSettings({ team, isAdmin, onUpdateTeam }: TeamSettingsProps)
     home_court: team.home_court || "",
     logo_url: team.logo_url,
   })
+
+  const { resendInvite, cancelInvite } = useTeam(team.id)
+  const [pendingInvites, setPendingInvites] = useState<any[]>([])
+  const [inviteLoading, setInviteLoading] = useState(false)
+  const [inviteMessage, setInviteMessage] = useState("")
+
+  useEffect(() => {
+    async function fetchInvites() {
+      if (!team?.id) return
+      const { data } = await supabase
+        .from("team_invitations")
+        .select("*")
+        .eq("team_id", team.id)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
+      setPendingInvites(data || [])
+    }
+    fetchInvites()
+  }, [team?.id])
+
+  async function handleResend(invite: any) {
+    setInviteLoading(true)
+    setInviteMessage("")
+    try {
+      await resendInvite(invite)
+      setInviteMessage("Invitation resent.")
+    } catch {
+      setInviteMessage("Failed to resend invitation.")
+    }
+    setInviteLoading(false)
+  }
+
+  async function handleCancel(inviteId: string) {
+    setInviteLoading(true)
+    setInviteMessage("")
+    try {
+      await cancelInvite(inviteId)
+      setPendingInvites((prev) => prev.filter((i) => i.id !== inviteId))
+      setInviteMessage("Invitation cancelled.")
+    } catch {
+      setInviteMessage("Failed to cancel invitation.")
+    }
+    setInviteLoading(false)
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -189,6 +235,25 @@ export function TeamSettings({ team, isAdmin, onUpdateTeam }: TeamSettingsProps)
               )}
             </div>
           </div>
+
+          {/* Pending Invitations Section */}
+          {isEditing && pendingInvites.length > 0 && (
+            <div className="mb-6">
+              <h4 className="font-semibold mb-2 text-[#f8fafc]">Pending Invitations</h4>
+              <div className="space-y-2">
+                {pendingInvites.map(invite => (
+                  <div key={invite.id} className="flex items-center justify-between p-2 border-b border-[#1e293b]">
+                    <span className="text-[#94a3b8]">{invite.email} ({invite.role})</span>
+                    <div className="flex gap-2">
+                      <Button size="sm" onClick={() => handleResend(invite)} disabled={inviteLoading}>Resend</Button>
+                      <Button size="sm" variant="destructive" onClick={() => handleCancel(invite.id)} disabled={inviteLoading}>Cancel</Button>
+                    </div>
+                  </div>
+                ))}
+                {inviteMessage && <div className="text-green-500 text-sm mt-2">{inviteMessage}</div>}
+              </div>
+            </div>
+          )}
 
           {isEditing && (
             <div className="flex justify-end">

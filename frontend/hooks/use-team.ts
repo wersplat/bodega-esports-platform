@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/components/auth/auth-provider"
 import type { Team, TeamMember, TeamStats } from "@/types/team"
+import axios from "axios"
+import { v4 as uuidv4 } from "uuid"
 
 export function useTeam(teamId?: string) {
   const { user } = useAuth()
@@ -155,59 +157,78 @@ export function useTeam(teamId?: string) {
     }
 
     try {
-      // First, find the user by email
-      const { data: userDataResult, error: userError } = await supabase
-        .from("users")
-        .select("id, full_name, avatar_url, username")
+      // Always create an invitation record
+      const token = uuidv4()
+      const { data: invitee, error: userError } = await supabase
+        .from("profiles")
+        .select("id")
         .eq("email", userData.email)
         .single()
 
-      if (userError) {
-        return { success: false, message: "User not found with that email" }
+      if (!invitee) {
+        // User not found, create pending invite and send email
+        await supabase.from("team_invitations").insert({
+          team_id: team.id,
+          email: userData.email,
+          role: userData.role,
+          invited_by: user?.id || null,
+          token,
+          status: "pending"
+        })
+        // Send invite email (call API endpoint)
+        await axios.post("/api/invite-team-member", {
+          email: userData.email,
+          teamId: team.id,
+          role: userData.role,
+          token,
+          invitedBy: user?.id || null
+        })
+        return { success: true, message: "Invitation email sent to user." }
+      } else {
+        // User exists, add to team and mark invite as accepted
+        await supabase.from("team_members").insert({
+          user_id: invitee.id,
+          team_id: team.id,
+          role: userData.role,
+          position: userData.position || null,
+          jersey_number: userData.jersey_number || null,
+          status: "active",
+          joined_at: new Date().toISOString()
+        })
+        await supabase.from("team_invitations").insert({
+          team_id: team.id,
+          email: userData.email,
+          role: userData.role,
+          invited_by: user?.id || null,
+          token,
+          status: "accepted",
+          accepted_at: new Date().toISOString()
+        })
+        return { success: true, message: "User added to team." }
       }
-
-      // Check if user is already a member of this team
-      const { data: existingMember, error: memberError } = await supabase
-        .from("team_members")
-        .select("id")
-        .eq("user_id", userDataResult.id)
-        .eq("team_id", team.id)
-        .single()
-
-      if (existingMember) {
-        return { success: false, message: "User is already a member of this team" }
-      }
-
-      // Add the user to the team
-      const newMember = {
-        user_id: userDataResult.id,
-        team_id: team.id,
-        role: userData.role,
-        position: userData.position || null,
-        jersey_number: userData.jersey_number || null,
-        status: "active",
-        joined_at: new Date().toISOString(),
-      }
-
-      const { data: insertData, error: insertError } = await supabase.from("team_members").insert([newMember]).select()
-
-      if (insertError) {
-        throw insertError
-      }
-
-      // Add the new member to the local state
-      const addedMember = {
-        ...insertData[0],
-        user: userDataResult,
-      } as unknown as TeamMember
-
-      setMembers((prev) => [...prev, addedMember])
-
-      return { success: true, message: "Member added successfully" }
     } catch (err: any) {
       console.error("Error adding team member:", err)
       return { success: false, message: err.message || "Failed to add member" }
     }
+  }
+
+  // Resend invite
+  async function resendInvite(invite: any) {
+    await axios.post("/api/invite-team-member", {
+      email: invite.email,
+      teamId: invite.team_id,
+      role: invite.role,
+      token: invite.token,
+      invitedBy: invite.invited_by
+    })
+  }
+
+  // Cancel invite
+  async function cancelInvite(inviteId: string) {
+    await supabase
+      .from("team_invitations")
+      .update({ status: "cancelled", cancelled_at: new Date().toISOString() })
+      .eq("id", inviteId)
   }
 
   async function updateTeamMember(
@@ -221,6 +242,15 @@ export function useTeam(teamId?: string) {
   ): Promise<{ success: boolean; message: string }> {
     if (!team || !isTeamAdmin) {
       return { success: false, message: "You don't have permission to update members" }
+    }
+
+    // Prevent demoting the only captain
+    const memberToUpdate = members.find((m) => m.id === memberId)
+    if (memberToUpdate && memberToUpdate.role === "captain" && updates.role && updates.role !== "captain") {
+      const numCaptains = members.filter((m) => m.role === "captain").length
+      if (numCaptains === 1) {
+        return { success: false, message: "Cannot demote the only team captain. Assign another captain first." }
+      }
     }
 
     try {
@@ -301,5 +331,7 @@ export function useTeam(teamId?: string) {
     updateTeamMember,
     removeTeamMember,
     updateTeam,
+    resendInvite,
+    cancelInvite,
   }
 } 

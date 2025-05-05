@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Edit, Trash2, UserPlus } from "lucide-react"
@@ -59,6 +59,62 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
   const [editPosition, setEditPosition] = useState("")
   const [editJerseyNumber, setEditJerseyNumber] = useState("")
   const [editStatus, setEditStatus] = useState<"active" | "injured" | "inactive">("active")
+
+  // Bulk selection state
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [bulkAction, setBulkAction] = useState<"" | "remove" | "role" | "status">("")
+  const [bulkValue, setBulkValue] = useState<string>("")
+  const [bulkMessage, setBulkMessage] = useState<string>("")
+
+  // Reset selection if members change
+  useEffect(() => { setSelectedIds([]) }, [members])
+
+  // Bulk select handlers
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id])
+  }
+  const selectAll = () => {
+    if (selectedIds.length === members.length) setSelectedIds([])
+    else setSelectedIds(members.map((m) => m.id))
+  }
+
+  // Bulk remove handler
+  const handleBulkRemove = async () => {
+    setIsSubmitting(true)
+    setBulkMessage("")
+    let removed = 0, skipped = 0
+    for (const id of selectedIds) {
+      const member = members.find((m) => m.id === id)
+      if (member?.role === "captain") { skipped++ } else {
+        const result = await onRemoveMember(id)
+        if (result.success) removed++
+      }
+    }
+    setBulkMessage(`Removed ${removed} member(s).${skipped ? ` Skipped ${skipped} captain(s).` : ""}`)
+    setIsSubmitting(false)
+    setBulkAction("")
+    setSelectedIds([])
+    setTimeout(() => setBulkMessage(""), 2000)
+  }
+
+  // Bulk update handler
+  const handleBulkUpdate = async (field: "role" | "status", value: string) => {
+    setIsSubmitting(true)
+    setBulkMessage("")
+    let updated = 0, skipped = 0
+    for (const id of selectedIds) {
+      const member = members.find((m) => m.id === id)
+      if (field === "role" && member?.role === "captain") { skipped++ } else {
+        const result = await onUpdateMember(id, { [field]: value })
+        if (result.success) updated++
+      }
+    }
+    setBulkMessage(`Updated ${updated} member(s).${skipped ? ` Skipped ${skipped} captain(s).` : ""}`)
+    setIsSubmitting(false)
+    setBulkAction("")
+    setSelectedIds([])
+    setTimeout(() => setBulkMessage(""), 2000)
+  }
 
   const handleAddMember = async () => {
     setIsSubmitting(true)
@@ -272,10 +328,65 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
         )}
       </div>
 
+      {/* Bulk Actions Bar */}
+      {isAdmin && selectedIds.length > 0 && (
+        <div className="mb-4 p-3 rounded-lg bg-[#1e293b] border border-[#0f172a] flex items-center gap-4 animate-fade-in">
+          <span className="text-[#e11d48] font-semibold">{selectedIds.length} selected</span>
+          <Button size="sm" variant="destructive" onClick={() => setBulkAction("remove")}>Remove</Button>
+          <Button size="sm" variant="outline" onClick={() => setBulkAction("role")}>Change Role</Button>
+          <Button size="sm" variant="outline" onClick={() => setBulkAction("status")}>Change Status</Button>
+          {bulkMessage && <span className="ml-4 text-green-500 text-sm">{bulkMessage}</span>}
+        </div>
+      )}
+      {/* Bulk Action Dialogs */}
+      <Dialog open={bulkAction === "remove"} onOpenChange={() => setBulkAction("")}> <DialogContent>
+        <DialogHeader><DialogTitle>Remove Selected Members</DialogTitle></DialogHeader>
+        <div className="py-2 text-[#f8fafc]">Are you sure you want to remove these members? Captains will be skipped.</div>
+        <ul className="mb-2 text-[#94a3b8] text-sm max-h-32 overflow-y-auto">
+          {selectedIds.map(id => {
+            const m = members.find(x => x.id === id)
+            return <li key={id}>{m?.user.full_name} ({m?.role})</li>
+          })}
+        </ul>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setBulkAction("")}>Cancel</Button>
+          <Button variant="destructive" onClick={handleBulkRemove} disabled={isSubmitting}>Remove</Button>
+        </DialogFooter>
+      </DialogContent></Dialog>
+      <Dialog open={bulkAction === "role"} onOpenChange={() => setBulkAction("")}> <DialogContent>
+        <DialogHeader><DialogTitle>Change Role</DialogTitle></DialogHeader>
+        <div className="py-2 text-[#f8fafc]">Set a new role for selected members. Captains will be skipped.</div>
+        <select className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] mb-4" value={bulkValue} onChange={e => setBulkValue(e.target.value)}>
+          <option value="">Select Role</option>
+          <option value="player">Player</option>
+          <option value="coach">Coach</option>
+          <option value="manager">Manager</option>
+        </select>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setBulkAction("")}>Cancel</Button>
+          <Button onClick={() => handleBulkUpdate("role", bulkValue)} disabled={!bulkValue || isSubmitting}>Change Role</Button>
+        </DialogFooter>
+      </DialogContent></Dialog>
+      <Dialog open={bulkAction === "status"} onOpenChange={() => setBulkAction("")}> <DialogContent>
+        <DialogHeader><DialogTitle>Change Status</DialogTitle></DialogHeader>
+        <div className="py-2 text-[#f8fafc]">Set a new status for selected members.</div>
+        <select className="w-full h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] mb-4" value={bulkValue} onChange={e => setBulkValue(e.target.value)}>
+          <option value="">Select Status</option>
+          <option value="active">Active</option>
+          <option value="injured">Injured</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setBulkAction("")}>Cancel</Button>
+          <Button onClick={() => handleBulkUpdate("status", bulkValue)} disabled={!bulkValue || isSubmitting}>Change Status</Button>
+        </DialogFooter>
+      </DialogContent></Dialog>
+
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
+              {isAdmin && <TableHead><input type="checkbox" checked={selectedIds.length === members.length && members.length > 0} onChange={selectAll} className="accent-[#e11d48]" /></TableHead>}
               <TableHead>Member</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Position</TableHead>
@@ -287,6 +398,7 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
           <TableBody>
             {members.map((member) => (
               <TableRow key={member.id}>
+                {isAdmin && <TableCell><input type="checkbox" checked={selectedIds.includes(member.id)} onChange={() => toggleSelect(member.id)} className="accent-[#e11d48]" /></TableCell>}
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-full bg-[#0f172a] flex items-center justify-center overflow-hidden">

@@ -1,5 +1,6 @@
 import type { TeamStats } from "@/types/team"
 import { Card } from "../ui/card"
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 
 interface TeamStatsDisplayProps {
   stats: TeamStats
@@ -8,6 +9,17 @@ interface TeamStatsDisplayProps {
 export function TeamStatsDisplay({ stats }: TeamStatsDisplayProps) {
   const winPercentage =
     stats.wins + stats.losses > 0 ? ((stats.wins / (stats.wins + stats.losses)) * 100).toFixed(1) : "0.0"
+
+  // Prepare data for charts
+  const chartData = [
+    { name: 'Wins', value: stats.wins },
+    { name: 'Losses', value: stats.losses },
+    { name: 'PPG', value: stats.points_per_game },
+    { name: 'APG', value: stats.assists_per_game },
+    { name: 'RPG', value: stats.rebounds_per_game },
+    { name: 'SPG', value: stats.steals_per_game },
+    { name: 'BPG', value: stats.blocks_per_game },
+  ]
 
   return (
     <Card>
@@ -52,6 +64,19 @@ export function TeamStatsDisplay({ stats }: TeamStatsDisplayProps) {
             <p className="text-lg font-bold">{stats.blocks_per_game.toFixed(1)}</p>
             <p className="text-xs text-[#94a3b8]">BLK</p>
           </div>
+        </div>
+
+        <div className="w-full h-64 mt-8">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData.slice(2)} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis dataKey="name" stroke="#94a3b8" />
+              <YAxis stroke="#94a3b8" />
+              <Tooltip contentStyle={{ background: '#0f172a', border: 'none', color: '#f8fafc' }} />
+              <Legend wrapperStyle={{ color: '#f8fafc' }} />
+              <Bar dataKey="value" fill="#38bdf8" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </Card>
