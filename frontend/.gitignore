@@ -9,6 +9,7 @@ out
 # dotenv
 .env
 .env.*.local
+.env.production
 
 # Vercel
 .vercel
