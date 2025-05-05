@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
 from app.utils.discord import send_discord_webhook
+from app.database import get_db
+from app.models.models import Match
 
 router = APIRouter(
     prefix="/matches",
@@ -15,6 +17,15 @@ async def create_match():
     # webhook_url = fetch_webhook_url(webhook_type="match_created")
     # send_discord_webhook(content="New match scheduled!", webhook_url=webhook_url)
     pass
+
+@router.get("/")
+# (Optional) response_model=List[MatchRead]
+async def list_matches(db: Session = Depends(get_db)):
+    """
+    List all matches.
+    """
+    matches = db.query(Match).all()
+    return matches
 
 @router.get("/{match_id}")
 async def get_match(match_id: str):
