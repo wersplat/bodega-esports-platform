@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 from app.utils.discord import send_discord_webhook
 from app.database import get_db
 from app.models.models import Match
