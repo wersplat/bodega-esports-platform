@@ -3,7 +3,7 @@
 import type React from "react"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { BarChart3, Calendar, Home, Settings, Shield, Upload, Users, UserCircle, LogOut } from "lucide-react"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -14,6 +14,7 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function Sidebar({ className, ...props }: SidebarProps) {
   const pathname = usePathname()
   const { user, signOut } = useAuth()
+  const router = useRouter()
 
   const routes = [
     {
@@ -109,19 +110,28 @@ export function Sidebar({ className, ...props }: SidebarProps) {
       </nav>
 
       <div className="mt-auto pt-4 border-t border-[#0f172a]">
-        <div className="flex items-center gap-3 px-3 py-2">
-          <div className="h-8 w-8 rounded-full bg-[#e11d48] flex items-center justify-center text-[#f8fafc]">
-            {userInitials}
+        {user ? (
+          <div className="flex items-center gap-3 px-3 py-2">
+            <div className="h-8 w-8 rounded-full bg-[#e11d48] flex items-center justify-center text-[#f8fafc]">
+              {userInitials}
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium truncate">{userName}</p>
+              <p className="text-xs text-[#94a3b8]">{userRole}</p>
+            </div>
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => signOut()} title="Sign Out">
+              <LogOut className="h-4 w-4" />
+              <span className="sr-only">Sign Out</span>
+            </Button>
           </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium truncate">{userName}</p>
-            <p className="text-xs text-[#94a3b8]">{userRole}</p>
+        ) : (
+          <div className="flex items-center justify-between px-3 py-2">
+            <span className="text-sm text-[#94a3b8]">Not logged in</span>
+            <Button size="sm" className="bg-[#e11d48] text-[#f8fafc]" onClick={() => router.push('/auth/login')}>
+              Login
+            </Button>
           </div>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => signOut()} title="Sign Out">
-            <LogOut className="h-4 w-4" />
-            <span className="sr-only">Sign Out</span>
-          </Button>
-        </div>
+        )}
       </div>
     </div>
   )

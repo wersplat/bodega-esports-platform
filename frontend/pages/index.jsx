@@ -1,6 +1,7 @@
 // frontend/pages/index.jsx
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
@@ -17,7 +18,9 @@ export default function HomePage() {
       <section className="flex-1 flex flex-col items-center justify-center py-20">
         <h1 className="text-5xl font-extrabold mb-4 text-[#f8fafc] text-center drop-shadow-lg">Bodega Esports Platform</h1>
         <p className="mb-8 text-xl text-muted-foreground text-center max-w-xl">Compete, connect, and climb the leaderboards. Join the next generation of esports tournaments and communities.</p>
-        <Button size="lg" className="px-8 py-4 text-lg font-semibold">Get Started</Button>
+        <Link href="/auth/register" passHref legacyBehavior>
+          <Button size="lg" className="px-8 py-4 text-lg font-semibold">Get Started</Button>
+        </Link>
       </section>
 
       {/* Features Section */}
