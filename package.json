@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@plasmicapp/loader-nextjs": "^1.0.424",
+    "@plasmicapp/react-web": "^0.2.384",
     "@radix-ui/react-accordion": "^1.2.8",
     "@radix-ui/react-alert-dialog": "^1.1.11",
     "@radix-ui/react-aspect-ratio": "^1.1.4",
