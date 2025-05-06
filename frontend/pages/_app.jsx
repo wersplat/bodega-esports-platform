@@ -5,6 +5,7 @@ import { Sidebar } from '@/components/ui/sidebar'
 import { useEffect } from 'react'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { Drawer, DrawerTrigger, DrawerContent } from '@/components/ui/drawer'
+import { PLASMIC } from '@/plasmic-init'
 
 export default function App({ Component, pageProps }) {
   useEffect(() => {
