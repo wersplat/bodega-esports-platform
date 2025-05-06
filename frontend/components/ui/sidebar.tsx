@@ -75,7 +75,16 @@ export function Sidebar({ className, ...props }: SidebarProps) {
   const userRole = "Team Captain"
 
   return (
-    <div className={cn("w-64 bg-[#1e293b] p-4 flex flex-col h-screen", className)} {...props}>
+    <div
+      className={cn("w-64 p-4 flex flex-col h-screen relative overflow-hidden", className)}
+      style={{
+        backgroundImage: "linear-gradient(rgba(15,23,42,0.85), rgba(15,23,42,0.85)), url('/img/BG.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+      {...props}
+    >
       <div className="mb-8 px-2">
         <h1 className="text-xl font-bold text-[#f8fafc]">Bodega Esports</h1>
         <p className="text-sm text-[#94a3b8]">Road to $25K</p>
