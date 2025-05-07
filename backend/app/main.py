@@ -75,6 +75,7 @@ app.include_router(seasons.router)
 app.include_router(leagues.router)
 app.include_router(events.router)
 app.include_router(standings.router)
+app.include_router(users.router, prefix="/api/users", tags=["users"])
 
 # Scheduler setup
 
