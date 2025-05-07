@@ -26,7 +26,7 @@ class ProfileRead(ProfileBase):
     discord_id: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ProfileUpdate(BaseModel):
     username: Optional[str] = None
