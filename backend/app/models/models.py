@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Index  # noqa
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Index, Boolean, Float, ARRAY  # noqa
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -20,7 +20,23 @@ class Team(Base):
 
 class Profile(Base):
     __tablename__ = 'profiles'
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True)  # uuid as string
+    username = Column(String, nullable=True)
+    display_name = Column(String, nullable=True)
+    platform = Column(String, nullable=True)
+    gamer_tag = Column(String, nullable=True)
+    avatar_url = Column(String, nullable=True)
+    is_admin = Column(Boolean, nullable=True, default=False)
+    created_at = Column(DateTime(timezone=True), nullable=False)
+    positions = Column(String, nullable=True)
+    career_ppg = Column(Float, nullable=True)
+    career_apg = Column(Float, nullable=True)
+    career_rpg = Column(Float, nullable=True)
+    email = Column(String, unique=True, nullable=True)
+    role = Column(String, nullable=True, default='player')
+    preferred_positions = Column(ARRAY(String), nullable=True)
+    photo_url = Column(String, nullable=True)
+    discord_id = Column(String, nullable=True)
     player_stats = relationship("PlayerStat", back_populates="profile")
 
 
