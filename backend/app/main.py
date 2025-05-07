@@ -5,7 +5,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-
+from app.routers.seasons     import router as seasons_router
+from app.routers.teams       import router as teams_router
+from app.routers.rosters     import router as rosters_router
 # Add backend directory to path (only if strictly needed)
 backend_path = Path(__file__).resolve().parents[1]
 sys.path.append(str(backend_path))
@@ -71,7 +73,9 @@ app.include_router(seasons.router)
 # app.include_router(divisions_router,  prefix="/api/divisions",  tags=["divisions"])
 app.include_router(leaderboard.router)
 # app.include_router(webhooks_router,   prefix="/api/webhooks",   tags=["webhooks"])
-
+app.include_router(seasons_router, prefix="/api/seasons", tags=["seasons"])
+app.include_router(teams_router,   prefix="/api/teams",   tags=["teams"])
+app.include_router(rosters_router, prefix="/api/rosters", tags=["rosters"])
 # app.include_router(players_router,    prefix="/api/players",    tags=["players"])
 # app.include_router(matches_router,    prefix="/api/matches",    tags=["matches"])
 app.include_router(matches.router)
