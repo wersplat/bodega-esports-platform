@@ -1,4 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, Index, Boolean, Float, ARRAY  # noqa
+from sqlalchemy import (
+    Column, Integer, String, ForeignKey, DateTime, Text,
+    Boolean, Float, ARRAY
+)
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -7,9 +10,39 @@ class League(Base):
     __tablename__ = 'leagues'
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    settings = relationship(
-        "LeagueSettings", uselist=False, back_populates="league"
-    )
+
+    settings = relationship("LeagueSettings", uselist=False, back_populates="league")
+    seasons = relationship("Season", back_populates="league")
+
+
+class Season(Base):
+    __tablename__ = 'seasons'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    league_id = Column(Integer, ForeignKey('leagues.id'))
+
+    league = relationship("League", back_populates="seasons")
+    divisions = relationship("Division", back_populates="season")
+    rosters = relationship("Roster", back_populates="season")
+
+
+class Division(Base):
+    __tablename__ = 'divisions'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    season_id = Column(Integer, ForeignKey('seasons.id'))
+    conference_id = Column(Integer, ForeignKey('conferences.id'))
+
+    season = relationship("Season", back_populates="divisions")
+    conference = relationship("Conference", back_populates="divisions")
+
+
+class Conference(Base):
+    __tablename__ = 'conferences'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+
+    divisions = relationship("Division", back_populates="conference")
 
 
 class Team(Base):
@@ -17,10 +50,13 @@ class Team(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
 
+    rosters = relationship("Roster", back_populates="team")
+    match_submissions = relationship("MatchSubmission", back_populates="team")
 
-class Profile(Base):
+
+class Profile(Base):  # = users
     __tablename__ = 'profiles'
-    id = Column(String, primary_key=True)  # uuid as string
+    id = Column(String, primary_key=True)  # UUID as string
     username = Column(String, nullable=True)
     display_name = Column(String, nullable=True)
     platform = Column(String, nullable=True)
@@ -37,119 +73,87 @@ class Profile(Base):
     preferred_positions = Column(ARRAY(String), nullable=True)
     photo_url = Column(String, nullable=True)
     discord_id = Column(String, nullable=True)
+
     player_stats = relationship("PlayerStat", back_populates="profile")
+    rosters = relationship("Roster", back_populates="profile")
+    roles = relationship("UserRole", back_populates="profile")
 
 
-class Notification(Base):
-    __tablename__ = 'notifications'
+class Roster(Base):
+    __tablename__ = 'rosters'
     id = Column(Integer, primary_key=True)
+    profile_id = Column(String, ForeignKey('profiles.id'))
+    team_id = Column(Integer, ForeignKey('teams.id'))
+    season_id = Column(Integer, ForeignKey('seasons.id'))
+    is_captain = Column(Boolean, default=False)
+    joined_at = Column(DateTime(timezone=True))
+
+    profile = relationship("Profile", back_populates="rosters")
+    team = relationship("Team", back_populates="rosters")
+    season = relationship("Season", back_populates="rosters")
+
+
+class Role(Base):
+    __tablename__ = 'roles'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False, unique=True)  # e.g., player, captain, staff
+    description = Column(Text)
+
+
+class UserRole(Base):
+    __tablename__ = 'user_roles'
+    id = Column(Integer, primary_key=True)
+    profile_id = Column(String, ForeignKey('profiles.id'))
+    role_id = Column(Integer, ForeignKey('roles.id'))
+    context = Column(String, nullable=True)  # optional: league/season/etc.
+
+    profile = relationship("Profile", back_populates="roles")
+    role = relationship("Role", back_populates="users")
+
+
+Role.users = relationship("UserRole", back_populates="role")
 
 
 class Match(Base):
     __tablename__ = 'matches'
     id = Column(Integer, primary_key=True)
+    # You can add team1_id, team2_id, season_id, etc.
 
-
-class Registration(Base):
-    __tablename__ = 'registrations'
-    id = Column(Integer, primary_key=True)
-
-
-# Define the Player model
-class Player(Base):
-    __tablename__ = 'players'
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    team_id = Column(Integer, ForeignKey('teams.id'))
-    team = relationship("Team", back_populates="players")
-
-
-# Add relationship to Team
-Team.players = relationship("Player", back_populates="team")
-
-
-# Ensure proper spacing before the Season model
-
-class Season(Base):
-    __tablename__ = 'seasons'
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    league_id = Column(Integer, ForeignKey('leagues.id'))
-    league = relationship("League", back_populates="seasons")
-
-
-# Add relationship to League
-League.seasons = relationship("Season", back_populates="league")
-
-
-# Define the Division model
-class Division(Base):
-    __tablename__ = 'divisions'
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    season_id = Column(Integer, ForeignKey('seasons.id'))
-    season = relationship("Season", back_populates="divisions")
-
-
-# Add relationship to Season
-Season.divisions = relationship("Division", back_populates="season")
-
-
-# Define the Conference model
-class Conference(Base):
-    __tablename__ = 'conferences'
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    divisions = relationship("Division", back_populates="conference")
-
-
-# Add relationship to Division
-Division.conference_id = Column(Integer, ForeignKey('conferences.id'))
-Division.conference = relationship("Conference", back_populates="divisions")
-
-
-# Define the Webhook model
-class Webhook(Base):
-    __tablename__ = 'webhooks'
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    url = Column(String, nullable=False)
-
-
-# Ensure proper spacing before and after the MatchSubmission model
 
 class MatchSubmission(Base):
     __tablename__ = 'match_submissions'
     id = Column(Integer, primary_key=True)
     match_id = Column(Integer, ForeignKey('matches.id'))
+    team_id = Column(Integer, ForeignKey('teams.id'))
+
     match = relationship("Match", back_populates="submissions")
+    team = relationship("Team", back_populates="match_submissions")
 
 
-# Add relationship to Match
 Match.submissions = relationship("MatchSubmission", back_populates="match")
 
 
-# Define the PlayerStat model
 class PlayerStat(Base):
     __tablename__ = 'player_stats'
     id = Column(Integer, primary_key=True)
-    player_id = Column(Integer, ForeignKey('players.id'))
-    # Foreign key to profiles
-    profile_id = Column(Integer, ForeignKey('profiles.id'))
-    player = relationship("Player", back_populates="player_stats")
-    profile = relationship("Profile", back_populates="player_stats")
+    profile_id = Column(String, ForeignKey('profiles.id'))
+    match_id = Column(Integer, ForeignKey('matches.id'))
     stat_type = Column(String, nullable=False)
     value = Column(Integer, nullable=False)
 
-
-# Add relationship to Player
-Player.player_stats = relationship("PlayerStat", back_populates="player")
+    profile = relationship("Profile", back_populates="player_stats")
+    match = relationship("Match", backref="player_stats")
 
 
 class LeagueSettings(Base):
     __tablename__ = 'league_settings'
     id = Column(Integer, primary_key=True)
     league_id = Column(Integer, ForeignKey('leagues.id'), nullable=False)
-    settings_json = Column(Text, nullable=True)  # Example field for settings
+    settings_json = Column(Text, nullable=True)
 
     league = relationship("League", back_populates="settings")
+
+
+class Notification(Base):
+    __tablename__ = 'notifications'
+    id = Column(Integer, primary_key=True)
