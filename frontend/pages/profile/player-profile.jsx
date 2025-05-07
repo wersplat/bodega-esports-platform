@@ -11,7 +11,7 @@ export default function PlayerProfile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch('https://api.bodegacatsgc.gg/profile/me');
+      const res = await fetch('https://api.bodegacatsgc.gg/auth/me');
       if (!res.ok) throw new Error('Failed to load profile');
       const data = await res.json();
       setProfile(data);

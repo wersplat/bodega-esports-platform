@@ -22,7 +22,7 @@ function Dashboard() {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch('https://api.bodegacatsgc.gg/profile/me');
+      const res = await fetch('https://api.bodegacatsgc.gg/auth/me');
       if (!res.ok) throw new Error('Not authenticated');
       const data = await res.json();
       setUser(data);

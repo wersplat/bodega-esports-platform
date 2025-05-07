@@ -19,7 +19,7 @@ export default function Admin() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("https://api.bodegacatsgc.gg/profile/me");
+        const res = await fetch("https://api.bodegacatsgc.gg/auth/me");
         if (!res.ok) throw new Error("Failed to load profile");
         const data = await res.json();
         if (!data.is_admin) throw new Error("Access denied");

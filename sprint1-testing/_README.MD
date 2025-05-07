@@ -52,7 +52,7 @@ Use manual substitution inside `.http`:
 
 1. Signup → Create a new user
 2. Login → Get `access_token`
-3. Fetch Profile → `/profile/me`
+3. Fetch Profile → `/auth/me`
 4. Update Profile → `/profile/update`
 5. Create Team → `/teams/create`
 6. Fetch Team → `/teams/{team_id}`

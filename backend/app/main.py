@@ -6,6 +6,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from fastapi.middleware.cors import CORSMiddleware
 
 # Local application imports
 from app.routers import (
@@ -37,6 +38,17 @@ backend_path = Path(__file__).resolve().parents[1]
 sys.path.append(str(backend_path))
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "https://dashboard.bodegacatsgc.gg"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Include routers
 app.include_router(seasons.router)
