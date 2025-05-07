@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi import APIRouter
 
 from app.database import get_db
-from app.models.models import Player
+# from app.models.models import Player
 from app.schemas.player import PlayerCreate, PlayerRead
 
 # Ensure the router is properly defined
