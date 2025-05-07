@@ -6,6 +6,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from app.api import users
 from fastapi.middleware.cors import CORSMiddleware
 
 # Local application imports
