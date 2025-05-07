@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from ..db import database  # your SQLAlchemy db engine or supabase client
+from app.database import database  # your SQLAlchemy db engine or supabase client
 from pydantic import BaseModel
 import uuid
 
