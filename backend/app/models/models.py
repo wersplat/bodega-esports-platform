@@ -1,7 +1,7 @@
 # backend/app/models/models.py
 
 from sqlalchemy import (
-    Column, String, Boolean, Date, DateTime, ForeignKey, func, Text
+    Column, String, Boolean, Date, DateTime, ForeignKey, func, Text, Integer
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
