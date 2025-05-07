@@ -26,6 +26,27 @@ from app.api.matches import router as matches_router
 # === Utils / Auth routers ===
 from app.utils.auth import router as auth_router
 from app.routers import profiles
+from app.routers import (
+    matches,
+    standings,
+    events,
+    leagues,
+    seasons,
+    notifications,
+    payments,
+    contracts,
+    discord,
+    divisions,
+    exports,
+    leaderboard,
+    match_submissions,
+    meta,
+    players,
+    player_stats,
+    stats,
+    stats_charts,
+    teams,
+)
 
 app = FastAPI()
 
@@ -52,6 +73,26 @@ app.include_router(webhooks_router,   prefix="/api/webhooks",   tags=["webhooks"
 
 app.include_router(players_router,    prefix="/api/players",    tags=["players"])
 app.include_router(matches_router,    prefix="/api/matches",    tags=["matches"])
+app.include_router(matches.router)
+app.include_router(standings.router)
+app.include_router(events.router)
+app.include_router(leagues.router)
+app.include_router(seasons.router)
+app.include_router(notifications.router)
+app.include_router(payments.router)
+app.include_router(contracts.router)
+app.include_router(discord.router)
+app.include_router(divisions.router)
+app.include_router(exports.router)
+app.include_router(leaderboard.router)
+app.include_router(match_submissions.router)
+app.include_router(meta.router)
+app.include_router(players.router)
+app.include_router(player_stats.router)
+app.include_router(profiles.router, prefix="/api/users", tags=["users"])
+app.include_router(stats.router)
+app.include_router(stats_charts.router)
+app.include_router(teams.router)
 # … include the rest of your routers exactly once each …
 
 # === Scheduler ===
