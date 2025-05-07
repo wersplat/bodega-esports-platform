@@ -43,6 +43,7 @@ from app.routers import (
     meta,
     players,
     player_stats,
+    profiles,
     stats,
     stats_charts,
     teams,
