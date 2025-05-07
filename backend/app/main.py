@@ -66,10 +66,10 @@ app.add_middleware(
 app.include_router(auth_router)
 
 # app.include_router(profiles.router, prefix="/api/users", tags=["users"])
-app.include_router(seasons_router,    prefix="/api/seasons",    tags=["seasons"])
+app.include_router(seasons.router)
 # app.include_router(teams_router,      prefix="/api/teams",      tags=["teams"])
 # app.include_router(divisions_router,  prefix="/api/divisions",  tags=["divisions"])
-app.include_router(leaderboard_router, prefix="/api/leaderboard", tags=["leaderboard"])
+app.include_router(leaderboard.router)
 # app.include_router(webhooks_router,   prefix="/api/webhooks",   tags=["webhooks"])
 
 # app.include_router(players_router,    prefix="/api/players",    tags=["players"])
