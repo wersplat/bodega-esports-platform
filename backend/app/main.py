@@ -18,13 +18,14 @@ from app.api.divisions import router as divisions_router
 from app.api.leaderboard import router as leaderboard_router
 from app.api.webhooks import router as webhooks_router
 
-# (and any others you’ve built in app.api: players, matches, etc.)
+# (and any others you've built in app.api: players, matches, etc.)
 from app.api.players import router as players_router
 from app.api.matches import router as matches_router
 # … etc. …
 
 # === Utils / Auth routers ===
 from app.utils.auth import router as auth_router
+from app.routers import profiles
 
 app = FastAPI()
 
@@ -42,7 +43,7 @@ app.add_middleware(
 # === Include all routers ===
 app.include_router(auth_router)
 
-app.include_router(users_router,      prefix="/api/users",      tags=["users"])
+app.include_router(profiles.router, prefix="/api/users", tags=["users"])
 app.include_router(seasons_router,    prefix="/api/seasons",    tags=["seasons"])
 app.include_router(teams_router,      prefix="/api/teams",      tags=["teams"])
 app.include_router(divisions_router,  prefix="/api/divisions",  tags=["divisions"])
