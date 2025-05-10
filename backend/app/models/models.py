@@ -141,3 +141,20 @@ class Webhook(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, nullable=False)
     url = Column(String, nullable=False)
+
+class Division(Base):
+    __tablename__ = 'divisions'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    season_id = Column(Integer, ForeignKey('seasons.id'))
+    conference_id = Column(Integer, ForeignKey('conferences.id'))
+
+    season = relationship("Season", back_populates="divisions")
+    conference = relationship("Conference", back_populates="divisions")
+
+class Conference(Base):
+    __tablename__ = 'conferences'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+
+    divisions = relationship("Division", back_populates="conference")
