@@ -84,6 +84,7 @@ class Team(Base):
     # relationships
     season = relationship("Season", back_populates="teams")
     rosters = relationship("Roster", back_populates="team")
+    match_submissions = relationship("MatchSubmission", back_populates="team")
 
 
 class Roster(Base):
