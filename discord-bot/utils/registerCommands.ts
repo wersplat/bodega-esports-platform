@@ -6,7 +6,7 @@ import { join } from 'path';
 export async function registerCommands() {
   // Detect if running from dist (production) or src (development)
   const isDist = __dirname.endsWith('dist') || __dirname.includes('/dist/');
-  const commandsDir = isDist ? join(__dirname, 'commands') : join(__dirname, '../commands');
+  const commandsDir = join(__dirname, '../commands');
   const ext = isDist ? '.js' : '.ts';
 
   const commands: any[] = [];
