@@ -1,18 +1,22 @@
-FROM python:3.11-slim
+# Use the official Node.js 20 LTS image
+FROM node:20-alpine
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Set work directory
+# Set the working directory
 WORKDIR /app
 
 # Install dependencies
-COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+COPY package*.json ./
+RUN npm ci --omit=dev
 
-# Copy project
+# Copy source code
 COPY . .
 
-# Run the bot
-CMD ["python", "bot.py"]
+# Build TypeScript
+RUN npm run build
+
+# (Optional) Use a non-root user for security
+# RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# USER appuser
+
+# Start the bot
+CMD ["node", "dist/main.js"]
