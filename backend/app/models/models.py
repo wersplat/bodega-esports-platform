@@ -9,6 +9,15 @@ from app.database import Base
 import uuid
 
 
+class League(Base):
+    __tablename__ = 'leagues'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+
+    settings = relationship("LeagueSettings", uselist=False, back_populates="league")
+    seasons = relationship("Season", back_populates="league")
+
+
 class Profile(Base):  # = users
     __tablename__ = 'profiles'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -55,8 +64,10 @@ class Season(Base):
     start_date = Column(Date, nullable=True)
     end_date = Column(Date, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    league_id = Column(Integer, ForeignKey('leagues.id'), nullable=True)
 
     # relationships
+    league = relationship("League", back_populates="seasons")
     teams = relationship("Team", back_populates="season")
     rosters = relationship("Roster", back_populates="season")
 
