@@ -4,11 +4,15 @@ import { readdirSync } from 'fs';
 import { join } from 'path';
 
 export async function registerCommands() {
+  // Detect if running from dist (production) or src (development)
+  const isDist = __dirname.endsWith('dist') || __dirname.includes('/dist/');
+  const commandsDir = isDist ? join(__dirname, 'commands') : join(__dirname, '../commands');
+  const ext = isDist ? '.js' : '.ts';
+
   const commands: any[] = [];
-  const commandsPath = join(__dirname, '../commands');
-  for (const file of readdirSync(commandsPath).filter(f => f.endsWith('.ts'))) {
+  for (const file of readdirSync(commandsDir).filter(f => f.endsWith(ext))) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { default: cmd } = require(join(commandsPath, file));
+    const { default: cmd } = require(join(commandsDir, file));
     commands.push(cmd.data.toJSON());
   }
 
