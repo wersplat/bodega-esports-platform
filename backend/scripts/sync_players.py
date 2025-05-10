@@ -10,9 +10,10 @@ SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE")
 
 # --- Init ---
 engine = create_engine(WP_DB_URL)
-metadata = MetaData(bind=engine)
+metadata = MetaData()
+metadata.reflect(bind=engine)
 wp_posts = Table("wp_posts", metadata, autoload_with=engine)
-wp_postmeta = Table("wp_postmeta", metadata, autoload_with=engine)
+
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
