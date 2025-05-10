@@ -1,8 +1,8 @@
 from .models import (
     League,
     Season,
-    Division,
-    Conference,
+    # Division,
+    # Conference,
     Team,
     Profile,
     Roster,
