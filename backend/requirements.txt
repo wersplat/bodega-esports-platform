@@ -13,4 +13,5 @@ requests
 oauth2client
 google-api-python-client
 python-multipart
+pymysql
 supabase
