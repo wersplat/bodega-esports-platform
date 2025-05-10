@@ -11,7 +11,7 @@ from .models import (
     Match,
     MatchSubmission,
     PlayerStat,
-    # LeagueSettings,
+    LeagueSettings,
     Notification
 )
 
@@ -28,6 +28,6 @@ __all__ = [
     "Match",
     "MatchSubmission",
     "PlayerStat",
-    #"LeagueSettings",
+    "LeagueSettings",
     "Notification",
 ]

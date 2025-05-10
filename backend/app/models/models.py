@@ -158,3 +158,10 @@ class Conference(Base):
     name = Column(String, nullable=False)
 
     divisions = relationship("Division", back_populates="conference")
+class LeagueSettings(Base):
+    __tablename__ = 'league_settings'
+    id = Column(Integer, primary_key=True)
+    league_id = Column(Integer, ForeignKey('leagues.id'), nullable=False)
+    settings_json = Column(Text, nullable=True)
+
+    league = relationship("League", back_populates="settings")
