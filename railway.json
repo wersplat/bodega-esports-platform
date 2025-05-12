@@ -1,0 +1,28 @@
+{
+  "services": [
+    {
+      "name": "backend",
+      "type": "web",
+      "path": "backend",
+      "buildCommand": "pip install -r requirements.txt",
+      "startCommand": "uvicorn app.main:app --host 0.0.0.0 --port $PORT",
+      "watch": { "paths": ["backend/**"] }
+    },
+    {
+      "name": "frontend",
+      "type": "web",
+      "path": "frontend",
+      "buildCommand": "npm install && npm run build",
+      "startCommand": "npm run start -- -p $PORT",
+      "watch": { "paths": ["frontend/**"] }
+    },
+    {
+      "name": "discord-bot",
+      "type": "worker",
+      "path": "discord-bot",
+      "buildCommand": "npm install",
+      "startCommand": "npm run dev",
+      "watch": { "paths": ["discord-bot/**"] }
+    }
+  ]
+}
