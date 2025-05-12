@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.database import get_db
 from app.models.models import Team
 
@@ -7,9 +8,10 @@ router = APIRouter()
 
 
 @router.get("/api/teams")
-def get_teams(db: Session = Depends(get_db)):
+async def get_teams(db: AsyncSession = Depends(get_db)):
     """Fetch all teams."""
-    teams = db.query(Team).all()
+    result = await db.execute(select(Team))
+    teams = result.scalars().all()
     return [
         {
             "id": team.id,

@@ -3,7 +3,9 @@ from app.utils.sheets import write_sheet
 from app.routers.standings import get_standings
 from app.routers.leaderboard import get_leaderboard
 from app.database import get_db
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from starlette.concurrency import run_in_threadpool
 from app.utils.auth import get_current_user
 
 router = APIRouter(prefix="/api/exports", tags=["Exports"])
@@ -12,11 +14,11 @@ SHEET_ID = "your_google_sheet_id_here"
 
 
 @router.post("/export-standings")
-def export_standings_to_sheets(
+async def export_standings_to_sheets(
     season_id: int = Query(...),
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
-    standings_by_season = get_standings(season_id=season_id, db=db)
+    standings_by_season = await run_in_threadpool(get_standings, season_id, db)
     rows = []
     for team in standings_by_season.get(season_id, []):
         rows.append([
@@ -26,18 +28,17 @@ def export_standings_to_sheets(
             team['point_diff'],
             team['win_pct']
         ])
-
-    write_sheet(SHEET_ID, "Standings", rows)
+    await run_in_threadpool(write_sheet, SHEET_ID, "Standings", rows)
     return {"message": "Standings exported successfully."}
 
 
 @router.post("/export-leaderboard")
-def export_leaderboard_to_sheets(
+async def export_leaderboard_to_sheets(
     season_id: int = Query(...),
     min_games: int = Query(5),
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
-    players = get_leaderboard(season_id=season_id, min_games=min_games, db=db)
+    players = await run_in_threadpool(get_leaderboard, season_id, min_games, db)
     rows = []
     for p in players:
         rows.append([
@@ -49,8 +50,8 @@ def export_leaderboard_to_sheets(
             p.eff,
             "✅" if p.mvp else ""
         ])
-
-    write_sheet(
+    await run_in_threadpool(
+        write_sheet,
         SHEET_ID,
         tab_name=f"Leaderboard S{season_id}",
         headers=["Player", "Team", "PPG", "APG", "RPG", "EFF", "MVP"],
@@ -60,15 +61,13 @@ def export_leaderboard_to_sheets(
 
 
 @router.post("/export-all")
-def export_all_to_sheets(
+async def export_all_to_sheets(
     season_id: int = Query(...),
     min_games: int = Query(5),
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     # Export standings
-    standings_by_season = get_standings(
-        season_id=season_id, db=db
-    )
+    standings_by_season = await run_in_threadpool(get_standings, season_id, db)
     standings_rows = []
     for team in standings_by_season.get(season_id, []):
         standings_rows.append([
@@ -78,18 +77,15 @@ def export_all_to_sheets(
             team["point_diff"],
             team["win_pct"]
         ])
-
-    write_sheet(
+    await run_in_threadpool(
+        write_sheet,
         SHEET_ID,
         tab_name=f"Standings S{season_id}",
         headers=["Team", "Wins", "Losses", "Point Diff", "Win %"],
         rows=standings_rows
     )
-
     # Export leaderboard
-    players = get_leaderboard(
-        season_id=season_id, min_games=min_games, db=db
-    )
+    players = await run_in_threadpool(get_leaderboard, season_id, min_games, db)
     leaderboard_rows = []
     for p in players:
         leaderboard_rows.append([
@@ -101,23 +97,22 @@ def export_all_to_sheets(
             p.eff,
             "✅" if p.mvp else ""
         ])
-
-    write_sheet(
+    await run_in_threadpool(
+        write_sheet,
         SHEET_ID,
         tab_name=f"Leaderboard S{season_id}",
         headers=["Player", "Team", "PPG", "APG", "RPG", "EFF", "MVP"],
         rows=leaderboard_rows
     )
-
     return {"status": "All data exported to Google Sheets."}
 
 
 @router.post("/discord/announce")
-def send_discord_announcement(
+async def send_discord_announcement(
     webhook_url: str,
     title: str,
     description: str,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
     """

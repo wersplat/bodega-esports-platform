@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class PlayerStatBase(BaseModel):
     match_id: int
-    player_id: int
+    profile_id: int
     team_id: int
     season_id: int
     points: int

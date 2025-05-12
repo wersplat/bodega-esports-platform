@@ -25,7 +25,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from app.utils.discord import send_discord_message
 from sqlalchemy.exc import SQLAlchemyError
 from app.database import get_db
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from starlette.concurrency import run_in_threadpool
 import logging
 
 # Configure logger
@@ -69,7 +71,7 @@ def create_embed(
 
 
 @router.post("/send-announcement")
-def send_announcement(
+async def send_announcement(
     webhook_url: str, title: str, description: str, color: int = 5814783,
     footer: str = None, timestamp: str = None, thumbnail: str = None
 ):
@@ -78,7 +80,7 @@ def send_announcement(
         title, description, color, footer, timestamp, thumbnail
     )
     try:
-        send_discord_message(webhook_url, content="", embeds=[embed])
+        await run_in_threadpool(send_discord_message, webhook_url, content="", embeds=[embed])
         logger.info("Announcement sent successfully: %s", title)
     except Exception as e:
         logger.error("Failed to send announcement: %s", str(e))
@@ -93,7 +95,7 @@ def send_announcement(
 
 
 @router.post("/send-standings-update")
-def send_standings_update(
+async def send_standings_update(
     webhook_url: str, standings: dict, color: int = 3447003,
     footer: str = None, timestamp: str = None, thumbnail: str = None
 ):
@@ -102,7 +104,7 @@ def send_standings_update(
         "Standings Update", str(standings), color, footer, timestamp, thumbnail
     )
     try:
-        send_discord_message(webhook_url, content="", embeds=[embed])
+        await run_in_threadpool(send_discord_message, webhook_url, content="", embeds=[embed])
         logger.info("Standings update sent successfully.")
     except Exception as e:
         logger.error("Failed to send standings update: %s", str(e))
@@ -117,7 +119,7 @@ def send_standings_update(
 
 
 @router.post("/send-stat-update")
-def send_stat_update(
+async def send_stat_update(
     webhook_url: str, stats: dict, color: int = 16776960,
     footer: str = None, timestamp: str = None, thumbnail: str = None
 ):
@@ -126,7 +128,7 @@ def send_stat_update(
         "Stat Update", str(stats), color, footer, timestamp, thumbnail
     )
     try:
-        send_discord_message(webhook_url, content="", embeds=[embed])
+        await run_in_threadpool(send_discord_message, webhook_url, content="", embeds=[embed])
         logger.info("Stat update sent successfully.")
     except Exception as e:
         logger.error("Failed to send stat update: %s", str(e))
@@ -141,7 +143,7 @@ def send_stat_update(
 
 
 @router.post("/send-export-notification")
-def send_export_notification(
+async def send_export_notification(
     webhook_url: str, file_url: str
 ):
     """Send a notification to Discord about an exported file."""
@@ -149,7 +151,7 @@ def send_export_notification(
         "Export Completed", f"File available at: {file_url}", 65280
     )
     try:
-        send_discord_message(webhook_url, content="", embeds=[embed])
+        await run_in_threadpool(send_discord_message, webhook_url, content="", embeds=[embed])
         logger.info(
             "Export notification sent successfully for file: %s", file_url
         )
@@ -166,14 +168,12 @@ def send_export_notification(
 
 
 @router.post("/send-message")
-def send_message(
+async def send_message(
     webhook_url: str, channel: str, content: str
 ):
     """Send a custom message to a specific Discord channel."""
     try:
-        send_discord_message(
-            webhook_url, content=f"[{channel}] {content}"
-        )
+        await run_in_threadpool(send_discord_message, webhook_url, content=content)
         logger.info("Message sent successfully to channel: %s", channel)
     except Exception as e:
         logger.error("Failed to send message: %s", str(e))
@@ -188,7 +188,7 @@ def send_message(
 
 
 @router.post("/send-registration-notification")
-def send_registration_notification(
+async def send_registration_notification(
     webhook_url: str, team_name: str, league_name: str
 ):
     """Send a notification to Discord about a new registration."""
@@ -198,7 +198,7 @@ def send_registration_notification(
         3447003
     )
     try:
-        send_discord_message(webhook_url, content="", embeds=[embed])
+        await run_in_threadpool(send_discord_message, webhook_url, content="", embeds=[embed])
         logger.info(
             "Registration notification sent successfully for team: %s "
             "in league: %s",
@@ -217,7 +217,7 @@ def send_registration_notification(
 
 
 @router.post("/send-roster-update")
-def send_roster_update(
+async def send_roster_update(
     webhook_url: str, team_name: str, season_name: str
 ):
     """Send a notification to Discord about a roster update."""
@@ -227,7 +227,7 @@ def send_roster_update(
         16776960
     )
     try:
-        send_discord_message(webhook_url, content="", embeds=[embed])
+        await run_in_threadpool(send_discord_message, webhook_url, content="", embeds=[embed])
         logger.info(
             "Roster update notification sent successfully for team: %s "
             "in season: %s",
@@ -246,7 +246,7 @@ def send_roster_update(
 
 
 @router.post("/send-league-update")
-def send_league_update(
+async def send_league_update(
     webhook_url: str, league_name: str, update_message: str,
     color: int = 65280, footer: str = None, timestamp: str = None,
     thumbnail: str = None
@@ -257,7 +257,7 @@ def send_league_update(
         footer, timestamp, thumbnail
     )
     try:
-        send_discord_message(webhook_url, content="", embeds=[embed])
+        await run_in_threadpool(send_discord_message, webhook_url, content="", embeds=[embed])
         logger.info(
             "League update notification sent successfully for league: %s",
             league_name
@@ -275,7 +275,7 @@ def send_league_update(
 
 
 @router.post("/send-match-result")
-def send_match_result(
+async def send_match_result(
     webhook_url: str, match_id: int, result_message: str,
     color: int = 16711680, footer: str = None, timestamp: str = None,
     thumbnail: str = None
@@ -286,7 +286,7 @@ def send_match_result(
         footer, timestamp, thumbnail
     )
     try:
-        send_discord_message(webhook_url, content="", embeds=[embed])
+        await run_in_threadpool(send_discord_message, webhook_url, content="", embeds=[embed])
         logger.info(
             "Match result notification sent successfully for match ID: %d",
             match_id
@@ -304,7 +304,7 @@ def send_match_result(
 
 
 @router.post("/send-profile-notification")
-def send_profile_notification(
+async def send_profile_notification(
     webhook_url: str, username: str, event: str, color: int = 3447003,
     footer: str = None, timestamp: str = None, thumbnail: str = None
 ):
@@ -315,7 +315,7 @@ def send_profile_notification(
         color, footer, timestamp, thumbnail
     )
     try:
-        send_discord_message(webhook_url, content="", embeds=[embed])
+        await run_in_threadpool(send_discord_message, webhook_url, content="", embeds=[embed])
         logger.info(
             "Profile %s notification sent successfully for user: %s",
             event, username
@@ -332,15 +332,15 @@ def send_profile_notification(
     }
 
 
-def log_notification(
-    db: Session, webhook_url: str, notification_type: str, status: str,
+async def log_notification(
+    db: AsyncSession, webhook_url: str, notification_type: str, status: str,
     error_message: str = None
 ):
     """
     Log a notification into the notification_logs table.
     """
     try:
-        db.execute(
+        await db.execute(
             """
             INSERT INTO notification_logs (
                 webhook_url, notification_type, status, error_message
@@ -356,20 +356,20 @@ def log_notification(
                 "error_message": error_message,
             },
         )
-        db.commit()
+        await db.commit()
     except SQLAlchemyError as e:
         logger.error("Failed to log notification: %s", str(e))
 
 
-def update_notification_analytics(
-    db: Session, notification_type: str, success: bool
+async def update_notification_analytics(
+    db: AsyncSession, notification_type: str, success: bool
 ):
     """
     Update the notification_analytics table.
     """
     try:
         if success:
-            db.execute(
+            await db.execute(
                 """
                 INSERT INTO notification_analytics (
                     notification_type, total_sent, total_success, last_sent_at
@@ -385,7 +385,7 @@ def update_notification_analytics(
                 {"notification_type": notification_type},
             )
         else:
-            db.execute(
+            await db.execute(
                 """
                 INSERT INTO notification_analytics (
                     notification_type, total_sent, total_failure, last_sent_at
@@ -400,13 +400,13 @@ def update_notification_analytics(
                 """,
                 {"notification_type": notification_type},
             )
-        db.commit()
+        await db.commit()
     except SQLAlchemyError as e:
         logger.error("Failed to update notification analytics: %s", str(e))
 
 
-def send_discord_notification(
-    db: Session, webhook_url: str, embed: dict, notification_type: str,
+async def send_discord_notification(
+    db: AsyncSession, webhook_url: str, embed: dict, notification_type: str,
     success_message: str, error_message: str
 ):
     """
@@ -414,14 +414,14 @@ def send_discord_notification(
     Logs the notification and updates analytics.
     """
     try:
-        send_discord_message(webhook_url, content="", embeds=[embed])
+        await run_in_threadpool(send_discord_message, webhook_url, content="", embeds=[embed])
         logger.info(success_message)
-        log_notification(db, webhook_url, notification_type, "success")
-        update_notification_analytics(db, notification_type, success=True)
+        await log_notification(db, webhook_url, notification_type, "success")
+        await update_notification_analytics(db, notification_type, True)
     except Exception as e:
         logger.error("%s: %s", error_message, str(e))
-        log_notification(db, webhook_url, notification_type, "failure", str(e))
-        update_notification_analytics(db, notification_type, success=False)
+        await log_notification(db, webhook_url, notification_type, "failure", str(e))
+        await update_notification_analytics(db, notification_type, False)
         raise HTTPException(
             status_code=500,
             detail=f"{error_message}: {str(e)}"
@@ -429,10 +429,10 @@ def send_discord_notification(
 
 
 @router.post("/send-player-notification")
-def send_player_notification(
+async def send_player_notification(
     webhook_url: str, player_name: str, event: str, team_name: str = None,
     color: int = 3447003, footer: str = None, timestamp: str = None,
-    thumbnail: str = None, db: Session = Depends(get_db)
+    thumbnail: str = None, db: AsyncSession = Depends(get_db)
 ):
     """
     Send a notification to Discord about a player event.
@@ -456,7 +456,7 @@ def send_player_notification(
 
 
 @router.post("/send-contract-notification")
-def send_contract_notification(
+async def send_contract_notification(
     webhook_url: str, player_name: str, contract_status: str, team_name: str,
     color: int = 65280, footer: str = None, timestamp: str = None,
     thumbnail: str = None
@@ -480,7 +480,7 @@ def send_contract_notification(
 
 
 @router.post("/send-conference-update")
-def send_conference_update(
+async def send_conference_update(
     webhook_url: str, conference_name: str, update_message: str,
     color: int = 3447003, footer: str = None, timestamp: str = None,
     thumbnail: str = None
@@ -503,7 +503,7 @@ def send_conference_update(
 
 
 @router.post("/send-division-update")
-def send_division_update(
+async def send_division_update(
     webhook_url: str, division_name: str, update_message: str,
     color: int = 3447003, footer: str = None, timestamp: str = None,
     thumbnail: str = None
@@ -526,7 +526,7 @@ def send_division_update(
 
 
 @router.post("/send-workflow-notification")
-def send_workflow_notification(
+async def send_workflow_notification(
     webhook_url: str, workflow_name: str, event: str,
     color: int = 3447003, footer: str = None, timestamp: str = None,
     thumbnail: str = None
@@ -550,7 +550,7 @@ def send_workflow_notification(
 
 
 @router.post("/send-bulk-notifications")
-def send_bulk_notifications(
+async def send_bulk_notifications(
     webhook_urls: list, title: str, description: str, color: int = 3447003,
     footer: str = None, timestamp: str = None, thumbnail: str = None
 ):
@@ -561,7 +561,7 @@ def send_bulk_notifications(
     failed_webhooks = []
     for webhook_url in webhook_urls:
         try:
-            send_discord_message(webhook_url, content="", embeds=[embed])
+            await run_in_threadpool(send_discord_message, webhook_url, content="", embeds=[embed])
             logger.info(
                 "Notification sent successfully to webhook: %s",
                 webhook_url

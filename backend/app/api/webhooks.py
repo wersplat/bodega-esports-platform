@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.database import get_db
 from app.models.models import Webhook
 
@@ -7,9 +8,10 @@ router = APIRouter()
 
 
 @router.get("/api/webhooks")
-def get_webhooks(db: Session = Depends(get_db)):
+async def get_webhooks(db: AsyncSession = Depends(get_db)):
     """Fetch all saved webhooks."""
-    webhooks = db.query(Webhook).all()
+    result = await db.execute(select(Webhook))
+    webhooks = result.scalars().all()
     return [
         {
             "id": webhook.id,

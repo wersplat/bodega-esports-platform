@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
 class PlayerLeaderboardEntry(BaseModel):
-    player_id: int
-    player_name: str
+    profile_id: int
+    profile_name: str
     team_id: int
     team_name: str
     ppg: float

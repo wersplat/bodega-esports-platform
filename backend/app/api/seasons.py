@@ -1,15 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.database import get_db
 from app.models.models import Season
 
 router = APIRouter()
 
 @router.get("/api/seasons")
-def get_seasons(db: Session = Depends(get_db)):
+async def get_seasons(db: AsyncSession = Depends(get_db)):
     """Fetch all seasons."""
     try:
-        seasons = db.query(Season).all()
+        result = await db.execute(select(Season))
+        seasons = result.scalars().all()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 

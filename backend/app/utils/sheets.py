@@ -36,7 +36,7 @@ def append_leaderboard_to_sheet(season_id: int, data: list):
     sheet_id = os.getenv("GOOGLE_SHEET_ID", "your-default-sheet-id")
     tab_name = f"Season {season_id}"
 
-    headers = ["Player", "Points", "Assists", "Rebounds", "Win %"]
+    headers = ["Profile", "Points", "Assists", "Rebounds", "Win %"]
     rows = [
         [
             player["username"],

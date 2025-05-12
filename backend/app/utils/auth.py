@@ -3,7 +3,9 @@ from fastapi import Depends, HTTPException, status, APIRouter, Request
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from app.database import get_db, supabase_client
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from starlette.concurrency import run_in_threadpool
 from app.models.models import Profile
 
 SECRET_KEY = "your_secret_key"
@@ -15,9 +17,9 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 # AUTH HELPERS
 
-def get_current_user(
+async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_db)
 ):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -28,7 +30,9 @@ def get_current_user(
                 detail="Invalid authentication credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        user = db.query(Profile).filter(Profile.id == user_id).first()
+        stmt = select(Profile).where(Profile.id == user_id)
+        result = await db.execute(stmt)
+        user = result.scalars().first()
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

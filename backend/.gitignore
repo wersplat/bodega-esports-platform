@@ -42,3 +42,7 @@ start.sh.bak # if you edit and save a backup
 *.bak
 .DS_Store
 Thumbs.db
+__pycache__
+.__pycache__
+/__pycache__
+/.__pycache__

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.utils.discord import send_discord_webhook
 from app.database import get_db
 from app.models.models import Match
@@ -22,11 +23,13 @@ async def create_match():
     pass
 
 @router.get("/", response_model=List[MatchRead])
-async def list_matches(db: Session = Depends(get_db)):
+async def list_matches(db: AsyncSession = Depends(get_db)):
     """
     List all matches.
     """
-    matches = db.query(Match).all()
+    stmt = select(Match)
+    result = await db.execute(stmt)
+    matches = result.scalars().all()
     return matches
 
 @router.get("/{match_id}")

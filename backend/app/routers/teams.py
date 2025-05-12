@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.database import get_db
 from app.models import Team
 
@@ -17,18 +18,25 @@ class TeamOut(TeamCreate):
         orm_mode = True
 
 @router.get("/", response_model=list[TeamOut])
-def list_teams(db: Session = Depends(get_db)):
-    return db.query(Team).all()
+
+@router.get("/", response_model=list[TeamOut])
+async def list_teams(db: AsyncSession = Depends(get_db)):
+    stmt = select(Team)
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
 @router.post("/", response_model=TeamOut)
-def create_team(data: TeamCreate, db: Session = Depends(get_db)):
+async def create_team(data: TeamCreate, db: AsyncSession = Depends(get_db)):
     new = Team(name=data.name, season_id=data.season_id)
-    db.add(new); db.commit(); db.refresh(new)
+    db.add(new)
+    await db.commit()
+    await db.refresh(new)
     return new
 
 @router.get("/{team_id}", response_model=TeamOut)
-def get_team(team_id: int, db: Session = Depends(get_db)):
-    team = db.get(Team, team_id)
+@router.get("/{team_id}", response_model=TeamOut)
+async def get_team(team_id: int, db: AsyncSession = Depends(get_db)):
+    team = await db.get(Team, team_id)
     if not team:
         raise HTTPException(404, "Team not found")
     return team

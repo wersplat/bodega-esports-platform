@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from fastapi.responses import StreamingResponse
 from io import StringIO
 import csv
@@ -12,37 +13,26 @@ router = APIRouter()
 
 
 @router.get("/api/leaderboard")
-def leaderboard(
+async def leaderboard(
     season_id: int,
     team_id: int = None,
     division_id: int = None,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    query = db.query(
-        PlayerStat, Profile.username
-    ).join(
-        Profile, PlayerStat.player_id == Profile.id
-    ).join(
-        Match, PlayerStat.match_id == Match.id
-    )
-
-    query = query.filter(PlayerStat.season_id == season_id)
-
+    stmt = select(PlayerStat, Profile.username).join(Profile, PlayerStat.player_id == Profile.id).join(Match, PlayerStat.match_id == Match.id).where(PlayerStat.season_id == season_id)
     if team_id:
-        query = query.filter(PlayerStat.team_id == team_id)
+        stmt = stmt.where(PlayerStat.team_id == team_id)
     if division_id:
-        query = query.filter(Match.division_id == division_id)
-
+        stmt = stmt.where(Match.division_id == division_id)
+    result = await db.execute(stmt)
+    rows = result.all()
     stats = []
-    for stat, username in query.all():
-        total_matches = db.query(Match).filter(
-            (
-                (Match.team1_id == stat.team_id) |
-                (Match.team2_id == stat.team_id)
-            ),
+    for stat, username in rows:
+        match_stmt = select(Match).where(
+            ((Match.team1_id == stat.team_id) | (Match.team2_id == stat.team_id)),
             Match.season_id == season_id
-        ).count()
-
+        )
+        total_matches = len((await db.execute(match_stmt)).scalars().all())
         stats.append({
             "username": username,
             "team_id": stat.team_id,
@@ -51,7 +41,6 @@ def leaderboard(
             "total_rebounds": stat.rebounds,
             "total_matches": total_matches,
         })
-
     return stats
 
 

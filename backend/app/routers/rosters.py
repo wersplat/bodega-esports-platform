@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from datetime import datetime
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.database import get_db
 from app.models import Roster
 
@@ -21,16 +22,22 @@ class RosterOut(RosterCreate):
         orm_mode = True
 
 @router.get("/", response_model=list[RosterOut])
-def list_rosters(db: Session = Depends(get_db)):
-    return db.query(Roster).all()
+
+@router.get("/", response_model=list[RosterOut])
+async def list_rosters(db: AsyncSession = Depends(get_db)):
+    stmt = select(Roster)
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
 @router.post("/", response_model=RosterOut)
-def create_roster(entry: RosterCreate, db: Session = Depends(get_db)):
-    exists = db.query(Roster).filter_by(
-        profile_id=entry.profile_id,
-        team_id=entry.team_id,
-        season_id=entry.season_id
-    ).first()
+async def create_roster(entry: RosterCreate, db: AsyncSession = Depends(get_db)):
+    stmt = select(Roster).where(
+        Roster.profile_id == entry.profile_id,
+        Roster.team_id == entry.team_id,
+        Roster.season_id == entry.season_id
+    )
+    result = await db.execute(stmt)
+    exists = result.scalars().first()
     if exists:
         raise HTTPException(400, "Already on that roster")
     new = Roster(
@@ -40,12 +47,14 @@ def create_roster(entry: RosterCreate, db: Session = Depends(get_db)):
         is_captain=entry.is_captain,
         joined_at=datetime.utcnow()
     )
-    db.add(new); db.commit(); db.refresh(new)
+    db.add(new)
+    await db.commit()
+    await db.refresh(new)
     return new
 
 @router.get("/{roster_id}", response_model=RosterOut)
-def get_roster(roster_id: int, db: Session = Depends(get_db)):
-    r = db.get(Roster, roster_id)
+async def get_roster(roster_id: int, db: AsyncSession = Depends(get_db)):
+    r = await db.get(Roster, roster_id)
     if not r:
         raise HTTPException(404, "Roster entry not found")
     return r
