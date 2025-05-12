@@ -16,3 +16,4 @@ venv
 venv312
 # MkDocs build output
 site/
+.env
