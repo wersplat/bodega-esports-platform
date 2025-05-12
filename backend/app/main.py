@@ -8,6 +8,7 @@ from apscheduler.triggers.cron import CronTrigger
 from app.routers.seasons     import router as seasons_router
 from app.routers.teams       import router as teams_router
 from app.routers.rosters     import router as rosters_router
+from app.routers.players     import router as players_router
 # Add backend directory to path (only if strictly needed)
 backend_path = Path(__file__).resolve().parents[1]
 sys.path.append(str(backend_path))
