@@ -9,6 +9,7 @@ from app.routers.seasons     import router as seasons_router
 from app.routers.teams       import router as teams_router
 from app.routers.rosters     import router as rosters_router
 from app.routers.players     import router as players_router
+from app.api.routes import forms
 # Add backend directory to path (only if strictly needed)
 backend_path = Path(__file__).resolve().parents[1]
 sys.path.append(str(backend_path))
@@ -51,6 +52,7 @@ from app.routers import (
     stats_charts,
     teams,
 )
+from app.api.routes import forms
 
 app = FastAPI()
 
@@ -114,6 +116,7 @@ app.include_router(profiles.router, prefix="/api/users", tags=["users"])
 app.include_router(stats.router)
 app.include_router(stats_charts.router)
 app.include_router(teams.router)
+app.include_router(forms.router)
 # … include the rest of your routers exactly once each …
 
 # === Scheduler ===
