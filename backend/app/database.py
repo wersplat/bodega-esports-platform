@@ -1,6 +1,10 @@
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
+
+# --- Analytics DB ---
+import logging
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,8 +22,31 @@ SessionLocal = sessionmaker(
 )
 Base = declarative_base()
 
+# ANALYTICS DATABASE CONNECTION
+ANALYTICS_DB_URL = os.getenv("ANALYTICS_DB_URL")
+if not ANALYTICS_DB_URL:
+    logging.warning("ANALYTICS_DB_URL not set. Analytics DB will not be available.")
+
+analytics_engine = create_async_engine(ANALYTICS_DB_URL, future=True, echo=True) if ANALYTICS_DB_URL else None
+AnalyticsSessionLocal = sessionmaker(
+    bind=analytics_engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+    autoflush=False,
+    autocommit=False,
+) if analytics_engine else None
+AnalyticsBase = declarative_base()
 async def get_db():
     async with SessionLocal() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
+
+async def get_analytics_db():
+    if AnalyticsSessionLocal is None:
+        raise RuntimeError("Analytics database is not configured.")
+    async with AnalyticsSessionLocal() as session:
         try:
             yield session
         finally:

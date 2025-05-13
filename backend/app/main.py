@@ -54,6 +54,21 @@ from app.routers import (
 
 app = FastAPI()
 
+# --- Analytics DB Table Creation ---
+from app.database import analytics_engine, AnalyticsBase
+import importlib
+import app.analytics_models.analytics_log  # Ensure models are imported for metadata
+from sqlalchemy.ext.asyncio import AsyncEngine
+
+async def create_analytics_tables():
+    if analytics_engine is not None:
+        async with analytics_engine.begin() as conn:
+            await conn.run_sync(AnalyticsBase.metadata.create_all)
+
+@app.on_event("startup")
+async def on_startup():
+    await create_analytics_tables()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
