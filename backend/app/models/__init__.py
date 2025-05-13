@@ -1,4 +1,5 @@
 from .form_submission import FormSubmission
+from .base import Base
 from .models import (
     League,
     Season,

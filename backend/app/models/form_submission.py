@@ -3,7 +3,7 @@
 from sqlalchemy import Column, String, JSON, TIMESTAMP
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
-from app.database import Base
+from app.models.base import Base
 import uuid
 
 class FormSubmission(Base):

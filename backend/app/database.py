@@ -1,6 +1,6 @@
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker
 
 # --- Analytics DB ---
 import logging
@@ -20,7 +20,9 @@ SessionLocal = sessionmaker(
     autoflush=False,
     autocommit=False,
 )
-Base = declarative_base()
+
+# Import Base from models instead of creating it here
+from app.models.base import Base
 
 # ANALYTICS DATABASE CONNECTION
 ANALYTICS_DB_URL = os.getenv("ANALYTICS_DB_URL")
@@ -35,7 +37,7 @@ AnalyticsSessionLocal = sessionmaker(
     autoflush=False,
     autocommit=False,
 ) if analytics_engine else None
-AnalyticsBase = declarative_base()
+
 async def get_db():
     async with SessionLocal() as session:
         try:
