@@ -17,3 +17,4 @@ venv312
 # MkDocs build output
 site/
 .env
+backend/new.env
