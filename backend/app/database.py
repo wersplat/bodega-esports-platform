@@ -25,6 +25,7 @@ SessionLocal = sessionmaker(
 from app.models.base import Base
 
 # ANALYTICS DATABASE CONNECTION
+from app.analytics_models.base import AnalyticsBase
 ANALYTICS_DB_URL = os.getenv("ANALYTICS_DB_URL")
 if not ANALYTICS_DB_URL:
     logging.warning("ANALYTICS_DB_URL not set. Analytics DB will not be available.")

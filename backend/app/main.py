@@ -54,10 +54,11 @@ from app.routers import (
 )
 from app.api.routes import forms
 
-app = FastAPI()
+fastapi_app = FastAPI()
 
 # --- Analytics DB Table Creation ---
-from app.database import analytics_engine, AnalyticsBase
+from app.database import analytics_engine
+from app.analytics_models.base import AnalyticsBase
 import importlib
 import app.analytics_models.analytics_log  # Ensure models are imported for metadata
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -67,11 +68,11 @@ async def create_analytics_tables():
         async with analytics_engine.begin() as conn:
             await conn.run_sync(AnalyticsBase.metadata.create_all)
 
-@app.on_event("startup")
+@fastapi_app.on_event("startup")
 async def on_startup():
     await create_analytics_tables()
 
-app.add_middleware(
+fastapi_app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
@@ -83,40 +84,40 @@ app.add_middleware(
 )
 
 # === Include all routers ===
-app.include_router(auth_router)
+fastapi_app.include_router(auth_router)
 
-# app.include_router(profiles.router, prefix="/api/users", tags=["users"])
-app.include_router(seasons.router)
-# app.include_router(teams_router,      prefix="/api/teams",      tags=["teams"])
-# app.include_router(divisions_router,  prefix="/api/divisions",  tags=["divisions"])
-app.include_router(leaderboard.router)
-# app.include_router(webhooks_router,   prefix="/api/webhooks",   tags=["webhooks"])
-app.include_router(seasons_router, prefix="/api/seasons", tags=["seasons"])
-app.include_router(teams_router,   prefix="/api/teams",   tags=["teams"])
-app.include_router(rosters_router, prefix="/api/rosters", tags=["rosters"])
-# app.include_router(players_router,    prefix="/api/players",    tags=["players"])
-# app.include_router(matches_router,    prefix="/api/matches",    tags=["matches"])
-app.include_router(matches.router)
-app.include_router(standings.router)
-app.include_router(events.router)
-app.include_router(leagues.router)
-app.include_router(seasons.router)
-app.include_router(notifications.router)
-app.include_router(payments.router)
-app.include_router(contracts.router)
-app.include_router(discord.router)
-app.include_router(divisions.router)
-app.include_router(exports.router)
-app.include_router(leaderboard.router)
-app.include_router(match_submissions.router)
-app.include_router(meta.router)
-app.include_router(players.router)
-app.include_router(player_stats.router)
-app.include_router(profiles.router, prefix="/api/users", tags=["users"])
-app.include_router(stats.router)
-app.include_router(stats_charts.router)
-app.include_router(teams.router)
-app.include_router(forms.router)
+# fastapi_app.include_router(profiles.router, prefix="/api/users", tags=["users"])
+fastapi_app.include_router(seasons.router)
+# fastapi_app.include_router(teams_router,      prefix="/api/teams",      tags=["teams"])
+# fastapi_app.include_router(divisions_router,  prefix="/api/divisions",  tags=["divisions"])
+fastapi_app.include_router(leaderboard.router)
+# fastapi_app.include_router(webhooks_router,   prefix="/api/webhooks",   tags=["webhooks"])
+fastapi_app.include_router(seasons_router, prefix="/api/seasons", tags=["seasons"])
+fastapi_app.include_router(teams_router,   prefix="/api/teams",   tags=["teams"])
+fastapi_app.include_router(rosters_router, prefix="/api/rosters", tags=["rosters"])
+# fastapi_app.include_router(players_router,    prefix="/api/players",    tags=["players"])
+# fastapi_app.include_router(matches_router,    prefix="/api/matches",    tags=["matches"])
+fastapi_app.include_router(matches.router)
+fastapi_app.include_router(standings.router)
+fastapi_app.include_router(events.router)
+fastapi_app.include_router(leagues.router)
+fastapi_app.include_router(seasons.router)
+fastapi_app.include_router(notifications.router)
+fastapi_app.include_router(payments.router)
+fastapi_app.include_router(contracts.router)
+fastapi_app.include_router(discord.router)
+fastapi_app.include_router(divisions.router)
+fastapi_app.include_router(exports.router)
+fastapi_app.include_router(leaderboard.router)
+fastapi_app.include_router(match_submissions.router)
+fastapi_app.include_router(meta.router)
+fastapi_app.include_router(players.router)
+fastapi_app.include_router(player_stats.router)
+fastapi_app.include_router(profiles.router, prefix="/api/users", tags=["users"])
+fastapi_app.include_router(stats.router)
+fastapi_app.include_router(stats_charts.router)
+fastapi_app.include_router(teams.router)
+fastapi_app.include_router(forms.router)
 # … include the rest of your routers exactly once each …
 
 # === Scheduler ===
@@ -130,10 +131,10 @@ def start_scheduler():
 
 start_scheduler()
 
-@app.get("/")
+@fastapi_app.get("/")
 def root():
     return {"message": "Welcome to the Bodega Esports Platform API!"}
 
-@app.get("/ping")
+@fastapi_app.get("/ping")
 def ping():
     return {"message": "pong"}

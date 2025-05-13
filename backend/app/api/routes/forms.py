@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Request, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db import get_db
+from app.database import get_db
 from app.models import FormSubmission
 import httpx
 import os
