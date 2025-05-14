@@ -6,7 +6,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
 node_modules
 dist
 dist-ssr
@@ -22,8 +21,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-.env
-/backend/credentials/service_account.json
+
+credentials/service_account.json
 
 # Python artifacts
 __pycache__/
@@ -31,10 +30,8 @@ __pycache__/
 *.pyo
 *.pyd
 *.db
-instance/
-.env
-venv/
-start.sh.bak # if you edit and save a backup
+instance/.env
+start.sh.bak
 
 # System junk
 *.log
@@ -47,3 +44,5 @@ __pycache__
 /__pycache__
 /.__pycache__
 new.env
+.env
+.env.new
