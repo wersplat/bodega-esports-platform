@@ -2,6 +2,8 @@ from pydantic import BaseModel
 from typing import TypeVar, Generic, List, Optional, Dict, Any
 from datetime import datetime
 
+T = TypeVar('T')
+
 class Pagination(BaseModel):
     total: int
     page: int
@@ -13,11 +15,11 @@ class BaseResponse(BaseModel):
     timestamp: datetime = datetime.utcnow()
     version: str = "2.0"
 
-class ListResponse(BaseResponse, Generic[TypeVar('T')]):
+class ListResponse(BaseResponse, Generic[T]):
     items: List[T]
     pagination: Pagination
 
-class SingleResponse(BaseResponse, Generic[TypeVar('T')]):
+class SingleResponse(BaseResponse, Generic[T]):
     item: T
 
 class CountResponse(BaseResponse):

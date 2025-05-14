@@ -16,21 +16,24 @@ interface ContractsTableProps {
 }
 
 export function ContractsTable({ contracts, onEditContract, onDeleteContract, isContractAdmin }: ContractsTableProps) {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+  const formatDate = (dateString: string): string => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
+  const getStatusColor = (status: string): string => {
+    const statusLower = status.toLowerCase();
+    switch (statusLower) {
       case "active":
-        return "bg-green-500/10 text-green-500 border-green-500/20"
+        return "bg-green-500/10 text-green-500 border-green-500/20";
       case "pending":
-        return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
+        return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20";
       case "expired":
-        return "bg-[#94a3b8]/10 text-[#94a3b8] border-[#94a3b8]/20"
+        return "bg-[#94a3b8]/10 text-[#94a3b8] border-[#94a3b8]/20";
       default:
-        return "bg-[#94a3b8]/10 text-[#94a3b8] border-[#94a3b8]/20"
+        return "bg-gray-500/10 text-gray-500 border-gray-500/20";
     }
   }
 

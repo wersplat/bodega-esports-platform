@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import { toast } from 'react-hot-toast';
+import type { League, Registration } from '@/types/league';
 
 function LeagueDetails() {
   const router = useRouter();
   const { id } = router.query;
 
-  const [league, setLeague] = useState(null);
-  const [registrations, setRegistrations] = useState([]);
+  const [league, setLeague] = useState<League | null>(null);
+  const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchLeague = useCallback(async () => {
     try {
@@ -15,8 +19,10 @@ function LeagueDetails() {
       const data = await res.json();
       setLeague(data);
     } catch (err) {
-      console.error('Failed to fetch league:', err);
-      // Consider showing a user-friendly error message
+      setError('Failed to fetch league details');
+      toast.error('Failed to fetch league details');
+    } finally {
+      setLoading(false);
     }
   }, [id]);
 
@@ -27,8 +33,10 @@ function LeagueDetails() {
       const data = await res.json();
       setRegistrations(data);
     } catch (err) {
-      console.error('Failed to fetch registrations:', err);
-      // Consider showing a user-friendly error message
+      setError('Failed to fetch registrations');
+      toast.error('Failed to fetch registrations');
+    } finally {
+      setLoading(false);
     }
   }, [id]);
 
@@ -37,14 +45,18 @@ function LeagueDetails() {
     
     const fetchData = async () => {
       try {
-        await fetchLeague();
-        await fetchRegistrations();
-      } catch (err) {
-        console.error('Failed to fetch data:', err);
+        setLoading(true);
+        setError(null);
+        await Promise.all([fetchLeague(), fetchRegistrations()]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to fetch league data');
+        toast.error('Failed to fetch league data');
       }
     };
+
     fetchData();
-  }, [id, fetchLeague, fetchRegistrations]);
+  }, [fetchLeague, fetchRegistrations, id]);
 
   return (
     <div className="main-content">
