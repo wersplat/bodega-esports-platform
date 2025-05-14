@@ -357,7 +357,7 @@ class TeamInvitation(Base):
     def __repr__(self) -> str:
         return f"<TeamInvitation id={self.id} email={self.email} role={self.role} status={self.status}>"
     
-    class Player(Base):
+class Player(Base):
     __tablename__ = "players"
     id = Column(Integer, primary_key=True)
     name = Column(String)
