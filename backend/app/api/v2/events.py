@@ -15,7 +15,7 @@ from app.database import get_db
 # Type imports
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
-from datetime import datetime
+from datetime import datetime, date
 from enum import Enum
 from dateutil.relativedelta import relativedelta
 
@@ -66,8 +66,8 @@ class EventOut(EventBase):
 
 @router.get("/events", response_model=ListResponse[EventBase])
 async def list_events(
-    start_date: Optional[Date] = Query(None, description="Start date for filtering"),
-    end_date: Optional[Date] = Query(None, description="End date for filtering"),
+    start_date: Optional[date] = Query(None, description="Start date for filtering"),
+    end_date: Optional[date] = Query(None, description="End date for filtering"),
     team_id: Optional[int] = Query(None, description="Filter by team ID"),
     league_id: Optional[int] = Query(None, description="Filter by league ID"),
     page: int = Query(1, ge=1),
