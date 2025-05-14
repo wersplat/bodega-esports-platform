@@ -8,18 +8,7 @@ function Dashboard() {
   const [userSeason, setUserSeason] = useState(null);
   const [loadingMatches, setLoadingMatches] = useState(true);
 
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
-
-  useEffect(() => {
-    if (user) {
-      fetchTeams();
-      fetchLeagues();
-      fetchMatches();
-    }
-  }, [user, fetchTeams, fetchLeagues, fetchMatches, user.id]);
-
+  // 1. Fetch current user
   const fetchUser = useCallback(async () => {
     try {
       const res = await fetch('https://api.bodegacatsgc.gg/auth/me');
@@ -31,33 +20,54 @@ function Dashboard() {
     }
   }, []);
 
+  // 2. Fetch teams (only if user.id exists)
   const fetchTeams = useCallback(async () => {
-    const res = await fetch(`https://api.bodegacatsgc.gg/teams?owner_id=${user.id}`);
+    if (!user?.id) return;                       // ← early exit if no user yet
+    const res = await fetch(
+      `https://api.bodegacatsgc.gg/teams?owner_id=${user.id}`
+    );
     const data = await res.json();
     setTeams(data);
     const season = data.find((t) => t.season)?.season;
     setUserSeason(season);
-  }, [user.id]);
+  }, [user?.id]);
 
+  // 3. Fetch leagues (no user dependency)
   const fetchLeagues = useCallback(async () => {
     const res = await fetch('https://api.bodegacatsgc.gg/leagues');
     const data = await res.json();
     setLeagues(data);
   }, []);
 
+  // 4. Fetch matches (no user dependency)
   const fetchMatches = useCallback(async () => {
     setLoadingMatches(true);
     try {
-      const res = await fetch(`https://api.bodegacatsgc.gg/matches/my`);
+      const res = await fetch('https://api.bodegacatsgc.gg/matches/my');
       const data = await res.json();
       setMatches(data);
     } catch {
-      // Error fetching matches
+      // ignore for now
     } finally {
       setLoadingMatches(false);
     }
   }, []);
 
+  // Kick off the user fetch once
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  // Once we have a real user.id, load the rest
+  useEffect(() => {
+    if (user?.id) {
+      fetchTeams();
+      fetchLeagues();
+      fetchMatches();
+    }
+  }, [user?.id, fetchTeams, fetchLeagues, fetchMatches]);
+
+  // Compute days until roster lock (safe if userSeason is null)
   const daysLeft = userSeason?.roster_lock_date
     ? Math.ceil((new Date(userSeason.roster_lock_date) - new Date()) / 86400000)
     : null;
@@ -68,29 +78,37 @@ function Dashboard() {
       {user && <h2 style={{ color: '#f8fafc' }}>Welcome, {user.email}</h2>}
 
       {daysLeft !== null && daysLeft >= 0 && (
-        <div style={{
-          marginTop: 20,
-          background: '#334155',
-          color: '#f8fafc',
-          padding: '10px 16px',
-          borderRadius: 6,
-          fontWeight: 600,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.25)'
-        }}>
-          Roster locks in <span style={{ color: '#facc15' }}>{daysLeft}</span> day{daysLeft !== 1 && 's'} ({userSeason.roster_lock_date})
+        <div
+          style={{
+            marginTop: 20,
+            background: '#334155',
+            color: '#f8fafc',
+            padding: '10px 16px',
+            borderRadius: 6,
+            fontWeight: 600,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+          }}
+        >
+          Roster locks in{' '}
+          <span style={{ color: '#facc15' }}>{daysLeft}</span> day
+          {daysLeft !== 1 && 's'} ({userSeason.roster_lock_date})
         </div>
       )}
 
       <section style={card}>
         <h3>🛡️ Your Teams</h3>
-        {teams.length === 0 ? <p style={{ color: '#cbd5e1' }}>No teams yet.</p> : (
+        {teams.length === 0 ? (
+          <p style={{ color: '#cbd5e1' }}>No teams yet.</p>
+        ) : (
           <ul>{teams.map((t) => <li key={t.id}>{t.name}</li>)}</ul>
         )}
       </section>
 
       <section style={card}>
         <h3>🏆 Active Leagues</h3>
-        {leagues.length === 0 ? <p style={{ color: '#cbd5e1' }}>None yet.</p> : (
+        {leagues.length === 0 ? (
+          <p style={{ color: '#cbd5e1' }}>None yet.</p>
+        ) : (
           <ul>{leagues.map((l) => <li key={l.id}>{l.name}</li>)}</ul>
         )}
       </section>
@@ -106,7 +124,8 @@ function Dashboard() {
             {matches.map((m) => (
               <li key={m.id} style={{ marginBottom: 10 }}>
                 <strong>{m.league_name || 'League'}:</strong>{' '}
-                {new Date(m.match_date).toLocaleString()} — {m.home_team_name} vs {m.away_team_name} ({m.status})
+                {new Date(m.match_date).toLocaleString()} — {m.home_team_name} vs{' '}
+                {m.away_team_name} ({m.status})
               </li>
             ))}
           </ul>
