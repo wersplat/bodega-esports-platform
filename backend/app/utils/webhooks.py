@@ -6,4 +6,5 @@ async def fetch_webhook_url(webhook_type: str) -> str:
     Placeholder function - implement actual DB call.
     """
     # TODO: Implement DB query to fetch webhook URL
-    return "your-default-webhook-url"
+    return "https://example.com/webhook"  # Placeholder return
+    # return "your-default-webhook-url"

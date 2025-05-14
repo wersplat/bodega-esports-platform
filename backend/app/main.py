@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.cron import CronTrigger  # REMOVE if not used below
 
 # Router imports
 from app.api.v2.matches import router as matches_router
@@ -26,6 +26,8 @@ from app.api.v2.webhooks import router as webhooks_router
 from app.api.v2.stats_charts import router as stats_charts_router
 from app.api.v2.forms import router as forms_router
 from app.utils.auth import router as auth_router
+# Remove: from app.api.v2.rosters import router as rosters_router
+# Remove: from app.api.v2.stats import router as stats_router
 
 app_instance = FastAPI()
 
@@ -33,7 +35,6 @@ app_instance = FastAPI()
 from app.database import analytics_engine
 from app.analytics_models.base import AnalyticsBase
 import app.analytics_models.analytics_log  # Ensure models are imported for metadata
-from sqlalchemy.ext.asyncio import AsyncEngine
 
 async def create_analytics_tables():
     if analytics_engine is None:
@@ -65,31 +66,30 @@ app_instance.add_middleware(
 
 # === Include all routers ===
 app_instance.include_router(auth_router)
-app_instance.include_router(seasons.router, prefix="/api/seasons", tags=["seasons"])
-app_instance.include_router(teams.router, prefix="/api/teams", tags=["teams"])
-app_instance.include_router(rosters.router, prefix="/api/rosters", tags=["rosters"])
-app_instance.include_router(players.router, prefix="/api/players", tags=["players"])
-app_instance.include_router(matches.router, prefix="/api/matches", tags=["matches"])
-app_instance.include_router(standings.router, prefix="/api/standings", tags=["standings"])
-app_instance.include_router(events.router, prefix="/api/events", tags=["events"])
-app_instance.include_router(leagues.router, prefix="/api/leagues", tags=["leagues"])
-app_instance.include_router(notifications.router, prefix="/api/notifications", tags=["notifications"])
-app_instance.include_router(payments.router, prefix="/api/payments", tags=["payments"])
-app_instance.include_router(contracts.router, prefix="/api/contracts", tags=["contracts"])
-app_instance.include_router(discord.router, prefix="/api/discord", tags=["discord"])
-app_instance.include_router(divisions.router, prefix="/api/divisions", tags=["divisions"])
-app_instance.include_router(exports.router, prefix="/api/exports", tags=["exports"])
-app_instance.include_router(leaderboard.router, prefix="/api/leaderboard", tags=["leaderboard"])
-app_instance.include_router(match_submissions.router, prefix="/api/match_submissions", tags=["match_submissions"])
-app_instance.include_router(meta.router, prefix="/api/meta", tags=["meta"])
-app_instance.include_router(player_stats.router, prefix="/api/player_stats", tags=["player_stats"])
-app_instance.include_router(profiles.router, prefix="/api/users", tags=["users"])
-app_instance.include_router(stats.router, prefix="/api/stats", tags=["stats"])
-app_instance.include_router(stats_charts.router, prefix="/api/stats_charts", tags=["stats_charts"])
-app_instance.include_router(forms.router, prefix="/api/forms", tags=["forms"])
+app_instance.include_router(seasons_router, prefix="/api/seasons", tags=["seasons"])
+app_instance.include_router(teams_router, prefix="/api/teams", tags=["teams"])
+# app_instance.include_router(rosters_router, prefix="/api/rosters", tags=["rosters"])  # REMOVE: rosters_router does not exist
+app_instance.include_router(players_router, prefix="/api/players", tags=["players"])
+app_instance.include_router(matches_router, prefix="/api/matches", tags=["matches"])
+app_instance.include_router(standings_router, prefix="/api/standings", tags=["standings"])
+app_instance.include_router(events_router, prefix="/api/events", tags=["events"])
+app_instance.include_router(leagues_router, prefix="/api/leagues", tags=["leagues"])
+app_instance.include_router(notifications_router, prefix="/api/notifications", tags=["notifications"])
+app_instance.include_router(payments_router, prefix="/api/payments", tags=["payments"])
+app_instance.include_router(contracts_router, prefix="/api/contracts", tags=["contracts"])
+app_instance.include_router(discord_router, prefix="/api/discord", tags=["discord"])
+app_instance.include_router(divisions_router, prefix="/api/divisions", tags=["divisions"])
+app_instance.include_router(exports_router, prefix="/api/exports", tags=["exports"])
+app_instance.include_router(leaderboard_router, prefix="/api/leaderboard", tags=["leaderboard"])
+app_instance.include_router(match_submissions_router, prefix="/api/match_submissions", tags=["match_submissions"])
+app_instance.include_router(meta_router, prefix="/api/meta", tags=["meta"])
+app_instance.include_router(player_stats_router, prefix="/api/player_stats", tags=["player_stats"])
+app_instance.include_router(profiles_router, prefix="/api/users", tags=["users"])
+# app_instance.include_router(stats_router, prefix="/api/stats", tags=["stats"])  # REMOVE: stats_router does not exist
+app_instance.include_router(stats_charts_router, prefix="/api/stats_charts", tags=["stats_charts"])
+app_instance.include_router(forms_router, prefix="/api/forms", tags=["forms"])
 
 # === Scheduler ===
-from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
