@@ -3,7 +3,7 @@
 # SQLAlchemy imports
 from sqlalchemy import Column, String, Boolean, Date, DateTime, ForeignKey, func, Text, Integer, JSON
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
 from app.models.base import Base
 
 # Type hints
@@ -51,7 +51,7 @@ class League(Base):
     status: str = Column(String, default=LeagueStatus.ACTIVE.value, nullable=False)
 
     # Relationships
-    settings: Optional['LeagueSettings'] = relationship(
+    settings: Mapped[Optional['LeagueSettings']] = relationship(
         "LeagueSettings", 
         uselist=False, 
         back_populates="league",
