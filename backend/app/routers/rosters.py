@@ -19,7 +19,7 @@ class RosterOut(RosterCreate):
     joined_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.get("/", response_model=list[RosterOut])
 async def list_rosters(db: AsyncSession = Depends(get_db)):

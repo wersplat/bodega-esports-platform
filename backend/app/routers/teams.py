@@ -15,7 +15,7 @@ class TeamOut(TeamCreate):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.get("/", response_model=list[TeamOut])
 async def list_teams(db: AsyncSession = Depends(get_db)):

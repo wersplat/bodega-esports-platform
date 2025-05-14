@@ -32,7 +32,7 @@ class TeamOut(BaseModel):
     average_points: Optional[float] = Field(alias="averagePoints")
     
     class Config:
-        orm_mode = True
+        from_attributes = True
         allow_population_by_field_name = True
 
 class TeamListResponse(BaseModel):

@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select
 
 # Project imports
-from app.models import Event
 from app.models.models import PlayerStat as PlayerStats  # Renamed to match actual model
 from app.api.v2.base import raise_error, not_found_error
 from app.api.v2.responses import ListResponse, SingleResponse
@@ -97,7 +96,7 @@ class PlayerStatsOut(BaseModel):
     plus_minus: float
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PlayerOut(BaseModel):
     id: int
@@ -113,7 +112,7 @@ class PlayerOut(BaseModel):
     achievements: List[str]
     
     class Config:
-        orm_mode = True
+        from_attributes = True
         allow_population_by_field_name = True
 
 class PlayerStats(BaseModel):
@@ -128,7 +127,7 @@ class PlayerStats(BaseModel):
     free_throws: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PlayerHistory(BaseModel):
     event_id: int

@@ -43,7 +43,7 @@ class FormSubmissionResponse(FormSubmissionBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 @router.post("", response_model=SingleResponse[FormSubmissionResponse], status_code=201)

@@ -62,7 +62,7 @@ class MatchSubmissionResponse(MatchSubmissionBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 @router.get("", response_model=ListResponse[MatchSubmissionResponse])
