@@ -44,7 +44,7 @@ export default function CreateTeamPage() {
 
     try {
       // Check if user is already in a team
-      const { data: existingTeam, error: teamCheckError } = await supabase
+      const { data: existingTeam } = await supabase
         .from("team_members")
         .select("team_id")
         .eq("user_id", user.id)
