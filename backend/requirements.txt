@@ -16,3 +16,7 @@ python-multipart
 pymysql
 supabase
 asyncpg
+pydantic[email]
+
+
+
