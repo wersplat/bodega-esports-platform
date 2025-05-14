@@ -14,7 +14,8 @@ from .models import (
     MatchSubmission,
     PlayerStat,
     LeagueSettings,
-    Notification
+    Notification,
+    TeamMember
 )
 from .webhook_models import (
     Webhook,
@@ -42,5 +43,6 @@ __all__ = [
     "Webhook",
     "WebhookRetry",
     "WebhookHealth",
-    "WebhookAnalytics"
+    "WebhookAnalytics",
+    "TeamMember"
 ]

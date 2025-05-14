@@ -321,3 +321,22 @@ class LeagueSettings(Base):
 
     def __repr__(self) -> str:
         return f"<LeagueSettings id={self.id} league_id={self.league_id}>"
+
+class TeamMember(Base):
+    __tablename__ = 'team_members'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    profile_id = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='CASCADE'), nullable=False)
+    team_id = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
+    season_id = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
+    is_captain = Column(Boolean, nullable=False, default=False)
+    joined_at = Column(DateTime(timezone=True), server_default=func.now())
+    status = Column(String, default=RosterStatus.ACTIVE.value, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    profile: Mapped['Profile'] = relationship("Profile", lazy="selectin")
+    team: Mapped['Team'] = relationship("Team", lazy="selectin")
+    season: Mapped['Season'] = relationship("Season", lazy="selectin")
+
+    def __repr__(self) -> str:
+        return f"<TeamMember id={self.id} profile_id={self.profile_id} team_id={self.team_id} status={self.status}>"
