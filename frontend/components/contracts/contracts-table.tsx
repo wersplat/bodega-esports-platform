@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Edit, AlertTriangle, FileText } from "lucide-react"
 import Image from "next/image"
 import type { Contract } from "@/types/contract"
-import { Tooltip } from "@/components/ui/tooltip"
+
 
 interface ContractsTableProps {
   contracts: Contract[]

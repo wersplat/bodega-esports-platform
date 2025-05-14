@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import TopScorersChart from '../../components/TopScorersChart'; // Updated import path
+import TopScorersChart from '../../components/TopScorersChart';
+import { toast } from 'react-hot-toast';
 
 function Leaderboard() {
   const [seasons, setSeasons] = useState([]);
@@ -12,35 +13,34 @@ function Leaderboard() {
   const [selectedTeam, setSelectedTeam] = useState('');
   const [selectedStat, setSelectedStat] = useState('points');
 
-  // Updated API_BASE to use NEXT_PUBLIC_API_BASE_URL with a fallback
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://default-api-url.com';
+  const API_BASE = 'https://api.bodegacatsgc.gg';
 
-  const fetchSeasons = async () => {
+  const fetchSeasons = useCallback(async () => {
     try {
       const { data } = await axios.get(`${API_BASE}/api/seasons`);
       if (Array.isArray(data)) {
         setSeasons(data);
         if (data.length > 0) setSelectedSeason(data[0].id);
       } else {
-        // Handle error (was: console.error('Unexpected API response format for seasons'))
+        toast.error('Unexpected API response format for seasons');
       }
     } catch (error) {
-      // Handle error (was: console.error('Error fetching seasons:', error))
+      toast.error('Failed to fetch seasons');
     }
-  };
+  }, [API_BASE]);
 
-  const fetchTeams = async () => {
+  const fetchTeams = useCallback(async () => {
     try {
-      const { data } = await axios.get(`${API_BASE}/api/teams`); // 🛠 FIXED
+      const { data } = await axios.get(`${API_BASE}/api/teams`);
       if (Array.isArray(data)) {
         setTeams(data);
       } else {
-        // Handle error (was: console.error('Unexpected API response format for teams'))
+        toast.error('Unexpected API response format for teams');
       }
     } catch (error) {
-      // Handle error (was: console.error('Error fetching teams:', error))
+      toast.error('Failed to fetch teams');
     }
-  };
+  }, [API_BASE]);
 
   const fetchLeaderboard = useCallback(async () => {
     setLoading(true);

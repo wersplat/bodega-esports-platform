@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 
 function LeagueSettings() {
@@ -14,19 +14,7 @@ function LeagueSettings() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  useEffect(() => {
-    fetchLeagues();
-  }, []);
-
-  useEffect(() => {
-    if (selectedLeagueId) fetchSeasons();
-  }, [selectedLeagueId]);
-
-  useEffect(() => {
-    if (selectedSeasonId) fetchSettings();
-  }, [selectedSeasonId]);
-
-  const fetchLeagues = async () => {
+  const fetchLeagues = useCallback(async () => {
     setError('');
     try {
       const res = await fetch('https://api.bodegacatsgc.gg/leagues');
@@ -36,9 +24,9 @@ function LeagueSettings() {
     } catch (err) {
       setError('Could not load leagues.');
     }
-  };
+  }, []);
 
-  const fetchSeasons = async () => {
+  const fetchSeasons = useCallback(async () => {
     setError('');
     try {
       const res = await fetch(`https://api.bodegacatsgc.gg/seasons?league_id=${selectedLeagueId}`);
@@ -48,9 +36,9 @@ function LeagueSettings() {
     } catch (err) {
       setError('Could not load seasons.');
     }
-  };
+  }, [selectedLeagueId]);
 
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     setError('');
     try {
       const res = await fetch(`https://api.bodegacatsgc.gg/league-settings?league_id=${selectedLeagueId}&season_id=${selectedSeasonId}`);
@@ -63,7 +51,19 @@ function LeagueSettings() {
     } catch (err) {
       setError('Could not load league settings.');
     }
-  };
+  }, [selectedLeagueId, selectedSeasonId]);
+
+  useEffect(() => {
+    fetchLeagues();
+  }, [fetchLeagues]);
+
+  useEffect(() => {
+    if (selectedLeagueId) fetchSeasons();
+  }, [selectedLeagueId, fetchSeasons]);
+
+  useEffect(() => {
+    if (selectedSeasonId) fetchSettings();
+  }, [selectedSeasonId, fetchSettings]);
 
   const handleToggle = (key) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
