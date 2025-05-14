@@ -41,6 +41,12 @@ class TeamStatus(str, Enum):
     ARCHIVED = "archived"
     DELETED = "deleted"
 
+class RosterStatus(str, Enum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+    REMOVED = "removed"
+    PENDING = "pending"
+
 class League(Base):
     __tablename__ = 'leagues'
     id: int = Column(Integer, primary_key=True)
@@ -168,7 +174,7 @@ class Roster(Base):
     season_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
     is_captain: bool = Column(Boolean, nullable=False, default=False)
     joined_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    status: str = Column(String, default=RosterStatus.ACTIVE.value, nullable=False) # type: ignore
+    status: str = Column(String, default=RosterStatus.ACTIVE.value, nullable=False)
     created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
@@ -179,6 +185,12 @@ class Roster(Base):
     def __repr__(self) -> str:
         return f"<Roster id={self.id} profile_id={self.profile_id} team_id={self.team_id} status={self.status}>"
 
+class MatchStatus(str, Enum):
+    SCHEDULED = "scheduled"
+    ONGOING = "ongoing"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
 class Match(Base):
     __tablename__ = 'matches'
     id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -188,7 +200,7 @@ class Match(Base):
     scheduled_at: datetime = Column(DateTime(timezone=True), nullable=False)
     started_at: Optional[datetime] = Column(DateTime(timezone=True), nullable=True)
     ended_at: Optional[datetime] = Column(DateTime(timezone=True), nullable=True)
-    status: str = Column(String, default=MatchStatus.SCHEDULED.value, nullable=False) # type: ignore
+    status: str = Column(String, default=MatchStatus.SCHEDULED.value, nullable=False)
     created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
@@ -202,13 +214,18 @@ class Match(Base):
     def __repr__(self) -> str:
         return f"<Match id={self.id} team1_id={self.team1_id} team2_id={self.team2_id} status={self.status}>"
 
+class MatchSubmissionStatus(str, Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
 class MatchSubmission(Base):
     __tablename__ = 'match_submissions'
     id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     match_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('matches.id', ondelete='CASCADE'), nullable=False)
     team_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
     score: Optional[int] = Column(Integer, nullable=True)
-    status: str = Column(String, default=MatchSubmissionStatus.PENDING.value, nullable=False) # type: ignore
+    status: str = Column(String, default=MatchSubmissionStatus.PENDING.value, nullable=False)
     submitted_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     reviewed_at: Optional[datetime] = Column(DateTime(timezone=True), nullable=True)
     reviewed_by: Optional[UUIDType] = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='SET NULL'), nullable=True)
