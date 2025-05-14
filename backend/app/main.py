@@ -91,6 +91,7 @@ app_instance.include_router(profiles_router, prefix="/api/users", tags=["users"]
 # app_instance.include_router(stats_router, prefix="/api/stats", tags=["stats"])  # REMOVE: stats_router does not exist
 app_instance.include_router(stats_charts_router, prefix="/api/stats_charts", tags=["stats_charts"])
 app_instance.include_router(forms_router, prefix="/api/forms", tags=["forms"])
+app_instance.include_router(webhooks_router, prefix="/api/webhooks", tags=["webhooks"])
 
 # === Scheduler ===
 import logging
