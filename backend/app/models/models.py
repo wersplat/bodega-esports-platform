@@ -168,7 +168,7 @@ class Roster(Base):
     season_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
     is_captain: bool = Column(Boolean, nullable=False, default=False)
     joined_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    status: str = Column(String, default=RosterStatus.ACTIVE.value, nullable=False)
+    status: str = Column(String, default=RosterStatus.ACTIVE.value, nullable=False) # type: ignore
     created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
@@ -188,7 +188,7 @@ class Match(Base):
     scheduled_at: datetime = Column(DateTime(timezone=True), nullable=False)
     started_at: Optional[datetime] = Column(DateTime(timezone=True), nullable=True)
     ended_at: Optional[datetime] = Column(DateTime(timezone=True), nullable=True)
-    status: str = Column(String, default=MatchStatus.SCHEDULED.value, nullable=False)
+    status: str = Column(String, default=MatchStatus.SCHEDULED.value, nullable=False) # type: ignore
     created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
@@ -208,7 +208,7 @@ class MatchSubmission(Base):
     match_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('matches.id', ondelete='CASCADE'), nullable=False)
     team_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
     score: Optional[int] = Column(Integer, nullable=True)
-    status: str = Column(String, default=MatchSubmissionStatus.PENDING.value, nullable=False)
+    status: str = Column(String, default=MatchSubmissionStatus.PENDING.value, nullable=False) # type: ignore
     submitted_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     reviewed_at: Optional[datetime] = Column(DateTime(timezone=True), nullable=True)
     reviewed_by: Optional[UUIDType] = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='SET NULL'), nullable=True)

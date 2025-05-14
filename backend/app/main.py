@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger  # REMOVE if not used below
+from contextlib import asynccontextmanager
 
 # Router imports
 from app.routers.matches import router as matches_router
@@ -15,11 +16,11 @@ from app.api.v2.contracts import router as contracts_router
 from app.api.v2.discord import router as discord_router
 from app.api.v2.divisions import router as divisions_router
 from app.api.v2.exports import router as exports_router
-from app.api.v2.leaderboard import router as leaderboard_router
+from app.api.leaderboard import router as leaderboard_router
 from app.api.v2.match_submissions import router as match_submissions_router
 from app.api.v2.meta import router as meta_router
 from app.api.v2.players import router as players_router
-from app.api.v2.player_stats import router as player_stats_router
+from app.api.v2.player_stats import router as player_stats_router # type: ignore
 from app.api.v2.profiles import router as profiles_router
 from app.api.v2.teams import router as teams_router
 from app.api.v2.webhooks import router as webhooks_router
@@ -29,7 +30,15 @@ from app.utils.auth import router as auth_router
 # Remove: from app.api.v2.rosters import router as rosters_router
 # Remove: from app.api.v2.stats import router as stats_router
 
-app_instance = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        await create_analytics_tables()
+    except Exception as e:
+        print(f"Error during startup: {e}")
+    yield
+
+app_instance = FastAPI(lifespan=lifespan)
 
 # --- Analytics DB Table Creation ---
 from app.database import analytics_engine
@@ -44,13 +53,6 @@ async def create_analytics_tables():
             await conn.run_sync(AnalyticsBase.metadata.create_all)
     except Exception as e:
         print(f"Error creating analytics tables: {e}")
-
-@app_instance.on_event("startup")
-async def on_startup():
-    try:
-        await create_analytics_tables()
-    except Exception as e:
-        print(f"Error during startup: {e}")
 
 app_instance.add_middleware(
     CORSMiddleware,
