@@ -276,20 +276,6 @@ class Notification(Base):
     def __repr__(self) -> str:
         return f"<Notification id={self.id} title={self.title} type={self.type} read={self.read}>"
 
-class Webhook(Base):
-    __tablename__ = 'webhooks'
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(String, nullable=False)
-    url = Column(String, nullable=False)
-    secret = Column(String, nullable=False)
-    events = Column(JSON, nullable=False)
-    active = Column(Boolean, default=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    
-    def __repr__(self) -> str:
-        return f"<Webhook id={self.id} name={self.name} active={self.active}>"
-
 class Division(Base):
     __tablename__ = 'divisions'
     id = Column(Integer, primary_key=True)
