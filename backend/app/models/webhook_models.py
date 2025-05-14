@@ -1,12 +1,18 @@
-from app.api.v2.types import Column, String, JSON, Integer, DateTime, ForeignKey, Boolean
-from app.api.v2.types import relationship
+# SQLAlchemy imports
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Boolean, Float
+from sqlalchemy.dialects.postgresql import UUID, JSON
+from sqlalchemy.orm import relationship
 from app.models.base import Base
-from app.api.v2.types import datetime
-from app.api.v2.types import UUID, uuid4
-from app.api.v2.types import List, Optional
-from app.api.v2.types import Enum
 
-from app.models import Team, Player
+# Standard library imports
+from datetime import datetime
+from typing import List, Optional, Dict, Any, TypeVar
+from enum import Enum
+import uuid
+
+# Forward reference for avoiding circular imports
+Team = 'Team'
+Player = 'Player'
 
 T = TypeVar('T')
 
@@ -29,7 +35,7 @@ class WebhookEventType(str, Enum):
 class Webhook(Base):
     __tablename__ = 'webhooks'
 
-    id: UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id: UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     url: str = Column(String, nullable=False)
     secret: str = Column(String, nullable=False)
     events: List[str] = Column(JSON, nullable=False)
@@ -62,7 +68,7 @@ class Webhook(Base):
 class WebhookEvent(Base):
     __tablename__ = 'webhook_events'
 
-    id: UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id: UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     webhook_id: UUID = Column(UUID(as_uuid=True), ForeignKey('webhooks.id'), nullable=False)
     event_type: str = Column(String, nullable=False)
     payload: Dict[str, Any] = Column(JSON, nullable=False)
@@ -79,12 +85,7 @@ class WebhookEvent(Base):
         back_populates="events",
         lazy="selectin"
     )
-    player = relationship(
-        "Player",
-        back_populates="webhooks",
-        foreign_keys=[player_id],
-        lazy="selectin"
-    )
+    # Note: Removed incorrect player relationship that referenced undefined player_id
     retries = relationship("WebhookRetry", back_populates="webhook", cascade="all, delete-orphan")
     health = relationship("WebhookHealth", back_populates="webhook", uselist=False, cascade="all, delete-orphan")
     analytics = relationship("WebhookAnalytics", back_populates="webhook", uselist=False, cascade="all, delete-orphan")

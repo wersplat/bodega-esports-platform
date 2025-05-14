@@ -1,13 +1,19 @@
 # backend/app/models/models.py
 
-from app.api.v2.types import Column, String, Boolean, Date, DateTime, ForeignKey, func, Text, Integer
-from app.api.v2.types import UUID
-from app.api.v2.types import relationship
+# SQLAlchemy imports
+from sqlalchemy import Column, String, Boolean, Date, DateTime, ForeignKey, func, Text, Integer, JSON
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 from app.models.base import Base
-from app.api.v2.types import List, Optional
-from app.api.v2.types import UUIDType
-from app.api.v2.types import datetime
-from app.api.v2.types import Enum
+
+# Type hints
+from typing import List, Optional, TypeVar
+from datetime import datetime
+from enum import Enum
+import uuid
+
+# Define UUIDType for type hinting
+UUIDType = uuid.UUID
 
 T = TypeVar('T')
 

@@ -1,8 +1,9 @@
-from app.api.v2.types import BaseModel, Field
-from app.api.v2.types import Optional, Dict, Any, List, Type, TypeVar, Union
-from app.api.v2.types import HTTPException, status
-from app.api.v2.types import Enum
-from app.api.v2.types import datetime
+# Direct imports from source libraries
+from pydantic import BaseModel, Field
+from typing import Optional, Dict, Any, List, Type, TypeVar, Union
+from fastapi import HTTPException, status
+from enum import Enum
+from datetime import datetime
 from app.utils.errors import ErrorType, ErrorDetail
 
 T = TypeVar('T')
@@ -40,7 +41,7 @@ def raise_error(
         ).dict()
     )
 
-def not_found_error(
+def generic_not_found_error(
     message: str = "Resource not found", 
     details: Optional[Dict[str, Any]] = None
 ) -> None:
@@ -52,7 +53,7 @@ def not_found_error(
         details=details
     )
 
-def conflict_error(
+def generic_conflict_error(
     message: str = "Resource conflict", 
     details: Optional[Dict[str, Any]] = None
 ) -> None:

@@ -1,14 +1,23 @@
-from app.api.v2.types import APIRouter, Depends, HTTPException, Query, Path
-from app.api.v2.types import AsyncSession
-from app.api.v2.types import raise_error, not_found_error, conflict_error
-from app.api.v2.types import ListResponse, SingleResponse
-from app.models import Player, Team, PlayerStats, Profile, TeamMember, Event, Award
-from app.api.v2.types import func, select, and_, or_, desc, distinct
-from app.api.v2.types import List, Optional, Dict, Any, Union
-from app.api.v2.types import BaseModel, Field
-from app.api.v2.types import datetime, date, timedelta
+# FastAPI imports
+from fastapi import APIRouter, Depends, HTTPException, Query, Path
+
+# Database imports
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import func, select, and_, or_, desc, distinct
+
+# Project imports
+from app.models import Profile, Team, TeamMember, Event
+from app.models.models import PlayerStat as PlayerStats  # Renamed to match actual model
+from app.api.v2.base import raise_error, not_found_error, conflict_error
+from app.api.v2.responses import ListResponse, SingleResponse
+from app.database import get_db
+
+# Type imports
+from typing import List, Optional, Dict, Any, Union
+from pydantic import BaseModel, Field
+from datetime import datetime, date, timedelta
+from enum import Enum
 from dateutil.relativedelta import relativedelta
-from app.api.v2.types import Enum
 
 router = APIRouter(
     prefix="/api/v2",
