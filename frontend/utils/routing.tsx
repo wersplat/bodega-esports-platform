@@ -1,5 +1,17 @@
 // Routing utilities for the Bodega Esports Platform
-import React, { Suspense, lazy } from "react";
+import React from "react";
+import LoginPage from '../pages/auth/login';
+import PrivateRoute from '../components/ui/PrivateRoute';
+import Dashboard from '../pages/admin/admin';
+import LeagueBrowser from '../pages/leagues/league-browser';
+import Matches from '../pages/matches/matches';
+import PlayerProfile from '../pages/profile/player-profile';
+import Teams from '../pages/Teams';
+import AdminCreateLeague from '../pages/admin/admin-create-league.jsx';
+import AdminAddTeam from '../pages/admin/admin-add-team.jsx';
+import ScheduleMatch from '../pages/admin/admin-schedule-match.jsx';
+import ReviewStats from '../pages/admin/admin-review-stats.jsx';
+import RosterLock from '../pages/admin/admin-roster-lock.jsx';
 import type { RouteObject } from "react-router-dom";
 import { Route, createRoutesFromElements } from "react-router-dom";
 
@@ -22,19 +34,6 @@ export const routes = {
   teams: "/teams",
 };
 
-// Lazy-loaded components
-const LoginPage = lazy(() => import('../pages/auth/login').then(m => ({ default: m.Login })));
-const PrivateRoute = lazy(() => import('../components/ui/PrivateRoute'));
-const Dashboard = lazy(() => import('../pages/admin/admin'));
-const LeagueBrowser = lazy(() => import('../pages/leagues/league-browser'));
-const Matches = lazy(() => import('../pages/matches/matches'));
-const PlayerProfile = lazy(() => import('../pages/profile/player-profile'));
-const Teams = lazy(() => import('../pages/Teams'));
-const AdminCreateLeague = lazy(() => import('../pages/admin/admin-create-league.jsx'));
-const AdminAddTeam = lazy(() => import('../pages/admin/admin-add-team.jsx'));
-const ScheduleMatch = lazy(() => import('../pages/admin/admin-schedule-match.jsx'));
-const ReviewStats = lazy(() => import('../pages/admin/admin-review-stats.jsx'));
-const RosterLock = lazy(() => import('../pages/admin/admin-roster-lock.jsx'));
 
 export const createRoutes = (): RouteObject[] =>
   createRoutesFromElements(
@@ -42,49 +41,49 @@ export const createRoutes = (): RouteObject[] =>
       <Route
         path={routes.root}
         element={
-          <Suspense fallback={<div>Loading...</div>}>
+          
             <Dashboard />
-          </Suspense>
+          
         }
       />
       <Route
         path={routes.login}
         element={
-          <Suspense fallback={<div>Loading...</div>}>
+          
             <LoginPage />
-          </Suspense>
+          
         }
       />
       <Route
         path={routes.leagues}
         element={
-          <Suspense fallback={<div>Loading...</div>}>
+          
             <LeagueBrowser />
-          </Suspense>
+          
         }
       />
       <Route
         path={routes.matches}
         element={
-          <Suspense fallback={<div>Loading...</div>}>
+          
             <Matches />
-          </Suspense>
+          
         }
       />
       <Route
         path={routes.profile}
         element={
-          <Suspense fallback={<div>Loading...</div>}>
+          
             <PlayerProfile />
-          </Suspense>
+          
         }
       />
       <Route
         path={routes.teams}
         element={
-          <Suspense fallback={<div>Loading...</div>}>
+          
             <Teams />
-          </Suspense>
+          
         }
       />
       {/* Admin routes */}
@@ -92,41 +91,41 @@ export const createRoutes = (): RouteObject[] =>
         <Route
           path={routes.admin.createLeague}
           element={
-            <Suspense fallback={<div>Loading...</div>}>
+            
               <AdminCreateLeague />
-            </Suspense>
+            
           }
         />
         <Route
           path={routes.admin.addTeam}
           element={
-            <Suspense fallback={<div>Loading...</div>}>
+            
               <AdminAddTeam />
-            </Suspense>
+            
           }
         />
         <Route
           path={routes.admin.scheduleMatch}
           element={
-            <Suspense fallback={<div>Loading...</div>}>
+            
               <ScheduleMatch />
-            </Suspense>
+            
           }
         />
         <Route
           path={routes.admin.reviewStats}
           element={
-            <Suspense fallback={<div>Loading...</div>}>
+            
               <ReviewStats />
-            </Suspense>
+            
           }
         />
         <Route
           path={routes.admin.rosterLock}
           element={
-            <Suspense fallback={<div>Loading...</div>}>
+            
               <RosterLock />
-            </Suspense>
+            
           }
         />
       </Route>
