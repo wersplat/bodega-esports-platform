@@ -1,15 +1,13 @@
 # backend/app/models/models.py
 
-from sqlalchemy import (
-    Column, String, Boolean, Date, DateTime, ForeignKey, func, Text, Integer
-)
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from app.api.v2.types import Column, String, Boolean, Date, DateTime, ForeignKey, func, Text, Integer
+from app.api.v2.types import UUID
+from app.api.v2.types import relationship
 from app.models.base import Base
-from typing import List, Optional
-from uuid import UUID as UUIDType
-from datetime import datetime
-from enum import Enum
+from app.api.v2.types import List, Optional
+from app.api.v2.types import UUIDType
+from app.api.v2.types import datetime
+from app.api.v2.types import Enum
 
 T = TypeVar('T')
 

@@ -1,25 +1,11 @@
-from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any, List, Type, TypeVar, Union
-from fastapi import HTTPException, status
-from enum import Enum
-from datetime import datetime
+from app.api.v2.types import BaseModel, Field
+from app.api.v2.types import Optional, Dict, Any, List, Type, TypeVar, Union
+from app.api.v2.types import HTTPException, status
+from app.api.v2.types import Enum
+from app.api.v2.types import datetime
+from app.utils.errors import ErrorType, ErrorDetail
 
 T = TypeVar('T')
-
-class ErrorType(str, Enum):
-    VALIDATION = "validation"
-    AUTH = "auth"
-    NOT_FOUND = "not_found"
-    CONFLICT = "conflict"
-    INTERNAL = "internal"
-    BAD_REQUEST = "bad_request"
-
-class ErrorDetail(BaseModel):
-    code: str = Field(description="Error code identifier")
-    message: str = Field(description="Human-readable error message")
-    type: ErrorType = Field(description="Error type category")
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Error timestamp")
-    details: Optional[Dict[str, Any]] = Field(default=None, description="Additional error details")
 
 class APIError(Exception):
     def __init__(
@@ -87,8 +73,6 @@ def validation_error(
         message=message,
         error_type=ErrorType.VALIDATION,
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        details={"errors": errors}
-    )
         details={"errors": errors}
     )
 

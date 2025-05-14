@@ -1,15 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Path
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import get_db
-from app.api.v2.base import raise_error, not_found_error, conflict_error
-from app.api.v2.responses import ListResponse, SingleResponse
+from app.api.v2.types import APIRouter, Depends, HTTPException, Query, Path
+from app.api.v2.types import AsyncSession
+from app.api.v2.types import raise_error, not_found_error, conflict_error
+from app.api.v2.types import ListResponse, SingleResponse
 from app.models import Team, TeamMember, TeamInvitation, Profile, Season, PlayerStats
-from sqlalchemy import func, select, and_, or_, desc
-from typing import List, Optional, Dict, Any, Union
-from pydantic import BaseModel, Field, EmailStr
-from datetime import datetime
+from app.api.v2.types import func, select, and_, or_, desc
+from app.api.v2.types import List, Optional, Dict, Any, Union
+from app.api.v2.types import BaseModel, Field
+from app.api.v2.types import datetime
 from dateutil.relativedelta import relativedelta
-from enum import Enum
+from app.api.v2.types import Enum
 
 router = APIRouter(
     prefix="/api/v2",
@@ -768,13 +767,11 @@ async def update_team(
     }
 )
 async def add_team_member(
-    team_id: int = Path(
-        ..., 
+    team_id: int = Path(...,
         description="The ID of the team to add member to",
         example=1
     ),
     member_data: TeamMemberCreate = Body(...),
-    ),
     db: AsyncSession = Depends(get_db)
 ):
     try:

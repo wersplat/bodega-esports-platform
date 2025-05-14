@@ -4,29 +4,27 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 # Router imports
-from app.api.v2 import (
-    matches,
-    standings,
-    events,
-    leagues,
-    seasons,
-    notifications,
-    payments,
-    contracts,
-    discord,
-    divisions,
-    exports,
-    leaderboard,
-    match_submissions,
-    meta,
-    players,
-    player_stats,
-    profiles,
-    stats,
-    stats_charts,
-    teams,
-    forms,
-)
+from app.api.v2.matches import router as matches_router
+from app.api.v2.standings import router as standings_router
+from app.api.v2.events import router as events_router
+from app.api.v2.leagues import router as leagues_router
+from app.api.v2.seasons import router as seasons_router
+from app.api.v2.notifications import router as notifications_router
+from app.api.v2.payments import router as payments_router
+from app.api.v2.contracts import router as contracts_router
+from app.api.v2.discord import router as discord_router
+from app.api.v2.divisions import router as divisions_router
+from app.api.v2.exports import router as exports_router
+from app.api.v2.leaderboard import router as leaderboard_router
+from app.api.v2.match_submissions import router as match_submissions_router
+from app.api.v2.meta import router as meta_router
+from app.api.v2.players import router as players_router
+from app.api.v2.player_stats import router as player_stats_router
+from app.api.v2.profiles import router as profiles_router
+from app.api.v2.teams import router as teams_router
+from app.api.v2.webhooks import router as webhooks_router
+from app.api.v2.stats_charts import router as stats_charts_router
+from app.api.v2.forms import router as forms_router
 from app.utils.auth import router as auth_router
 
 app_instance = FastAPI()

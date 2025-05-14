@@ -1,10 +1,10 @@
-from sqlalchemy import Column, String, JSON, Integer, DateTime, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
+from app.api.v2.types import Column, String, JSON, Integer, DateTime, ForeignKey, Boolean
+from app.api.v2.types import relationship
 from app.models.base import Base
-from datetime import datetime
-from uuid import UUID, uuid4
-from typing import List, Optional
-from enum import Enum
+from app.api.v2.types import datetime
+from app.api.v2.types import UUID, uuid4
+from app.api.v2.types import List, Optional
+from app.api.v2.types import Enum
 
 from app.models import Team, Player
 

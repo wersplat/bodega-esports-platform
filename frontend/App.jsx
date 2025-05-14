@@ -1,24 +1,25 @@
 // frontend/App.jsx
 
-import { useEffect } from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation
-} from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { RouterProvider } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { theme } from '@/theme/theme';
 
-import Navbar from './components/Navbar';
+// Create and use theme
+const AppTheme = theme;
 
+// Components
+import Navbar from '@/components/Navbar';
+import { useLocation } from 'react-router-dom';
 
-
-// Auth & General User Pages
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import LeagueBrowser from './pages/LeagueBrowser';
-import RegisterTeam from './pages/RegisterTeam';
-import SubmitPlayerStats from './pages/SubmitPlayerStats';
+// Pages
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import Dashboard from '@/pages/Dashboard';
+import LeagueBrowser from '@/pages/LeagueBrowser';
+import RegisterTeam from '@/pages/RegisterTeam';
+import SubmitPlayerStats from '@/pages/SubmitPlayerStats';
 import SubmitResult from './pages/SubmitResult';
 import Matches from './pages/Matches';
 import PublicMatches from './pages/PublicMatches';
@@ -117,8 +118,11 @@ function App() {
 
 export default function AppWrapper() {
   return (
-    <Router>
-      <App />
-    </Router>
+    <ThemeProvider theme={AppTheme}>
+      <CssBaseline />
+      <Router>
+        <App />
+      </Router>
+    </ThemeProvider>
   );
 }

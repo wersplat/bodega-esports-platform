@@ -1,8 +1,14 @@
 import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
-// import { Card } from '@/components/ui/card'; // Uncomment if available
 
-export default function TeamListPage({ initialTeams, error }) {
+// import { Card } from '@/components/ui/card'; // Uncomment if available
+import React from "react";
+
+interface TeamListPageProps {
+  initialTeams?: any[];
+  error?: string;
+}
+
+const TeamListPage: React.FC<TeamListPageProps> = ({ initialTeams = [], error } = {}) => {
   if (error) return <p className="p-4 text-red-500">Error: {error}</p>;
 
   return (
@@ -48,7 +54,9 @@ export default function TeamListPage({ initialTeams, error }) {
       </div>
     </div>
   );
-}
+};
+
+export default TeamListPage;
 
 export async function getServerSideProps() {
   try {
@@ -61,7 +69,7 @@ export async function getServerSideProps() {
         initialTeams: teams,
       },
     };
-  } catch (err) {
+  } catch (err: any) {
     return {
       props: {
         error: err.message,

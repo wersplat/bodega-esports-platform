@@ -1,6 +1,15 @@
-import type { TeamStats } from "@/types/team"
-import { Card } from "../ui/card"
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import type { TeamStats } from '@/types/team';
+import { Card } from '@/components/ui/card';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend
+} from 'recharts';
 
 interface TeamStatsDisplayProps {
   stats: TeamStats
