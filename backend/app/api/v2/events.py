@@ -13,7 +13,7 @@ from app.api.v2.responses import ListResponse, SingleResponse
 from app.database import get_db
 
 # Type imports
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 from datetime import datetime
 from enum import Enum
@@ -62,7 +62,7 @@ class EventResult(BaseModel):
 class EventOut(EventBase):
     results: List[EventResult]
     lineups: Dict[str, List[Dict[str, str]]]
-    stats: Dict[str, any]
+    stats: Dict[str, Any]
 
 @router.get("/events", response_model=ListResponse[EventBase])
 async def list_events(
