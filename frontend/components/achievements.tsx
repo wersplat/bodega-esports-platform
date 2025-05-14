@@ -1,4 +1,6 @@
 import { Trophy } from "lucide-react"
+import { useEffect, useState } from "react"
+import { supabase } from "../supabaseClient"
 
 interface Achievement {
   id: string
@@ -6,29 +8,70 @@ interface Achievement {
   date: string
 }
 
-export function Achievements() {
-  // Sample achievements data
-  // In a real app, you would fetch this from Supabase
-  const achievements: Achievement[] = [
-    { id: "1", title: "Season MVP", date: "2022-2023" },
-    { id: "2", title: "All-Star Selection", date: "2023" },
-    { id: "3", title: "Player of the Week", date: "May 1-7, 2023" },
-    { id: "4", title: "30+ Point Game", date: "vs Team Omega, April 10, 2023" },
-  ]
+interface AchievementsProps {
+  userId?: string;
+}
+
+export function Achievements({ userId }: AchievementsProps) {
+  const [achievements, setAchievements] = useState<Achievement[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!userId) return
+    setLoading(true)
+    setError(null)
+    supabase
+      .from('achievements')
+      .select('*')
+      .eq('user_id', userId)
+      .then(({ data, error }) => {
+        if (error) {
+          setError('Failed to fetch achievements')
+          setAchievements([])
+        } else if (data) {
+          // Map data to Achievement[] if needed
+          setAchievements(
+            data.map((a: any) => ({
+              id: a.id,
+              title: a.title,
+              date: a.date,
+            }))
+          )
+        }
+        setLoading(false)
+      })
+  }, [userId])
+
+  if (!userId) {
+    return <div className="p-2 text-red-500">No user ID provided.</div>
+  }
+
+  if (loading) {
+    return <div className="p-2 text-gray-500">Loading achievements...</div>
+  }
+
+  if (error) {
+    return <div className="p-2 text-red-500">{error}</div>
+  }
 
   return (
     <div className="space-y-4 p-2">
-      {achievements.map((achievement) => (
-        <div key={achievement.id} className="flex items-center gap-4">
-          <div className="h-10 w-10 rounded-full bg-[#e11d48]/10 flex items-center justify-center">
-            <Trophy className="h-5 w-5 text-[#e11d48]" />
+      {achievements.length === 0 ? (
+        <div className="text-gray-500">No achievements found.</div>
+      ) : (
+        achievements.map((achievement) => (
+          <div key={achievement.id} className="flex items-center gap-4">
+            <div className="h-10 w-10 rounded-full bg-[#e11d48]/10 flex items-center justify-center">
+              <Trophy className="h-5 w-5 text-[#e11d48]" />
+            </div>
+            <div>
+              <p className="font-medium">{achievement.title}</p>
+              <p className="text-sm text-[#94a3b8]">{achievement.date}</p>
+            </div>
           </div>
-          <div>
-            <p className="font-medium">{achievement.title}</p>
-            <p className="text-sm text-[#94a3b8]">{achievement.date}</p>
-          </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   )
-} 
+}

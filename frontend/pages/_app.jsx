@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import '../styles/globals.css'
 // import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/components/auth/auth-provider'
