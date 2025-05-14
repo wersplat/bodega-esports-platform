@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends
-from app.utils.discord import send_discord_webhook
+from fastapi import APIRouter
 
 router = APIRouter(
     prefix="/payments",

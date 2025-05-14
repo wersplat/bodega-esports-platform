@@ -4,7 +4,6 @@ from app.routers.standings import get_standings
 from app.routers.leaderboard import get_leaderboard
 from app.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 from starlette.concurrency import run_in_threadpool
 from app.utils.auth import get_current_user
 

@@ -1,9 +1,9 @@
 # FastAPI imports
-from fastapi import APIRouter, Depends, HTTPException, Query, Path
+from fastapi import APIRouter, Depends, Query, Path
 
 # Database imports
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import func, select, and_, or_, desc
+from sqlalchemy import func, select
 
 # Project imports
 from app.models import Team, TeamMember, Profile, Season
@@ -11,11 +11,10 @@ from app.api.v2.base import raise_error, not_found_error, conflict_error
 from app.api.v2.responses import ListResponse, SingleResponse
 
 # Type imports
-from typing import List, Optional, Dict, Any, Union
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 from datetime import datetime
 from enum import Enum
-from dateutil.relativedelta import relativedelta
 
 # Add missing imports
 from app.database import get_db

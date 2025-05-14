@@ -1,25 +1,24 @@
 # FastAPI imports
 from asyncio import Event
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 
 # Database imports
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Date, func, select, and_
 
 # Project imports
-from app.models import Team, League
-from app.api.v2.base import raise_error, not_found_error, conflict_error
+from app.models import Team
+from app.api.v2.base import raise_error, not_found_error
 from app.api.v2.responses import ListResponse, SingleResponse
 from app.database import get_db
 
 # Type imports
-from typing import List, Optional, Dict, Any, Union
+from typing import List, Optional, Dict
 from pydantic import BaseModel, Field
 from datetime import datetime
 from enum import Enum
 from dateutil.relativedelta import relativedelta
 
-from backend.app.schemas import player
 
 router = APIRouter(
     prefix="/api/v2",
@@ -125,7 +124,7 @@ async def get_upcoming_events(
 ):
     try:
         # Get events from now until X days ahead
-        now = datetime.utcnow()
+        now = datetime.now(datetime.UTC)
         end_date = now + relativedelta(days=days)
         
         stmt = select(Event)
@@ -183,7 +182,7 @@ async def get_event(
         lineups_stmt = lineups_stmt.join(EventResult)
         lineups_stmt = lineups_stmt.where(EventResult.event_id == event_id)
         lineups_result = await db.execute(lineups_stmt)
-        players = lineups_result.scalars().all()
+        player = lineups_result.scalars().all()
         
         # Format response
         event_data = {

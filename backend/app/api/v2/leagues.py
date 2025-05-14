@@ -1,21 +1,20 @@
 # FastAPI imports
-from fastapi import APIRouter, Depends, HTTPException, Query, Path
+from fastapi import APIRouter, Depends, Query, Path
 
 # Database imports
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import func, select, and_, or_, desc
+from sqlalchemy import func, select
 
 # Project imports
-from app.models import League, Season
-from app.api.v2.base import raise_error, not_found_error, conflict_error
+from app.models import League
+from app.api.v2.base import not_found_error, conflict_error
 from app.api.v2.responses import ListResponse, SingleResponse
 from app.database import get_db
 
 # Type imports
-from typing import List, Optional, Dict, Any, Union
-from pydantic import BaseModel, Field
+from typing import Optional
+from pydantic import BaseModel
 from datetime import datetime
-from enum import Enum
 
 router = APIRouter(
     prefix="/api/v2",
@@ -72,8 +71,7 @@ async def get_leagues(
     query = query.offset(skip).limit(limit)
     result = await db.execute(query)
     leagues = result.scalars().all()
-    
-    return ListResponse[
+    return ListResponse(
         items=leagues,
         pagination={
             "total": total_count,

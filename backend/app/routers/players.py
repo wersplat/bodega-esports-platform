@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status
 from fastapi import APIRouter
@@ -23,7 +24,6 @@ async def create_player(
 
 @router.get("/", response_model=list[ProfileRead])
 async def get_players(db: AsyncSession = Depends(get_db)):
-    from sqlalchemy.future import select
     stmt = select(Profile)
     result = await db.execute(stmt)
     return result.scalars().all()
@@ -33,7 +33,6 @@ async def get_players(db: AsyncSession = Depends(get_db)):
 async def get_player(
     player_id: int, db: AsyncSession = Depends(get_db)
 ):
-    from sqlalchemy.future import select
     stmt = select(Profile).where(Profile.id == player_id)
     result = await db.execute(stmt)
     player = result.scalars().first()

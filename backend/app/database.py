@@ -3,8 +3,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from typing import Optional, AsyncContextManager, Type
+from typing import AsyncContextManager
 from contextlib import asynccontextmanager
 import logging
 
@@ -54,7 +53,6 @@ class SessionFactory:
             await session.close()
 
 # Import Base from your models
-from app.models.base import Base
 
 # Analytics DB setup (optional)
 analytics_engine = None

@@ -1,8 +1,7 @@
 from pydantic import BaseModel, Field
-from typing import TypeVar, Generic, List, Optional, Dict, Any, Type
+from typing import TypeVar, Generic, List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
-from typing_extensions import Annotated
 
 T = TypeVar('T')
 

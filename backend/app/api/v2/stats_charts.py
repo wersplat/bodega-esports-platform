@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.api.v2.base import raise_error, not_found_error
+from app.api.v2.base import raise_error
 from app.api.v2.responses import ListResponse
-from app.models.models import PlayerStat, Match, Team, Profile
+from app.models.models import PlayerStat, Match, Team, Profile, Roster
 from sqlalchemy import func, select
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
 from pydantic import BaseModel
 from datetime import datetime
 from enum import Enum
@@ -101,7 +101,7 @@ async def top_scorers(
                 Team.name.label("team_name")
             ).join(Team, Team.id == Roster.team_id)
             team_stmt = team_stmt.where(Roster.season_id == season_id)
-            team_result = await db.execute(team_stmt)
+            team_result = (await db.execute(team_stmt)).all()
             team_map = {r.profile_id: r for r in team_result}
         
         # Format response

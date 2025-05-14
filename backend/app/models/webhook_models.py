@@ -6,7 +6,7 @@ from app.models.base import Base
 
 # Standard library imports
 from datetime import datetime
-from typing import List, Optional, Dict, Any, TypeVar
+from typing import TypeVar
 from enum import Enum
 import uuid
 

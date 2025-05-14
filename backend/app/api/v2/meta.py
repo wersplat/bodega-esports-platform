@@ -1,5 +1,5 @@
 # FastAPI imports
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 
 # Database imports
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,10 +9,9 @@ from app.api.v2.responses import SingleResponse
 from app.database import get_db
 
 # Type imports
-from typing import Dict, Any, List
+from typing import Dict, Any
 from pydantic import BaseModel
 import platform
-import sys
 import os
 
 router = APIRouter(

@@ -1,17 +1,16 @@
-import json
-from datetime import datetime
+from datetime import datetime, timedelta, UTC
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Query
+from fastapi import APIRouter, Body, Depends, Query
 from pydantic import BaseModel, Field, HttpUrl
-from sqlalchemy import and_, desc, func, or_, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v2.base import conflict_error, not_found_error, raise_error
+from app.api.v2.base import not_found_error, raise_error
 from app.api.v2.responses import ListResponse, SingleResponse
 from app.database import get_db
-from app.models import Player, PlayerStats, Team, TeamMember, Webhook
+from app.models import Player, PlayerStats, Team, Webhook
 
 router = APIRouter(
     prefix="/api/v2",
@@ -158,7 +157,7 @@ async def handle_team_update(team_id: int, db: AsyncSession):
             "logo_url": team.logo_url,
             "updated_at": team.updated_at
         },
-        timestamp=datetime.utcnow()
+        timestamp=datetime.now(UTC)
     )
     
     await send_webhook_event(event, db)
@@ -177,7 +176,7 @@ async def handle_player_update(player_id: int, db: AsyncSession):
             "jersey_number": player.jersey_number,
             "updated_at": player.updated_at
         },
-        timestamp=datetime.utcnow()
+        timestamp=datetime.now(UTC)
     )
     
     await send_webhook_event(event, db)
@@ -198,7 +197,7 @@ async def handle_stats_update(stats_id: int, db: AsyncSession):
             "rebounds": stats.rebounds,
             "updated_at": stats.updated_at
         },
-        timestamp=datetime.utcnow()
+        timestamp=datetime.now(UTC)
     )
     
     await send_webhook_event(event, db)
@@ -245,8 +244,8 @@ async def send_webhook_event(event: WebhookEvent, db: AsyncSession):
                     webhook_id=webhook.id,
                     event=event,
                     attempt=1,
-                    last_attempt=datetime.utcnow(),
-                    next_attempt=datetime.utcnow() + timedelta(seconds=webhook.retry_delay),
+                    last_attempt=datetime.now(UTC),
+                    next_attempt=datetime.now(UTC) + timedelta(seconds=webhook.retry_delay),
                     error="Initial send failed"
                 )
                 db.add(retry)
@@ -254,7 +253,7 @@ async def send_webhook_event(event: WebhookEvent, db: AsyncSession):
                 
         except Exception as e:
             webhook.last_error = str(e)
-            webhook.last_retry = datetime.utcnow()
+            webhook.last_retry = datetime.now(UTC)
             await db.commit()
 
 async def trigger_daily_mvp_event(db: AsyncSession):
@@ -270,7 +269,7 @@ async def trigger_daily_mvp_event(db: AsyncSession):
             data={
                 "player": data.get("player"),
                 "stats": data.get("stats"),
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(UTC).isoformat()
             }
         )
         
@@ -291,7 +290,7 @@ async def trigger_weekly_top5_event(db: AsyncSession):
             event=WebhookType.WEEKLY_TOP5,
             data={
                 "top": data.get("top", []),
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(UTC).isoformat()
             }
         )
         
@@ -309,7 +308,7 @@ async def trigger_weekly_top5_event(db: AsyncSession):
     )
     
     # Apply rate limiting
-    now = datetime.utcnow()
+    now = datetime.now(UTC)
     stmt = stmt.where(
         or_(
             Webhook.last_retry.is_(None),
@@ -385,7 +384,7 @@ async def send_webhook_request(webhook: Webhook, event: WebhookEvent) -> bool:
 
 async def process_webhook_retries(db: AsyncSession):
     """Process pending webhook retries"""
-    now = datetime.utcnow()
+    now = datetime.now(UTC)
     
     # Get pending retries
     stmt = select(WebhookRetry).join(Webhook)

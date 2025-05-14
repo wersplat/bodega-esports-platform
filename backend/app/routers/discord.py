@@ -26,7 +26,6 @@ from app.utils.discord import send_discord_message
 from sqlalchemy.exc import SQLAlchemyError
 from app.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 from starlette.concurrency import run_in_threadpool
 import logging
 

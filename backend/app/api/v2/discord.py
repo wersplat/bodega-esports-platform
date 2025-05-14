@@ -1,22 +1,20 @@
 # FastAPI imports
-from fastapi import APIRouter, Depends, HTTPException, Query, Path, BackgroundTasks
+from fastapi import APIRouter, Depends, BackgroundTasks
 
 # Database imports
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import func, select, and_, or_, desc
+from sqlalchemy import select
 
 # Project imports
 from app.models import Profile, Team
 from app.api.v2.base import raise_error, not_found_error, conflict_error
-from app.api.v2.responses import ListResponse, SingleResponse
+from app.api.v2.responses import SingleResponse
 from app.database import get_db
 
 # Type imports
-from typing import List, Optional, Dict, Any, Union
-from pydantic import BaseModel, Field
-from datetime import datetime
+from typing import List, Optional, Dict, Any
+from pydantic import BaseModel
 from enum import Enum
-import uuid
 
 router = APIRouter(
     prefix="/api/v2",
