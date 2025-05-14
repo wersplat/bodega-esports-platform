@@ -4,11 +4,12 @@ import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/components/auth/auth-provider"
 import type { Team, TeamMember, TeamStats } from "@/types/team"
-import axios from "axios"
+import type { TeamApiResponse, TeamMembersApiResponse, TeamStatsApiResponse } from "@/types/api"
+import axios, { AxiosResponse } from "axios"
 import { v4 as uuidv4 } from "uuid"
-import getConfig from 'next/config'
+import type { NextConfig } from 'next'
 
-const { publicRuntimeConfig } = getConfig()
+const { publicRuntimeConfig } = getConfig() as NextConfig
 const API_BASE = publicRuntimeConfig.API_BASE
 const API_VERSION = publicRuntimeConfig.API_VERSION
 
@@ -35,15 +36,22 @@ export function useTeam(teamId?: string) {
         setIsLoading(true)
         setError(null)
 
-        let targetTeamId = teamId
+        let targetTeamId: string | undefined = teamId
 
         // If no teamId is provided, fetch the user's team
         if (!targetTeamId) {
           try {
-            const response = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/user`, {
+            const response: AxiosResponse<TeamApiResponse> = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/user`, {
               params: { user_id: user.id }
             })
-            const teamData = response.data.item
+            const responseData = response.data
+            if (responseData.error) {
+              throw new Error(responseData.error.message)
+            }
+            const teamData = responseData.data.item
+            if (!teamData) {
+              throw new Error('Team data not found')
+            }
             targetTeamId = teamData.id
             setUserRole(teamData.role)
             setTeam(teamData)
@@ -57,7 +65,11 @@ export function useTeam(teamId?: string) {
         } else {
           try {
             const response = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/${targetTeamId}`)
-            setTeam(response.data.item)
+            const responseData = response.data as TeamApiResponse
+            if (responseData.error) {
+              throw new Error(responseData.error.message)
+            }
+            setTeam(responseData.data.item)
           } catch (error: any) {
             throw error
           }
@@ -71,19 +83,30 @@ export function useTeam(teamId?: string) {
         // Fetch team members
         try {
           const response = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/${targetTeamId}/members`)
-          setMembers(response.data.items.map((member: any) => ({
+          const responseData = response.data as TeamMembersApiResponse
+          if (responseData.error) {
+            throw new Error(responseData.error.message)
+          }
+          const teamMembers = responseData.data.items
+          if (!teamMembers) {
+            throw new Error('Team members data not found')
+          }
+          setMembers(teamMembers.map((member: any) => ({
             id: member.id,
-            userId: member.user_id,
+            user_id: member.user_id,
+            team_id: member.team_id,
             role: member.role,
             position: member.position,
-            jerseyNumber: member.jersey_number,
+            jersey_number: member.jersey_number,
+            status: member.status,
+            joined_at: member.joined_at,
             user: {
               id: member.user.id,
+              full_name: member.user.full_name,
+              avatar_url: member.user.avatar_url,
               username: member.user.username,
-              email: member.user.email,
-              profilePicture: member.user.profile_picture,
             },
-          })))
+          } as TeamMember)))
         } catch (error: any) {
           throw error
         }
@@ -91,7 +114,15 @@ export function useTeam(teamId?: string) {
         // Fetch team stats
         try {
           const response = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/${targetTeamId}/stats`)
-          setStats(response.data.item)
+          const responseData = response.data as TeamStatsApiResponse
+          if (responseData.error) {
+            throw new Error(responseData.error.message)
+          }
+          const statsData = responseData.data.item
+          if (!statsData) {
+            throw new Error('Team stats data not found')
+          }
+          setStats(statsData)
         } catch (error: any) {
           setStats({
             wins: 0,
@@ -138,12 +169,15 @@ export function useTeam(teamId?: string) {
       return { 
         success: false, 
         message: error.response?.data?.error?.message || "Failed to add member" 
-      }
+      } as const
     }
   }
 
   // Resend invite
   async function resendInvite(invite: any) {
+    if (!team) {
+      throw new Error('Team is not initialized');
+    }
     await axios.post(`${API_BASE}/api/${API_VERSION}/teams/${team.id}/invites/resend`, {
       email: invite.email,
       teamId: invite.team_id,
@@ -175,7 +209,7 @@ export function useTeam(teamId?: string) {
     }
 
     // Prevent demoting the only captain
-    const memberToUpdate = members.find((m) => m.id === memberId)
+    const memberToUpdate = members.find((m: TeamMember) => m.id === memberId)
     if (memberToUpdate && memberToUpdate.role === "captain" && updates.role && updates.role !== "captain") {
       const numCaptains = members.filter((m) => m.role === "captain").length
       if (numCaptains === 1) {
@@ -191,7 +225,7 @@ export function useTeam(teamId?: string) {
       }
 
       // Update the member in local state
-      setMembers((prev) => prev.map((member) => (member.id === memberId ? { ...member, ...updates } : member)))
+      setMembers((prev: TeamMember[]) => prev.map((member) => (member.id === memberId ? { ...member, ...updates } : member)))
 
       return { success: true, message: "Member updated successfully" }
     } catch (err: any) {
@@ -207,7 +241,7 @@ export function useTeam(teamId?: string) {
 
     try {
       // Check if the member is the team captain
-      const memberToRemove = members.find((m) => m.id === memberId)
+      const memberToRemove = members.find((m: TeamMember) => m.id === memberId)
       if (memberToRemove?.role === "captain") {
         return { success: false, message: "Cannot remove the team captain" }
       }
@@ -219,7 +253,7 @@ export function useTeam(teamId?: string) {
       }
 
       // Remove the member from local state
-      setMembers((prev) => prev.filter((member) => member.id !== memberId))
+      setMembers((prev: TeamMember[]) => prev.filter((member: TeamMember) => member.id !== memberId))
 
       return { success: true, message: "Member removed successfully" }
     } catch (err: any) {
@@ -241,7 +275,7 @@ export function useTeam(teamId?: string) {
       }
 
       // Update the team in local state
-      setTeam((prev) => (prev ? { ...prev, ...updates } : null))
+      setTeam((prev: Team | null) => (prev ? { ...prev, ...updates } : null))
 
       return { success: true, message: "Team updated successfully" }
     } catch (err: any) {
@@ -263,5 +297,5 @@ export function useTeam(teamId?: string) {
     updateTeam,
     resendInvite,
     cancelInvite,
-  }
+  } as const
 } 

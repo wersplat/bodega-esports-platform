@@ -9,6 +9,7 @@ export interface Team {
   captain_id: string
   description: string | null
   home_court: string | null
+  role: "captain" | "coach" | "player" | "manager"
 }
 
 export interface TeamMember {

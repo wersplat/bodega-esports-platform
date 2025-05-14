@@ -1,12 +1,16 @@
+import os
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 # Load environment
 load_dotenv()
 
-# Ensure the async driver is used
+# Get database URL from environment
 DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL environment variable is not set")
 
 # Async engine setup
 engine = create_async_engine(
@@ -24,7 +28,7 @@ SessionLocal = sessionmaker(
 )
 
 # Import Base from your models
-from app.models.base import Base  # keep your existing Base
+from app.models.base import Base
 
 # Analytics DB setup (optional)
 if DATABASE_URL:
@@ -33,12 +37,16 @@ if DATABASE_URL:
         echo=True,
         future=True,
     )
-    AnalyticsSessionLocal = sessionmaker(
-        bind=analytics_engine,
-        class_=AsyncSession,
-        expire_on_commit=False,
-        autoflush=False,
-    )
+
+# Test database connection
+async def test_connection():
+    try:
+        async with engine.begin() as conn:
+            await conn.execute("SELECT 1")
+        print("Database connection successful")
+    except Exception as e:
+        print(f"Database connection failed: {e}")
+        raise
 else:
     analytics_engine = None
     AnalyticsSessionLocal = None
