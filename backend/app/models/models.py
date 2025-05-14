@@ -356,3 +356,16 @@ class TeamInvitation(Base):
 
     def __repr__(self) -> str:
         return f"<TeamInvitation id={self.id} email={self.email} role={self.role} status={self.status}>"
+    
+    class Player(Base):
+    __tablename__ = "players"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    position = Column(String)
+    jersey_number = Column(Integer)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    def __repr__(self) -> str:
+        return f"<Player id={self.id} name={self.name} position={self.position} jersey_number={self.jersey_number}>"
+
