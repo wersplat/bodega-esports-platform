@@ -50,8 +50,9 @@ class EventBase(BaseModel):
     updated_at: datetime = Field(description="Event last update timestamp")
     
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        validate_by_name = True
+        arbitrary_types_allowed = True
 
 class EventResult(BaseModel):
     team_id: int

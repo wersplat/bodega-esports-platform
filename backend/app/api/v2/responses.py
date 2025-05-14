@@ -25,6 +25,10 @@ class BaseResponse(BaseModel, Generic[T]):
     message: Optional[str] = Field(default=None, description="Optional response message")
     error_code: Optional[str] = Field(default=None, description="Optional error code")
 
+    class Config:
+        from_attributes = True
+        arbitrary_types_allowed = True
+
 class ListResponse(BaseResponse[T]):
     items: List[T] = Field(description="List of items")
     pagination: Pagination = Field(description="Pagination information")

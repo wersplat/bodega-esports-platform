@@ -20,6 +20,10 @@ class ErrorDetail(BaseModel):
     timestamp: datetime = datetime.utcnow()
     details: Optional[Dict[str, Any]] = None
 
+    class Config:
+        from_attributes = True
+        arbitrary_types_allowed = True
+
 def raise_error(
     code: str = "ERROR",
     message: str = "An error occurred",

@@ -67,7 +67,8 @@ class ContractResponse(ContractBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+        arbitrary_types_allowed = True
 
 
 # Mock contracts storage (replace with actual database models when available)

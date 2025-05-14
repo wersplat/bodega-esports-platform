@@ -95,3 +95,7 @@ def internal_error(message: str = "Internal server error", details: Optional[Dic
         status_code=500,
         details=details
     )
+
+class Config:
+    from_attributes = True
+    arbitrary_types_allowed = True
