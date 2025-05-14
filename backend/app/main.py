@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+
 # Router imports
 from app.api.v2 import (
     matches,
@@ -31,18 +34,24 @@ app_instance = FastAPI()
 # --- Analytics DB Table Creation ---
 from app.database import analytics_engine
 from app.analytics_models.base import AnalyticsBase
-import importlib
 import app.analytics_models.analytics_log  # Ensure models are imported for metadata
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 async def create_analytics_tables():
-    if analytics_engine is not None:
+    if analytics_engine is None:
+        return
+    try:
         async with analytics_engine.begin() as conn:
             await conn.run_sync(AnalyticsBase.metadata.create_all)
+    except Exception as e:
+        print(f"Error creating analytics tables: {e}")
 
 @app_instance.on_event("startup")
 async def on_startup():
-    await create_analytics_tables()
+    try:
+        await create_analytics_tables()
+    except Exception as e:
+        print(f"Error during startup: {e}")
 
 app_instance.add_middleware(
     CORSMiddleware,
@@ -82,13 +91,22 @@ app_instance.include_router(stats_charts.router, prefix="/api/stats_charts", tag
 app_instance.include_router(forms.router, prefix="/api/forms", tags=["forms"])
 
 # === Scheduler ===
+from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+
 def some_task():
-    print("Scheduled task is running...")
+    logger.info("Scheduled task is running...")
 
 def start_scheduler():
-    sched = BackgroundScheduler()
-    sched.add_job(func=some_task, trigger=CronTrigger(hour=0))
-    sched.start()
+    try:
+        sched = BackgroundScheduler()
+        sched.add_job(func=some_task, trigger=CronTrigger(hour=0))
+        sched.start()
+        logger.info("Scheduler started successfully")
+    except Exception as e:
+        logger.error(f"Failed to start scheduler: {e}")
 
 start_scheduler()
 

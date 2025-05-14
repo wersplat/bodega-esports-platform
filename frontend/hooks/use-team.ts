@@ -7,11 +7,7 @@ import type { Team, TeamMember, TeamStats } from "@/types/team"
 import type { TeamApiResponse, TeamMembersApiResponse, TeamStatsApiResponse } from "@/types/api"
 import axios, { AxiosResponse } from "axios"
 import { v4 as uuidv4 } from "uuid"
-import type { NextConfig } from 'next'
-
-const { publicRuntimeConfig } = getConfig() as NextConfig
-const API_BASE = publicRuntimeConfig.API_BASE
-const API_VERSION = publicRuntimeConfig.API_VERSION
+import { useRuntimeConfig } from "@/hooks/use-runtime-config"
 
 export function useTeam(teamId?: string) {
   const { user } = useAuth()
@@ -40,15 +36,15 @@ export function useTeam(teamId?: string) {
 
         // If no teamId is provided, fetch the user's team
         if (!targetTeamId) {
-          try {
-            const response: AxiosResponse<TeamApiResponse> = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/user`, {
-              params: { user_id: user.id }
-            })
-            const responseData = response.data
-            if (responseData.error) {
-              throw new Error(responseData.error.message)
-            }
-            const teamData = responseData.data.item
+          const config = useRuntimeConfig()
+          const response: AxiosResponse<TeamApiResponse> = await axios.get(`${config.apiBase}/api/${config.apiVersion}/teams/user`, {
+            params: { user_id: user.id }
+          })
+          const responseData = response.data
+          if (responseData.error) {
+            throw new Error(responseData.error.message)
+          }
+          const teamData = responseData.data.item
             if (!teamData) {
               throw new Error('Team data not found')
             }

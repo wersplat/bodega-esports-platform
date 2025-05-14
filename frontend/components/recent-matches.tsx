@@ -69,7 +69,7 @@ export function RecentMatches({ userId }: RecentMatchesProps) {
           setMatches(formattedMatches)
         }
       } catch (error) {
-        // console.error("Error fetching recent matches:", error)
+        console.error("Error fetching recent matches:", error)
       } finally {
         setIsLoading(false)
       }
@@ -89,6 +89,14 @@ export function RecentMatches({ userId }: RecentMatchesProps) {
 
   // Use sample data if no real data is available
   const displayMatches = matches.length > 0 ? matches : sampleMatches
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    )
+  }
 
   return (
     <>

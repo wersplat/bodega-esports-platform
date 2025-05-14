@@ -3,8 +3,11 @@ from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from typing import Optional, AsyncContextManager
+from typing import Optional, AsyncContextManager, Type
 from contextlib import asynccontextmanager
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Load environment
 load_dotenv()
@@ -12,42 +15,66 @@ load_dotenv()
 # Get database URL from environment
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
+    logger.error("DATABASE_URL environment variable is not set")
     raise ValueError("DATABASE_URL environment variable is not set")
 
-# Async engine setup
-engine = create_async_engine(
-    DATABASE_URL,
-    echo=True,
-    future=True,
-)
+try:
+    # Async engine setup
+    engine = create_async_engine(
+        DATABASE_URL,
+        echo=True,
+        future=True,
+    )
+    logger.info("Database engine created successfully")
+except Exception as e:
+    logger.error(f"Failed to create database engine: {e}")
+    raise
 
 # Async session factory
-SessionLocal = sessionmaker(
-    bind=engine,
-    class_=AsyncSession,
-    expire_on_commit=False,
-    autoflush=False,
-)
+class SessionFactory:
+    def __init__(self, engine):
+        self.engine = engine
+        self.SessionLocal = sessionmaker(
+            bind=self.engine,
+            class_=AsyncSession,
+            expire_on_commit=False,
+            autoflush=False,
+        )
+
+    @asynccontextmanager
+    async def get_session(self) -> AsyncContextManager[AsyncSession]:
+        session = self.SessionLocal()
+        try:
+            yield session
+        except Exception as e:
+            logger.error(f"Session error: {e}")
+            raise
+        finally:
+            await session.close()
 
 # Import Base from your models
 from app.models.base import Base
 
 # Analytics DB setup (optional)
-if DATABASE_URL:
-    analytics_engine = create_async_engine(
-        DATABASE_URL,
-        echo=True,
-        future=True,
-    )
-    AnalyticsSessionLocal = sessionmaker(
-        bind=analytics_engine,
-        class_=AsyncSession,
-        expire_on_commit=False,
-        autoflush=False,
-    )
-else:
-    analytics_engine = None
-    AnalyticsSessionLocal = None
+analytics_engine = None
+AnalyticsSessionLocal = None
+
+try:
+    if DATABASE_URL:
+        analytics_engine = create_async_engine(
+            DATABASE_URL,
+            echo=True,
+            future=True,
+        )
+        AnalyticsSessionLocal = sessionmaker(
+            bind=analytics_engine,
+            class_=AsyncSession,
+            expire_on_commit=False,
+            autoflush=False,
+        )
+        logger.info("Analytics database setup completed")
+except Exception as e:
+    logger.error(f"Failed to setup analytics database: {e}")
 
 # Database connection context manager
 @asynccontextmanager
