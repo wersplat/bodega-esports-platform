@@ -57,7 +57,7 @@ class League(Base):
         back_populates="league",
         lazy="selectin"
     )
-    seasons: List['Season'] = relationship(
+    seasons: Mapped[List['Season']] = relationship(
         "Season", 
         back_populates="league",
         lazy="selectin"
@@ -82,9 +82,9 @@ class Profile(Base):  # = users
     discord_id: Optional[str] = Column(String, nullable=True)
 
     # relationships
-    rosters: List['Roster'] = relationship("Roster", back_populates="profile", lazy="selectin")
-    roles: List['UserRole'] = relationship("UserRole", back_populates="profile", lazy="selectin")
-    player_stats: List['PlayerStat'] = relationship("PlayerStat", back_populates="profile", lazy="selectin")
+    rosters: Mapped[List['Roster']] = relationship("Roster", back_populates="profile", lazy="selectin")
+    roles: Mapped[List['UserRole']] = relationship("UserRole", back_populates="profile", lazy="selectin")
+    player_stats: Mapped[List['PlayerStat']] = relationship("PlayerStat", back_populates="profile", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<Profile id={self.id} username={self.username} status={self.status}>"
@@ -97,7 +97,7 @@ class Role(Base):
     created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    users: List['UserRole'] = relationship("UserRole", back_populates="role", lazy="selectin")
+    users: Mapped[List['UserRole']] = relationship("UserRole", back_populates="role", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<Role id={self.id} name={self.name}>"
@@ -111,8 +111,8 @@ class UserRole(Base):
     created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    profile: 'Profile' = relationship("Profile", back_populates="roles", lazy="selectin")
-    role: 'Role' = relationship("Role", back_populates="users", lazy="selectin")
+    profile: Mapped['Profile'] = relationship("Profile", back_populates="roles", lazy="selectin")
+    role: Mapped['Role'] = relationship("Role", back_populates="users", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<UserRole id={self.id} profile_id={self.profile_id} role_id={self.role_id}>"
@@ -130,9 +130,9 @@ class Season(Base):
     league_id: Optional[int] = Column(Integer, ForeignKey('leagues.id'), nullable=True)
 
     # relationships
-    league: Optional['League'] = relationship("League", back_populates="seasons", lazy="selectin")
-    teams: List['Team'] = relationship("Team", back_populates="season", lazy="selectin")
-    rosters: List['Roster'] = relationship("Roster", back_populates="season", lazy="selectin")
+    league: Mapped[Optional['League']] = relationship("League", back_populates="seasons", lazy="selectin")
+    teams: Mapped[List['Team']] = relationship("Team", back_populates="season", lazy="selectin")
+    rosters: Mapped[List['Roster']] = relationship("Roster", back_populates="season", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<Season id={self.id} name={self.name} status={self.status}>"
@@ -150,12 +150,12 @@ class Team(Base):
     status: str = Column(String, default=TeamStatus.ACTIVE.value, nullable=False)
 
     # relationships
-    season: 'Season' = relationship("Season", back_populates="teams", lazy="selectin")
-    members: List['Roster'] = relationship("Roster", back_populates="team", lazy="selectin")
-    created_by_profile: Optional['Profile'] = relationship("Profile", foreign_keys=[created_by], lazy="selectin")
-    match_submissions: List['MatchSubmission'] = relationship("MatchSubmission", back_populates="team", lazy="selectin")
-    home_matches: List['Match'] = relationship("Match", foreign_keys=['Match.team1_id'], back_populates="team1", lazy="selectin")
-    away_matches: List['Match'] = relationship("Match", foreign_keys=['Match.team2_id'], back_populates="team2", lazy="selectin")
+    season: Mapped['Season'] = relationship("Season", back_populates="teams", lazy="selectin")
+    members: Mapped[List['Roster']] = relationship("Roster", back_populates="team", lazy="selectin")
+    created_by_profile: Mapped[Optional['Profile']] = relationship("Profile", foreign_keys=[created_by], lazy="selectin")
+    match_submissions: Mapped[List['MatchSubmission']] = relationship("MatchSubmission", back_populates="team", lazy="selectin")
+    home_matches: Mapped[List['Match']] = relationship("Match", foreign_keys=['Match.team1_id'], back_populates="team1", lazy="selectin")
+    away_matches: Mapped[List['Match']] = relationship("Match", foreign_keys=['Match.team2_id'], back_populates="team2", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<Team id={self.id} name={self.name} status={self.status}>"
@@ -172,9 +172,9 @@ class Roster(Base):
     created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    profile: 'Profile' = relationship("Profile", back_populates="rosters", lazy="selectin")
-    team: 'Team' = relationship("Team", back_populates="members", lazy="selectin")
-    season: 'Season' = relationship("Season", back_populates="rosters", lazy="selectin")
+    profile: Mapped['Profile'] = relationship("Profile", back_populates="rosters", lazy="selectin")
+    team: Mapped['Team'] = relationship("Team", back_populates="members", lazy="selectin")
+    season: Mapped['Season'] = relationship("Season", back_populates="rosters", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<Roster id={self.id} profile_id={self.profile_id} team_id={self.team_id} status={self.status}>"
@@ -193,11 +193,11 @@ class Match(Base):
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # relationships
-    team1: 'Team' = relationship("Team", foreign_keys=[team1_id], back_populates="home_matches", lazy="selectin")
-    team2: 'Team' = relationship("Team", foreign_keys=[team2_id], back_populates="away_matches", lazy="selectin")
-    season: 'Season' = relationship("Season", back_populates="matches", lazy="selectin")
-    submissions: List['MatchSubmission'] = relationship("MatchSubmission", back_populates="match", lazy="selectin")
-    player_stats: List['PlayerStat'] = relationship("PlayerStat", back_populates="match", lazy="selectin")
+    team1: Mapped['Team'] = relationship("Team", foreign_keys=[team1_id], back_populates="home_matches", lazy="selectin")
+    team2: Mapped['Team'] = relationship("Team", foreign_keys=[team2_id], back_populates="away_matches", lazy="selectin")
+    season: Mapped['Season'] = relationship("Season", back_populates="matches", lazy="selectin")
+    submissions: Mapped[List['MatchSubmission']] = relationship("MatchSubmission", back_populates="match", lazy="selectin")
+    player_stats: Mapped[List['PlayerStat']] = relationship("PlayerStat", back_populates="match", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<Match id={self.id} team1_id={self.team1_id} team2_id={self.team2_id} status={self.status}>"
@@ -215,9 +215,9 @@ class MatchSubmission(Base):
     created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    match: 'Match' = relationship("Match", back_populates="submissions", lazy="selectin")
-    team: 'Team' = relationship("Team", back_populates="match_submissions", lazy="selectin")
-    reviewer: Optional['Profile'] = relationship("Profile", foreign_keys=[reviewed_by], lazy="selectin")
+    match: Mapped['Match'] = relationship("Match", back_populates="submissions", lazy="selectin")
+    team: Mapped['Team'] = relationship("Team", back_populates="match_submissions", lazy="selectin")
+    reviewer: Mapped[Optional['Profile']] = relationship("Profile", foreign_keys=[reviewed_by], lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<MatchSubmission id={self.id} match_id={self.match_id} team_id={self.team_id} status={self.status}>"
@@ -232,8 +232,8 @@ class PlayerStat(Base):
     created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    profile: 'Profile' = relationship("Profile", back_populates="player_stats", lazy="selectin")
-    match: 'Match' = relationship("Match", back_populates="player_stats", lazy="selectin")
+    profile: Mapped['Profile'] = relationship("Profile", back_populates="player_stats", lazy="selectin")
+    match: Mapped['Match'] = relationship("Match", back_populates="player_stats", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<PlayerStat id={self.id} profile_id={self.profile_id} stat_type={self.stat_type} value={self.value}>"
@@ -282,8 +282,8 @@ class Division(Base):
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     
     # relationships
-    season: 'Season' = relationship("Season", back_populates="divisions", lazy="selectin")
-    teams: List['Team'] = relationship("Team", back_populates="division", lazy="selectin")
+    season: Mapped['Season'] = relationship("Season", back_populates="divisions", lazy="selectin")
+    teams: Mapped[List['Team']] = relationship("Team", back_populates="division", lazy="selectin")
     
     def __repr__(self) -> str:
         return f"<Division id={self.id} name={self.name} season_id={self.season_id}>"
@@ -298,8 +298,8 @@ class Conference(Base):
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # relationships
-    league: 'League' = relationship("League", back_populates="conferences", lazy="selectin")
-    divisions: List['Division'] = relationship("Division", back_populates="conference", lazy="selectin")
+    league: Mapped['League'] = relationship("League", back_populates="conferences", lazy="selectin")
+    divisions: Mapped[List['Division']] = relationship("Division", back_populates="conference", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<Conference id={self.id} name={self.name} league_id={self.league_id}>"
@@ -313,7 +313,7 @@ class LeagueSettings(Base):
     updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # relationships
-    league: 'League' = relationship("League", back_populates="settings", lazy="selectin")
+    league: Mapped['League'] = relationship("League", back_populates="settings", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<LeagueSettings id={self.id} league_id={self.league_id}>"
