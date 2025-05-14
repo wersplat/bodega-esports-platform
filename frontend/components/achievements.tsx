@@ -6,14 +6,10 @@ interface Achievement {
   date: string
 }
 
-interface AchievementsProps {
-  userId: string
-}
-
-export function Achievements({ userId }: AchievementsProps) {
+export function Achievements() {
   // Sample achievements data
   // In a real app, you would fetch this from Supabase
-  const achievements = [
+  const achievements: Achievement[] = [
     { id: "1", title: "Season MVP", date: "2022-2023" },
     { id: "2", title: "All-Star Selection", date: "2023" },
     { id: "3", title: "Player of the Week", date: "May 1-7, 2023" },
