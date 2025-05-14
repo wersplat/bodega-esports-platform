@@ -102,14 +102,14 @@ export default function CreateTeamPage() {
       const { error: statsError } = await supabase.from("team_stats").insert([teamStats])
 
       if (statsError) {
-        console.error("Error creating team stats:", statsError)
+        setError("Failed to create team stats")
         // Continue anyway as this is not critical
       }
 
       // Redirect to team management page
       router.push("/teams/manage")
     } catch (err: any) {
-      console.error("Error creating team:", err)
+      setError("Failed to create team")
       setError(err.message || "Failed to create team")
     } finally {
       setIsSubmitting(false)

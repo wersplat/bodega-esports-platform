@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 function LeaderboardStatic() {
   const [seasons, setSeasons] = useState([]);
@@ -14,7 +14,7 @@ function LeaderboardStatic() {
     if (selectedSeason) {
       fetchLeaderboard();
     }
-  }, [selectedSeason]);
+  }, [selectedSeason, fetchLeaderboard]);
 
   const fetchSeasons = async () => {
     try {
@@ -23,22 +23,22 @@ function LeaderboardStatic() {
       setSeasons(data);
       if (data.length > 0) setSelectedSeason(data[0].id);
     } catch (err) {
-      // Handle error (was: console.error('Error fetching seasons:', err))
+      // Error fetching seasons
     }
   };
 
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`https://api.bodegacatsgc.gg/leaderboard/simple?season_id=${selectedSeason}`);
       const data = await res.json();
       setPlayers(data);
     } catch (err) {
-      // Handle error (was: console.error('Error fetching leaderboard:', err))
+      // Error fetching leaderboard
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedSeason]);
 
   return (
     <div className="main-content">

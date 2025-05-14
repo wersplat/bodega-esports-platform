@@ -99,13 +99,13 @@ export default function UserProfilePage() {
             .single()
 
           if (teamError) {
-            console.error("Error fetching team data:", teamError)
+            setError("Failed to load team data")
           } else {
             setTeam(teamData as Team)
           }
         }
       } catch (err: any) {
-        console.error("Error fetching user profile:", err)
+        setError("Failed to load profile")
         setError(err.message || "Failed to load profile")
       } finally {
         setIsLoading(false)

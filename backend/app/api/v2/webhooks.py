@@ -6,7 +6,7 @@ from app.api.v2.responses import SingleResponse, ListResponse
 from app.models import Webhook, Team, Player, TeamMember, PlayerStats
 from sqlalchemy import func, select, and_, or_, desc
 from typing import List, Optional, Dict, Any, Union
-from pydantic import BaseModel, Field, HttpUrl, EmailStr
+from pydantic import BaseModel, Field, HttpUrl
 from datetime import datetime
 from enum import Enum
 import json

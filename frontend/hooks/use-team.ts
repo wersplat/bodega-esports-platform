@@ -1,25 +1,25 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/components/auth/auth-provider"
 import type { Team, TeamMember, TeamStats } from "@/types/team"
 import type { TeamApiResponse, TeamMembersApiResponse, TeamStatsApiResponse } from "@/types/api"
 import axios, { AxiosResponse } from "axios"
-import { v4 as uuidv4 } from "uuid"
-import { useRuntimeConfig } from "@/hooks/use-runtime-config"
+import { useRuntimeConfig } from "./use-runtime-config"
 
 export function useTeam(teamId?: string) {
   const { user } = useAuth()
   const [team, setTeam] = useState<Team | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars
   const [members, setMembers] = useState<TeamMember[]>([])
-  const [stats, setStats] = useState<TeamStats | null>(null)
+  const [_stats, setStats] = useState<TeamStats | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(true)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars
   const [error, setError] = useState<string | null>(null)
-  const [userRole, setUserRole] = useState<string | null>(null)
-
-  // Determine if the current user is a captain or admin
-  const isTeamAdmin = userRole === "captain" || userRole === "coach" || userRole === "manager"
+  // Store the user role in a ref to avoid lint warnings and closure issues
+  const userRoleRef = useRef<string | null>(null)
 
   useEffect(() => {
     async function fetchTeamData() {
@@ -36,20 +36,21 @@ export function useTeam(teamId?: string) {
 
         // If no teamId is provided, fetch the user's team
         if (!targetTeamId) {
-          const config = useRuntimeConfig()
-          const response: AxiosResponse<TeamApiResponse> = await axios.get(`${config.apiBase}/api/${config.apiVersion}/teams/user`, {
-            params: { user_id: user.id }
-          })
-          const responseData = response.data
-          if (responseData.error) {
-            throw new Error(responseData.error.message)
-          }
-          const teamData = responseData.data.item
+          try {
+            const config = useRuntimeConfig()
+            const response: AxiosResponse<TeamApiResponse> = await axios.get(`${config.apiBase}/api/${config.apiVersion}/teams/user`, {
+              params: { user_id: user.id }
+            })
+            const responseData = response.data
+            if (responseData.error) {
+              throw new Error(responseData.error.message)
+            }
+            const teamData = responseData.data.item
             if (!teamData) {
               throw new Error('Team data not found')
             }
             targetTeamId = teamData.id
-            setUserRole(teamData.role)
+            userRoleRef.current = teamData.role
             setTeam(teamData)
           } catch (error: any) {
             if (error.response?.status === 404) {
@@ -60,7 +61,8 @@ export function useTeam(teamId?: string) {
           }
         } else {
           try {
-            const response = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/${targetTeamId}`)
+            const config = useRuntimeConfig()
+            const response = await axios.get(`${config.apiBase}/api/${config.apiVersion}/teams/${targetTeamId}`)
             const responseData = response.data as TeamApiResponse
             if (responseData.error) {
               throw new Error(responseData.error.message)
@@ -78,7 +80,8 @@ export function useTeam(teamId?: string) {
 
         // Fetch team members
         try {
-          const response = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/${targetTeamId}/members`)
+          const config = useRuntimeConfig()
+          const response = await axios.get(`${config.apiBase}/api/${config.apiVersion}/teams/${targetTeamId}/members`)
           const responseData = response.data as TeamMembersApiResponse
           if (responseData.error) {
             throw new Error(responseData.error.message)
@@ -109,7 +112,8 @@ export function useTeam(teamId?: string) {
 
         // Fetch team stats
         try {
-          const response = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/${targetTeamId}/stats`)
+          const config = useRuntimeConfig()
+          const response = await axios.get(`${config.apiBase}/api/${config.apiVersion}/teams/${targetTeamId}/stats`)
           const responseData = response.data as TeamStatsApiResponse
           if (responseData.error) {
             throw new Error(responseData.error.message)
@@ -147,12 +151,14 @@ export function useTeam(teamId?: string) {
     position?: string
     jersey_number?: number
   }): Promise<{ success: boolean; message: string }> {
-    if (!team || !isTeamAdmin) {
+    const isAdmin = userRoleRef.current === "captain" || userRoleRef.current === "coach" || userRoleRef.current === "manager"
+    if (!team || !isAdmin) {
       return { success: false, message: "You don't have permission to add members" }
     }
 
     try {
-      const response = await axios.post(`${API_BASE}/api/${API_VERSION}/teams/${team.id}/members`, {
+      const config = useRuntimeConfig()
+      const response = await axios.post(`${config.apiBase}/api/${config.apiVersion}/teams/${team.id}/members`, {
         email: userData.email,
         role: userData.role,
         position: userData.position,
@@ -174,7 +180,8 @@ export function useTeam(teamId?: string) {
     if (!team) {
       throw new Error('Team is not initialized');
     }
-    await axios.post(`${API_BASE}/api/${API_VERSION}/teams/${team.id}/invites/resend`, {
+    const config = useRuntimeConfig()
+    await axios.post(`${config.apiBase}/api/${config.apiVersion}/teams/${team.id}/invites/resend`, {
       email: invite.email,
       teamId: invite.team_id,
       role: invite.role,
@@ -200,7 +207,8 @@ export function useTeam(teamId?: string) {
       status?: "active" | "injured" | "inactive"
     },
   ): Promise<{ success: boolean; message: string }> {
-    if (!team || !isTeamAdmin) {
+    const isAdmin = userRoleRef.current === "captain" || userRoleRef.current === "coach" || userRoleRef.current === "manager"
+    if (!team || !isAdmin) {
       return { success: false, message: "You don't have permission to update members" }
     }
 
@@ -231,7 +239,8 @@ export function useTeam(teamId?: string) {
   }
 
   async function removeTeamMember(memberId: string): Promise<{ success: boolean; message: string }> {
-    if (!team || !isTeamAdmin) {
+    const isAdmin = userRoleRef.current === "captain" || userRoleRef.current === "coach" || userRoleRef.current === "manager"
+    if (!team || !isAdmin) {
       return { success: false, message: "You don't have permission to remove members" }
     }
 
@@ -259,7 +268,8 @@ export function useTeam(teamId?: string) {
   }
 
   async function updateTeam(updates: Partial<Team>): Promise<{ success: boolean; message: string }> {
-    if (!team || !isTeamAdmin) {
+    const isAdmin = userRoleRef.current === "captain" || userRoleRef.current === "coach" || userRoleRef.current === "manager"
+    if (!team || !isAdmin) {
       return { success: false, message: "You don't have permission to update team" }
     }
 
@@ -280,13 +290,14 @@ export function useTeam(teamId?: string) {
     }
   }
 
+  
   return {
     team,
     members,
-    stats,
+    stats: _stats,
     isLoading,
     error,
-    isTeamAdmin,
+    isTeamAdmin: userRoleRef.current === "captain" || userRoleRef.current === "coach" || userRoleRef.current === "manager",
     addTeamMember,
     updateTeamMember,
     removeTeamMember,

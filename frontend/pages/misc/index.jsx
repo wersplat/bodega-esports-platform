@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 function Dashboard() {
   const [user, setUser] = useState(null);
@@ -10,7 +10,7 @@ function Dashboard() {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [fetchUser]);
 
   useEffect(() => {
     if (user) {
@@ -18,9 +18,9 @@ function Dashboard() {
       fetchLeagues();
       fetchMatches();
     }
-  }, [user]);
+  }, [user, fetchTeams, fetchLeagues, fetchMatches, user.id]);
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const res = await fetch('https://api.bodegacatsgc.gg/auth/me');
       if (!res.ok) throw new Error('Not authenticated');
@@ -29,34 +29,34 @@ function Dashboard() {
     } catch {
       window.location.href = '/login';
     }
-  };
+  }, []);
 
-  const fetchTeams = async () => {
+  const fetchTeams = useCallback(async () => {
     const res = await fetch(`https://api.bodegacatsgc.gg/teams?owner_id=${user.id}`);
     const data = await res.json();
     setTeams(data);
     const season = data.find((t) => t.season)?.season;
     setUserSeason(season);
-  };
+  }, [user.id]);
 
-  const fetchLeagues = async () => {
+  const fetchLeagues = useCallback(async () => {
     const res = await fetch('https://api.bodegacatsgc.gg/leagues');
     const data = await res.json();
     setLeagues(data);
-  };
+  }, []);
 
-  const fetchMatches = async () => {
+  const fetchMatches = useCallback(async () => {
     setLoadingMatches(true);
     try {
       const res = await fetch(`https://api.bodegacatsgc.gg/matches/my`);
       const data = await res.json();
       setMatches(data);
     } catch {
-      // Handle error (was: console.error(err))
+      // Error fetching matches
     } finally {
       setLoadingMatches(false);
     }
-  };
+  }, []);
 
   const daysLeft = userSeason?.roster_lock_date
     ? Math.ceil((new Date(userSeason.roster_lock_date) - new Date()) / 86400000)

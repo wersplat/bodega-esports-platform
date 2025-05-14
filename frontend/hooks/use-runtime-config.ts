@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import type { NextConfig } from 'next'
 
 export function useRuntimeConfig() {
   const [config, setConfig] = useState<{

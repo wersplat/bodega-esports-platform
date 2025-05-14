@@ -2,6 +2,7 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
+import React from "react"
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 
@@ -20,28 +21,22 @@ interface RecentMatchesProps {
   userId: string
 }
 
-export function RecentMatches({ userId }: RecentMatchesProps) {
+export const RecentMatches: React.FC<RecentMatchesProps> = ({ userId }) => {
   const [matches, setMatches] = useState<Match[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchRecentMatches() {
       try {
         setIsLoading(true)
+        setError(null)
 
         const { data, error } = await supabase
-          .from("player_match_stats")
-          .select(`
-            id,
-            matches(id, date, home_team, away_team),
-            points,
-            assists,
-            rebounds,
-            steals,
-            blocks
-          `)
-          .eq("player_id", userId)
-          .order("created_at", { ascending: false })
+          .from("matches")
+          .select("id, opponent, date, pts, ast, reb, stl, blk")
+          .eq("user_id", userId)
+          .order("date", { ascending: false })
           .limit(5)
 
         if (error) {
@@ -69,6 +64,7 @@ export function RecentMatches({ userId }: RecentMatchesProps) {
           setMatches(formattedMatches)
         }
       } catch (error) {
+        setError("Failed to load match data")
         console.error("Error fetching recent matches:", error)
       } finally {
         setIsLoading(false)
@@ -94,6 +90,14 @@ export function RecentMatches({ userId }: RecentMatchesProps) {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 text-center text-red-500">
+        {error}
       </div>
     )
   }

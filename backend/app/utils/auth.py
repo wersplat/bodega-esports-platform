@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 from app.database import get_db, supabase_client
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from starlette.concurrency import run_in_threadpool
+# Removed unused import
 from app.models.models import Profile
 
 SECRET_KEY = "your_secret_key"
