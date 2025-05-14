@@ -6,7 +6,7 @@ from apscheduler.triggers.cron import CronTrigger  # REMOVE if not used below
 from contextlib import asynccontextmanager
 
 # Router imports
-from app.routers.matches import router as matches_router
+from app.api.v2.matches import router as matches_router
 from app.api.v2.standings import router as standings_router
 from app.api.v2.events import router as events_router
 from app.api.v2.leagues import router as leagues_router
