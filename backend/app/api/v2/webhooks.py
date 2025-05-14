@@ -10,7 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.v2.base import not_found_error, raise_error
 from app.api.v2.responses import ListResponse, SingleResponse
 from app.database import get_db
-from app.models import Player, PlayerStats, Team, Webhook
+from app.models import Player, PlayerStat, Team, Webhook
+from app.api.v2.players import PlayerStats
 
 router = APIRouter(
     prefix="/api/v2",
@@ -172,7 +173,7 @@ async def handle_player_update(player_id: int, db: AsyncSession):
     await send_webhook_event(event, db)
 
 async def handle_stats_update(stats_id: int, db: AsyncSession):
-    stats = await db.get(PlayerStats, stats_id)
+    stats = await db.get(PlayerStat, stats_id)
     if not stats:
         return
         
