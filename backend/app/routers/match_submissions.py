@@ -33,7 +33,6 @@ async def create_submission(
 
 
 @router.get("/", response_model=list[MatchSubmissionRead])
-@router.get("/", response_model=list[MatchSubmissionRead])
 async def get_submissions(db: AsyncSession = Depends(get_db)):
     stmt = select(MatchSubmission)
     result = await db.execute(stmt)

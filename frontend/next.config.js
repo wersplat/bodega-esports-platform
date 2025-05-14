@@ -11,7 +11,8 @@ const nextConfig = {
   env: {
     SUPABASE_URL: env.SUPABASE_URL || '',
     SUPABASE_ANON_KEY: env.SUPABASE_ANON_KEY || '',
-    API_BASE: env.API_BASE,
+    API_BASE: env.API_BASE || 'https://api.bodegacatsgc.gg',
+    API_VERSION: 'v2',
   },
   webpack: (config) => {
     config.resolve.alias = {

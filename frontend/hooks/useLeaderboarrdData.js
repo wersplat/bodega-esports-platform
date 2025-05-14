@@ -14,7 +14,7 @@ export default function useLeaderboardData(seasonId = 1, sort = "ppg", minGames 
 
     setLoading(true);
     axios
-      .get(`${API_BASE}/api/leaderboard`, {
+      .get(`${API_BASE}/api/v2/stats/leaderboard`, {
         params: { season_id: seasonId, sort_by: sort, min_games: minGames }
       })
       .then((res) => setData(res.data))

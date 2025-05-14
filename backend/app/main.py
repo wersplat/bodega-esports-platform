@@ -1,36 +1,7 @@
-import sys
-from pathlib import Path
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
-from app.routers.seasons     import router as seasons_router
-from app.routers.teams       import router as teams_router
-from app.routers.rosters     import router as rosters_router
-from app.routers.players     import router as players_router
-from app.api.routes import forms
-# Add backend directory to path (only if strictly needed)
-backend_path = Path(__file__).resolve().parents[1]
-sys.path.append(str(backend_path))
-
-# === Router imports (pick one: app.api.*) ===
-# from app.api.users import router as users_router
-# from app.api.seasons import router as seasons_router
-# from app.api.teams import router as teams_router
-# from app.api.divisions import router as divisions_router
-# from app.api.leaderboard import router as leaderboard_router
-# from app.api.webhooks import router as webhooks_router
-
-# (and any others you've built in app.api: players, matches, etc.)
-# from app.api.players import router as players_router
-# from app.api.matches import router as matches_router
-# … etc. …
-
-# === Utils / Auth routers ===
-from app.utils.auth import router as auth_router
-from app.routers import profiles
-from app.routers import (
+# Router imports
+from app.api.v2 import (
     matches,
     standings,
     events,
@@ -51,10 +22,11 @@ from app.routers import (
     stats,
     stats_charts,
     teams,
+    forms,
 )
-from app.api.routes import forms
+from app.utils.auth import router as auth_router
 
-app = FastAPI()
+app_instance = FastAPI()
 
 # --- Analytics DB Table Creation ---
 from app.database import analytics_engine
@@ -68,15 +40,16 @@ async def create_analytics_tables():
         async with analytics_engine.begin() as conn:
             await conn.run_sync(AnalyticsBase.metadata.create_all)
 
-@app.on_event("startup")
+@app_instance.on_event("startup")
 async def on_startup():
     await create_analytics_tables()
 
-app.add_middleware(
+app_instance.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
         "https://dashboard.bodegacatsgc.gg",
+        "https://api.bodegacatsgc.gg",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -84,41 +57,29 @@ app.add_middleware(
 )
 
 # === Include all routers ===
-app.include_router(auth_router)
-
-# app.include_router(profiles.router, prefix="/api/users", tags=["users"])
-app.include_router(seasons.router)
-# app.include_router(teams_router,      prefix="/api/teams",      tags=["teams"])
-# app.include_router(divisions_router,  prefix="/api/divisions",  tags=["divisions"])
-app.include_router(leaderboard.router)
-# app.include_router(webhooks_router,   prefix="/api/webhooks",   tags=["webhooks"])
-app.include_router(seasons_router, prefix="/api/seasons", tags=["seasons"])
-app.include_router(teams_router,   prefix="/api/teams",   tags=["teams"])
-app.include_router(rosters_router, prefix="/api/rosters", tags=["rosters"])
-# app.include_router(players_router,    prefix="/api/players",    tags=["players"])
-# app.include_router(matches_router,    prefix="/api/matches",    tags=["matches"])
-app.include_router(matches.router)
-app.include_router(standings.router)
-app.include_router(events.router)
-app.include_router(leagues.router)
-app.include_router(seasons.router)
-app.include_router(notifications.router)
-app.include_router(payments.router)
-app.include_router(contracts.router)
-app.include_router(discord.router)
-app.include_router(divisions.router)
-app.include_router(exports.router)
-app.include_router(leaderboard.router)
-app.include_router(match_submissions.router)
-app.include_router(meta.router)
-app.include_router(players.router)
-app.include_router(player_stats.router)
-app.include_router(profiles.router, prefix="/api/users", tags=["users"])
-app.include_router(stats.router)
-app.include_router(stats_charts.router)
-app.include_router(teams.router)
-app.include_router(forms.router)
-# … include the rest of your routers exactly once each …
+app_instance.include_router(auth_router)
+app_instance.include_router(seasons.router, prefix="/api/seasons", tags=["seasons"])
+app_instance.include_router(teams.router, prefix="/api/teams", tags=["teams"])
+app_instance.include_router(rosters.router, prefix="/api/rosters", tags=["rosters"])
+app_instance.include_router(players.router, prefix="/api/players", tags=["players"])
+app_instance.include_router(matches.router, prefix="/api/matches", tags=["matches"])
+app_instance.include_router(standings.router, prefix="/api/standings", tags=["standings"])
+app_instance.include_router(events.router, prefix="/api/events", tags=["events"])
+app_instance.include_router(leagues.router, prefix="/api/leagues", tags=["leagues"])
+app_instance.include_router(notifications.router, prefix="/api/notifications", tags=["notifications"])
+app_instance.include_router(payments.router, prefix="/api/payments", tags=["payments"])
+app_instance.include_router(contracts.router, prefix="/api/contracts", tags=["contracts"])
+app_instance.include_router(discord.router, prefix="/api/discord", tags=["discord"])
+app_instance.include_router(divisions.router, prefix="/api/divisions", tags=["divisions"])
+app_instance.include_router(exports.router, prefix="/api/exports", tags=["exports"])
+app_instance.include_router(leaderboard.router, prefix="/api/leaderboard", tags=["leaderboard"])
+app_instance.include_router(match_submissions.router, prefix="/api/match_submissions", tags=["match_submissions"])
+app_instance.include_router(meta.router, prefix="/api/meta", tags=["meta"])
+app_instance.include_router(player_stats.router, prefix="/api/player_stats", tags=["player_stats"])
+app_instance.include_router(profiles.router, prefix="/api/users", tags=["users"])
+app_instance.include_router(stats.router, prefix="/api/stats", tags=["stats"])
+app_instance.include_router(stats_charts.router, prefix="/api/stats_charts", tags=["stats_charts"])
+app_instance.include_router(forms.router, prefix="/api/forms", tags=["forms"])
 
 # === Scheduler ===
 def some_task():
@@ -131,10 +92,10 @@ def start_scheduler():
 
 start_scheduler()
 
-@fastapi_app.get("/")
+@app_instance.get("/")
 def root():
     return {"message": "Welcome to the Bodega Esports Platform API!"}
 
-@fastapi_app.get("/ping")
+@app_instance.get("/ping")
 def ping():
     return {"message": "pong"}

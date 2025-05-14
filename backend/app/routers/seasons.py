@@ -16,7 +16,7 @@ class SeasonOut(SeasonCreate):
     class Config:
         orm_mode = True
 
-from sqlalchemy.future import select
+
 
 @router.get("/", response_model=list[SeasonOut])
 async def list_seasons(db: AsyncSession = Depends(get_db)):
@@ -32,7 +32,6 @@ async def create_season(data: SeasonCreate, db: AsyncSession = Depends(get_db)):
     await db.refresh(new)
     return new
 
-@router.get("/{season_id}", response_model=SeasonOut)
 @router.get("/{season_id}", response_model=SeasonOut)
 async def get_season(season_id: int, db: AsyncSession = Depends(get_db)):
     season = await db.get(Season, season_id)

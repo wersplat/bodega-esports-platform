@@ -6,6 +6,11 @@ import { useAuth } from "@/components/auth/auth-provider"
 import type { Team, TeamMember, TeamStats } from "@/types/team"
 import axios from "axios"
 import { v4 as uuidv4 } from "uuid"
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
+const API_BASE = publicRuntimeConfig.API_BASE
+const API_VERSION = publicRuntimeConfig.API_VERSION
 
 export function useTeam(teamId?: string) {
   const { user } = useAuth()
@@ -34,35 +39,27 @@ export function useTeam(teamId?: string) {
 
         // If no teamId is provided, fetch the user's team
         if (!targetTeamId) {
-          const { data: userTeamData, error: userTeamError } = await supabase
-            .from("team_members")
-            .select("team_id, role")
-            .eq("user_id", user.id)
-            .single()
-
-          if (userTeamError) {
-            if (userTeamError.code !== "PGRST116") {
-              // Not found error
-              throw userTeamError
+          try {
+            const response = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/user`, {
+              params: { user_id: user.id }
+            })
+            const teamData = response.data.item
+            targetTeamId = teamData.id
+            setUserRole(teamData.role)
+            setTeam(teamData)
+          } catch (error: any) {
+            if (error.response?.status === 404) {
+              setIsLoading(false)
+              return
             }
-            // User has no team
-            setIsLoading(false)
-            return
+            throw error
           }
-
-          targetTeamId = userTeamData.team_id
-          setUserRole(userTeamData.role)
         } else {
-          // Check if user is a member of this team and get their role
-          const { data: memberData, error: memberError } = await supabase
-            .from("team_members")
-            .select("role")
-            .eq("user_id", user.id)
-            .eq("team_id", targetTeamId)
-            .single()
-
-          if (!memberError) {
-            setUserRole(memberData.role)
+          try {
+            const response = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/${targetTeamId}`)
+            setTeam(response.data.item)
+          } catch (error: any) {
+            throw error
           }
         }
 
@@ -71,60 +68,31 @@ export function useTeam(teamId?: string) {
           return
         }
 
-        // Fetch team details
-        const { data: teamData, error: teamError } = await supabase
-          .from("teams")
-          .select("*")
-          .eq("id", targetTeamId)
-          .single()
-
-        if (teamError) throw teamError
-
-        setTeam(teamData as Team)
-
         // Fetch team members
-        const { data: membersData, error: membersError } = await supabase
-          .from("team_members")
-          .select(`
-            id,
-            user_id,
-            team_id,
-            role,
-            position,
-            jersey_number,
-            status,
-            joined_at,
-            users:user_id (
-              id,
-              full_name,
-              avatar_url,
-              username
-            )
-          `)
-          .eq("team_id", targetTeamId)
-          .order("role", { ascending: false })
-
-        if (membersError) throw membersError
-
-        // Transform the data to match our TeamMember interface
-        const formattedMembers = membersData.map((member: any) => ({
-          ...member,
-          user: member.users,
-        })) as unknown as TeamMember[]
-
-        setMembers(formattedMembers)
+        try {
+          const response = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/${targetTeamId}/members`)
+          setMembers(response.data.items.map((member: any) => ({
+            id: member.id,
+            userId: member.user_id,
+            role: member.role,
+            position: member.position,
+            jerseyNumber: member.jersey_number,
+            user: {
+              id: member.user.id,
+              username: member.user.username,
+              email: member.user.email,
+              profilePicture: member.user.profile_picture,
+            },
+          })))
+        } catch (error: any) {
+          throw error
+        }
 
         // Fetch team stats
-        const { data: statsData, error: statsError } = await supabase
-          .from("team_stats")
-          .select("*")
-          .eq("team_id", targetTeamId)
-          .single()
-
-        if (!statsError && statsData) {
-          setStats(statsData as TeamStats)
-        } else {
-          // If no stats found, create default stats
+        try {
+          const response = await axios.get(`${API_BASE}/api/${API_VERSION}/teams/${targetTeamId}/stats`)
+          setStats(response.data.item)
+        } catch (error: any) {
           setStats({
             wins: 0,
             losses: 0,
@@ -157,64 +125,26 @@ export function useTeam(teamId?: string) {
     }
 
     try {
-      // Always create an invitation record
-      const token = uuidv4()
-      const { data: invitee, error: userError } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("email", userData.email)
-        .single()
+      const response = await axios.post(`${API_BASE}/api/${API_VERSION}/teams/${team.id}/members`, {
+        email: userData.email,
+        role: userData.role,
+        position: userData.position,
+        jersey_number: userData.jersey_number
+      })
 
-      if (!invitee) {
-        // User not found, create pending invite and send email
-        await supabase.from("team_invitations").insert({
-          team_id: team.id,
-          email: userData.email,
-          role: userData.role,
-          invited_by: user?.id || null,
-          token,
-          status: "pending"
-        })
-        // Send invite email (call API endpoint)
-        await axios.post("/api/invite-team-member", {
-          email: userData.email,
-          teamId: team.id,
-          role: userData.role,
-          token,
-          invitedBy: user?.id || null
-        })
-        return { success: true, message: "Invitation email sent to user." }
-      } else {
-        // User exists, add to team and mark invite as accepted
-        await supabase.from("team_members").insert({
-          user_id: invitee.id,
-          team_id: team.id,
-          role: userData.role,
-          position: userData.position || null,
-          jersey_number: userData.jersey_number || null,
-          status: "active",
-          joined_at: new Date().toISOString()
-        })
-        await supabase.from("team_invitations").insert({
-          team_id: team.id,
-          email: userData.email,
-          role: userData.role,
-          invited_by: user?.id || null,
-          token,
-          status: "accepted",
-          accepted_at: new Date().toISOString()
-        })
-        return { success: true, message: "User added to team." }
+      return { success: true, message: response.data.message || "Member added successfully" }
+    } catch (error: any) {
+      console.error("Error adding team member:", error)
+      return { 
+        success: false, 
+        message: error.response?.data?.error?.message || "Failed to add member" 
       }
-    } catch (err: any) {
-      console.error("Error adding team member:", err)
-      return { success: false, message: err.message || "Failed to add member" }
     }
   }
 
   // Resend invite
   async function resendInvite(invite: any) {
-    await axios.post("/api/invite-team-member", {
+    await axios.post(`${API_BASE}/api/${API_VERSION}/teams/${team.id}/invites/resend`, {
       email: invite.email,
       teamId: invite.team_id,
       role: invite.role,

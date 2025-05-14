@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+
 from app.database import get_db
 from app.models import Roster
 
@@ -20,8 +20,6 @@ class RosterOut(RosterCreate):
 
     class Config:
         orm_mode = True
-
-@router.get("/", response_model=list[RosterOut])
 
 @router.get("/", response_model=list[RosterOut])
 async def list_rosters(db: AsyncSession = Depends(get_db)):

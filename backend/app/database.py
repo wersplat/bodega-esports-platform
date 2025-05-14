@@ -1,8 +1,3 @@
-import os
-print("CWD:", os.getcwd())
-print(".env exists:", os.path.exists(".env"))
-print("DATABASE_URL:", os.environ.get("DATABASE_URL"))
-import logging
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
@@ -32,7 +27,6 @@ SessionLocal = sessionmaker(
 from app.models.base import Base  # keep your existing Base
 
 # Analytics DB setup (optional)
-DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:
     analytics_engine = create_async_engine(
         DATABASE_URL,
@@ -48,7 +42,7 @@ if DATABASE_URL:
 else:
     analytics_engine = None
     AnalyticsSessionLocal = None
-    logging.warning("DATABASE_URL not set. Analytics DB will not be available.")
+    print("Warning: DATABASE_URL not set. Analytics DB will not be available.")
 
 # Dependency for FastAPI
 async def get_db():

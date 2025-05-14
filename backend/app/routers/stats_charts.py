@@ -2,8 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models.models import PlayerStat, Match, Team, Profile
-from sqlalchemy import func
-from sqlalchemy.future import select
+from sqlalchemy import func, select
 
 router = APIRouter(prefix="/api/stats", tags=["Stats Charts"])
 
@@ -33,7 +32,6 @@ async def top_scorers(season_id: int, db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/team-wins")
-@router.get("/team-wins")
 async def team_wins(season_id: int, db: AsyncSession = Depends(get_db)):
     stmt = select(
         Team.id.label("team_id"),
@@ -54,7 +52,6 @@ async def team_wins(season_id: int, db: AsyncSession = Depends(get_db)):
     ]
 
 
-@router.get("/stat-progression")
 @router.get("/stat-progression")
 async def stat_progression(
     profile_id: int,

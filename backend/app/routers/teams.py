@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+
 from app.database import get_db
 from app.models import Team
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v1")
 
 class TeamCreate(BaseModel):
     name: str
@@ -16,8 +16,6 @@ class TeamOut(TeamCreate):
 
     class Config:
         orm_mode = True
-
-@router.get("/", response_model=list[TeamOut])
 
 @router.get("/", response_model=list[TeamOut])
 async def list_teams(db: AsyncSession = Depends(get_db)):
@@ -33,7 +31,6 @@ async def create_team(data: TeamCreate, db: AsyncSession = Depends(get_db)):
     await db.refresh(new)
     return new
 
-@router.get("/{team_id}", response_model=TeamOut)
 @router.get("/{team_id}", response_model=TeamOut)
 async def get_team(team_id: int, db: AsyncSession = Depends(get_db)):
     team = await db.get(Team, team_id)

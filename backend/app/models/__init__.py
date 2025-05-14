@@ -32,5 +32,9 @@ __all__ = [
     "PlayerStat",
     "LeagueSettings",
     "Notification",
-    "FormSubmission"
+    "FormSubmission",
+    "Webhook",
+    "WebhookRetry",
+    "WebhookHealth",
+    "WebhookAnalytics"
     ]
