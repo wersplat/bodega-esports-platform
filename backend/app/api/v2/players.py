@@ -64,8 +64,8 @@ class PlayerUpdate(BaseModel):
     stats: Dict[str, Any]
     
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        validate_by_name = True
 
 class PlayerCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)

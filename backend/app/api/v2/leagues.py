@@ -49,7 +49,7 @@ class LeagueResponse(LeagueBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 @router.get("", response_model=ListResponse[LeagueResponse])
@@ -79,7 +79,7 @@ async def get_leagues(
             "per_page": limit,
             "total_pages": (total_count + limit - 1) // limit
         }
-    ]
+    )
 
 
 @router.get("/{league_id}", response_model=SingleResponse[LeagueResponse])

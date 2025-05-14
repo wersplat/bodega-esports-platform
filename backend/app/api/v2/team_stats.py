@@ -65,7 +65,7 @@ class PlayerStatsOut(BaseModel):
     plus_minus: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TeamStatsOut(BaseModel):
     team_id: int
@@ -84,7 +84,7 @@ class TeamStatsOut(BaseModel):
     avg_free_throws: float
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.get("/teams/{team_id}/stats", response_model=SingleResponse[TeamStatsOut])
 async def get_team_stats(

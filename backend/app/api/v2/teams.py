@@ -47,7 +47,7 @@ class TeamBase(BaseModel):
     status: str = Field(description="Team status")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TeamCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100, description="Team name")
@@ -58,7 +58,7 @@ class TeamCreate(BaseModel):
     status: str = Field(default="active", description="Team status")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TeamUpdate(BaseModel):
     name: Optional[str] = Field(default=None, description="Team name")
@@ -67,7 +67,7 @@ class TeamUpdate(BaseModel):
     status: Optional[str] = Field(default=None, description="Team status")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Team Member Models
 class TeamMemberBase(BaseModel):
@@ -79,7 +79,7 @@ class TeamMemberBase(BaseModel):
     status: str = Field(description="Member status")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TeamMemberCreate(BaseModel):
     team_id: int = Field(description="Team ID")
@@ -88,14 +88,14 @@ class TeamMemberCreate(BaseModel):
     status: str = Field(default="active", description="Member status")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TeamMemberUpdate(BaseModel):
     role: Optional[Role] = Field(default=None, description="Member role")
     status: Optional[str] = Field(default=None, description="Member status")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
     created_by: Optional[str] = Field(description="ID of the user creating the team")
 
 class TeamUpdate(BaseModel):
@@ -137,7 +137,7 @@ class TeamOut(BaseModel):
     stats: Optional[Dict[str, Any]]
     
     class Config:
-        orm_mode = True
+        from_attributes = True
         allow_population_by_field_name = True
 
 class TeamRoster(BaseModel):
@@ -200,7 +200,7 @@ class TeamOut(BaseModel):
     captain_id: Optional[str] = Field(alias="captainId")
     
     class Config:
-        orm_mode = True
+        from_attributes = True
         allow_population_by_field_name = True
 
 @router.get(

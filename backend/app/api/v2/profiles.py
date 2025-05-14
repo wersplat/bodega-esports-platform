@@ -67,7 +67,7 @@ class RoleInfo(BaseModel):
     description: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ProfileResponse(ProfileBase):
@@ -78,7 +78,7 @@ class ProfileResponse(ProfileBase):
     roles: List[RoleInfo] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 @router.get("", response_model=ListResponse[ProfileResponse])

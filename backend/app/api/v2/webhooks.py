@@ -62,6 +62,9 @@ class WebhookConfig(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Creation timestamp")
     updated_at: datetime = Field(default_factory=datetime.utcnow, description="Last update timestamp")
 
+    class Config:
+        from_attributes = True
+
 class WebhookEvent(BaseModel):
     event_type: WebhookType = Field(description="Type of event")
     timestamp: datetime = Field(description="Event timestamp")
@@ -102,21 +105,8 @@ class WebhookEvent(BaseModel):
     ADMIN_ACTION = "admin_action"
     MODERATION_ACTION = "moderation_action"
 
-class WebhookConfig(BaseModel):
-    url: HttpUrl = Field(..., description="Webhook URL to receive events")
-    secret: str = Field(..., description="Secret token for webhook verification")
-    events: List[WebhookType] = Field(..., description="List of events to subscribe to")
-    team_id: Optional[int] = Field(None, description="Team ID to subscribe to")
-    player_id: Optional[int] = Field(None, description="Player ID to subscribe to")
-    active: bool = Field(True, description="Whether the webhook is active")
-    retry_count: int = Field(3, description="Number of retry attempts")
-    retry_delay: int = Field(60, description="Delay between retry attempts (seconds)")
-    rate_limit: int = Field(100, description="Maximum events per minute")
-    last_retry: Optional[datetime] = Field(None, description="Last retry attempt timestamp")
-    last_error: Optional[str] = Field(None, description="Last error message")
-    
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class WebhookOut(BaseModel):
     id: int
@@ -130,7 +120,7 @@ class WebhookOut(BaseModel):
     updated_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class WebhookEvent(BaseModel):
     event: WebhookType
@@ -211,7 +201,7 @@ class WebhookRetry(BaseModel):
     error: str
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 async def send_webhook_event(event: WebhookEvent, db: AsyncSession):
     # Get active webhooks for this event type
