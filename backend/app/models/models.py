@@ -49,12 +49,12 @@ class RosterStatus(str, Enum):
 
 class League(Base):
     __tablename__ = 'leagues'
-    id: int = Column(Integer, primary_key=True)
-    name: str = Column(String, nullable=False)
-    description: Optional[str] = Column(Text, nullable=True)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    status: str = Column(String, default=LeagueStatus.ACTIVE.value, nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    status = Column(String, default=LeagueStatus.ACTIVE.value, nullable=False)
 
     # Relationships
     settings: Mapped[Optional['LeagueSettings']] = relationship(
@@ -74,18 +74,18 @@ class League(Base):
 
 class Profile(Base):  # = users
     __tablename__ = 'profiles'
-    id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    username: Optional[str] = Column(String, nullable=True)
-    display_name: Optional[str] = Column(String, nullable=True)
-    platform: Optional[str] = Column(String, nullable=True)
-    gamer_tag: Optional[str] = Column(String, nullable=True)
-    avatar_url: Optional[str] = Column(String, nullable=True)
-    is_admin: bool = Column(Boolean, nullable=False, default=False)
-    status: str = Column(String, default=ProfileStatus.ACTIVE.value, nullable=False)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    email: Optional[str] = Column(String, unique=True, nullable=True)
-    discord_id: Optional[str] = Column(String, nullable=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    username = Column(String, nullable=True)
+    display_name = Column(String, nullable=True)
+    platform = Column(String, nullable=True)
+    gamer_tag = Column(String, nullable=True)
+    avatar_url = Column(String, nullable=True)
+    is_admin = Column(Boolean, nullable=False, default=False)
+    status = Column(String, default=ProfileStatus.ACTIVE.value, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    email = Column(String, unique=True, nullable=True)
+    discord_id = Column(String, nullable=True)
 
     # relationships
     rosters: Mapped[List['Roster']] = relationship("Roster", back_populates="profile", lazy="selectin")
@@ -97,11 +97,11 @@ class Profile(Base):  # = users
 
 class Role(Base):
     __tablename__ = 'roles'
-    id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name: str = Column(String, nullable=False, unique=True)  # e.g., player, captain, staff
-    description: Optional[str] = Column(Text, nullable=True)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String, nullable=False, unique=True)  # e.g., player, captain, staff
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     users: Mapped[List['UserRole']] = relationship("UserRole", back_populates="role", lazy="selectin")
 
@@ -110,12 +110,12 @@ class Role(Base):
 
 class UserRole(Base):
     __tablename__ = 'user_roles'
-    id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    profile_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='CASCADE'), nullable=False)
-    role_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('roles.id', ondelete='CASCADE'), nullable=False)
-    context: Optional[str] = Column(String, nullable=True)  # optional: season, team, etc.
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    profile_id = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='CASCADE'), nullable=False)
+    role_id = Column(UUID(as_uuid=True), ForeignKey('roles.id', ondelete='CASCADE'), nullable=False)
+    context = Column(String, nullable=True)  # optional: season, team, etc.
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     profile: Mapped['Profile'] = relationship("Profile", back_populates="roles", lazy="selectin")
     role: Mapped['Role'] = relationship("Role", back_populates="users", lazy="selectin")
@@ -125,15 +125,15 @@ class UserRole(Base):
 
 class Season(Base):
     __tablename__ = 'seasons'
-    id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name: str = Column(String, nullable=False)
-    description: Optional[str] = Column(Text, nullable=True)
-    start_date: Optional[Date] = Column(Date, nullable=True)
-    end_date: Optional[Date] = Column(Date, nullable=True)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    status: str = Column(String, default=SeasonStatus.UPCOMING.value, nullable=False)
-    league_id: Optional[int] = Column(Integer, ForeignKey('leagues.id'), nullable=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    start_date = Column(Date, nullable=True)
+    end_date = Column(Date, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    status = Column(String, default=SeasonStatus.UPCOMING.value, nullable=False)
+    league_id = Column(Integer, ForeignKey('leagues.id'), nullable=True)
 
     # relationships
     league: Mapped[Optional['League']] = relationship("League", back_populates="seasons", lazy="selectin")
@@ -145,15 +145,15 @@ class Season(Base):
 
 class Team(Base):
     __tablename__ = 'teams'
-    id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name: str = Column(String, nullable=False)
-    description: Optional[str] = Column(Text, nullable=True)
-    season_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
-    logo_url: Optional[str] = Column(String, nullable=True)
-    created_by: Optional[UUIDType] = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='SET NULL'), nullable=True)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    status: str = Column(String, default=TeamStatus.ACTIVE.value, nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    season_id = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
+    logo_url = Column(String, nullable=True)
+    created_by = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='SET NULL'), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    status = Column(String, default=TeamStatus.ACTIVE.value, nullable=False)
 
     # relationships
     season: Mapped['Season'] = relationship("Season", back_populates="teams", lazy="selectin")
@@ -168,15 +168,15 @@ class Team(Base):
 
 class Roster(Base):
     __tablename__ = 'rosters'
-    id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    profile_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='CASCADE'), nullable=False)
-    team_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
-    season_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
-    is_captain: bool = Column(Boolean, nullable=False, default=False)
-    joined_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    status: str = Column(String, default=RosterStatus.ACTIVE.value, nullable=False)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    profile_id = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='CASCADE'), nullable=False)
+    team_id = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
+    season_id = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
+    is_captain = Column(Boolean, nullable=False, default=False)
+    joined_at = Column(DateTime(timezone=True), server_default=func.now())
+    status = Column(String, default=RosterStatus.ACTIVE.value, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     profile: Mapped['Profile'] = relationship("Profile", back_populates="rosters", lazy="selectin")
     team: Mapped['Team'] = relationship("Team", back_populates="members", lazy="selectin")
@@ -193,16 +193,16 @@ class MatchStatus(str, Enum):
 
 class Match(Base):
     __tablename__ = 'matches'
-    id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    team1_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
-    team2_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
-    season_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
-    scheduled_at: datetime = Column(DateTime(timezone=True), nullable=False)
-    started_at: Optional[datetime] = Column(DateTime(timezone=True), nullable=True)
-    ended_at: Optional[datetime] = Column(DateTime(timezone=True), nullable=True)
-    status: str = Column(String, default=MatchStatus.SCHEDULED.value, nullable=False)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    team1_id = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
+    team2_id = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
+    season_id = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
+    scheduled_at = Column(DateTime(timezone=True), nullable=False)
+    started_at = Column(DateTime(timezone=True), nullable=True)
+    ended_at = Column(DateTime(timezone=True), nullable=True)
+    status = Column(String, default=MatchStatus.SCHEDULED.value, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # relationships
     team1: Mapped['Team'] = relationship("Team", foreign_keys=[team1_id], back_populates="home_matches", lazy="selectin")
@@ -221,16 +221,16 @@ class MatchSubmissionStatus(str, Enum):
 
 class MatchSubmission(Base):
     __tablename__ = 'match_submissions'
-    id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    match_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('matches.id', ondelete='CASCADE'), nullable=False)
-    team_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
-    score: Optional[int] = Column(Integer, nullable=True)
-    status: str = Column(String, default=MatchSubmissionStatus.PENDING.value, nullable=False)
-    submitted_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    reviewed_at: Optional[datetime] = Column(DateTime(timezone=True), nullable=True)
-    reviewed_by: Optional[UUIDType] = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='SET NULL'), nullable=True)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    match_id = Column(UUID(as_uuid=True), ForeignKey('matches.id', ondelete='CASCADE'), nullable=False)
+    team_id = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
+    score = Column(Integer, nullable=True)
+    status = Column(String, default=MatchSubmissionStatus.PENDING.value, nullable=False)
+    submitted_at = Column(DateTime(timezone=True), server_default=func.now())
+    reviewed_at = Column(DateTime(timezone=True), nullable=True)
+    reviewed_by = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='SET NULL'), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     match: Mapped['Match'] = relationship("Match", back_populates="submissions", lazy="selectin")
     team: Mapped['Team'] = relationship("Team", back_populates="match_submissions", lazy="selectin")
@@ -241,13 +241,13 @@ class MatchSubmission(Base):
 
 class PlayerStat(Base):
     __tablename__ = 'player_stats'
-    id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    profile_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='CASCADE'), nullable=False)
-    match_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('matches.id', ondelete='CASCADE'), nullable=False)
-    stat_type: str = Column(String, nullable=False)
-    value: int = Column(Integer, nullable=False)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    profile_id = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='CASCADE'), nullable=False)
+    match_id = Column(UUID(as_uuid=True), ForeignKey('matches.id', ondelete='CASCADE'), nullable=False)
+    stat_type = Column(String, nullable=False)
+    value = Column(Integer, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     profile: Mapped['Profile'] = relationship("Profile", back_populates="player_stats", lazy="selectin")
     match: Mapped['Match'] = relationship("Match", back_populates="player_stats", lazy="selectin")
@@ -264,39 +264,39 @@ class NotificationType(str, Enum):
 
 class Notification(Base):
     __tablename__ = 'notifications'
-    id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    title: str = Column(String, nullable=False)
-    message: str = Column(Text, nullable=False)
-    type: str = Column(String, nullable=False, default=NotificationType.INFO.value)
-    read: bool = Column(Boolean, default=False)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    title = Column(String, nullable=False)
+    message = Column(Text, nullable=False)
+    type = Column(String, nullable=False, default=NotificationType.INFO.value)
+    read = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     
     def __repr__(self) -> str:
         return f"<Notification id={self.id} title={self.title} type={self.type} read={self.read}>"
 
 class Webhook(Base):
     __tablename__ = 'webhooks'
-    id: UUIDType = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name: str = Column(String, nullable=False)
-    url: str = Column(String, nullable=False)
-    secret: str = Column(String, nullable=False)
-    events: List[str] = Column(JSON, nullable=False)
-    active: bool = Column(Boolean, default=True)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String, nullable=False)
+    url = Column(String, nullable=False)
+    secret = Column(String, nullable=False)
+    events = Column(JSON, nullable=False)
+    active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     
     def __repr__(self) -> str:
         return f"<Webhook id={self.id} name={self.name} active={self.active}>"
 
 class Division(Base):
     __tablename__ = 'divisions'
-    id: int = Column(Integer, primary_key=True)
-    name: str = Column(String, nullable=False)
-    description: Optional[str] = Column(Text, nullable=True)
-    season_id: UUIDType = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    season_id = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     
     # relationships
     season: Mapped['Season'] = relationship("Season", back_populates="divisions", lazy="selectin")
@@ -307,12 +307,12 @@ class Division(Base):
 
 class Conference(Base):
     __tablename__ = 'conferences'
-    id: int = Column(Integer, primary_key=True)
-    name: str = Column(String, nullable=False)
-    description: Optional[str] = Column(Text, nullable=True)
-    league_id: int = Column(Integer, ForeignKey('leagues.id', ondelete='CASCADE'), nullable=False)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    league_id = Column(Integer, ForeignKey('leagues.id', ondelete='CASCADE'), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # relationships
     league: Mapped['League'] = relationship("League", back_populates="conferences", lazy="selectin")
@@ -323,11 +323,11 @@ class Conference(Base):
 
 class LeagueSettings(Base):
     __tablename__ = 'league_settings'
-    id: int = Column(Integer, primary_key=True)
-    league_id: int = Column(Integer, ForeignKey('leagues.id', ondelete='CASCADE'), nullable=False)
-    settings_json: Optional[str] = Column(Text, nullable=True)
-    created_at: datetime = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at: datetime = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    id = Column(Integer, primary_key=True)
+    league_id = Column(Integer, ForeignKey('leagues.id', ondelete='CASCADE'), nullable=False)
+    settings_json = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # relationships
     league: Mapped['League'] = relationship("League", back_populates="settings", lazy="selectin")
