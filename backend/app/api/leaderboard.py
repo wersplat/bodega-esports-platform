@@ -45,7 +45,7 @@ async def leaderboard(
 
 
 @router.get("/api/leaderboard/export/csv")
-def export_csv(season_id: int, db: Session = Depends(get_db)):
+def export_csv(season_id: int, db: AsyncSession = Depends(get_db)):
     output = StringIO()
     writer = csv.writer(output)
     writer.writerow(["Username", "Points", "Assists", "Rebounds", "Win %"])
@@ -94,7 +94,7 @@ def export_csv(season_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/api/leaderboard/export/sheets")
-def export_to_sheets(season_id: int, db: Session = Depends(get_db)):
+def export_to_sheets(season_id: int, db: AsyncSession = Depends(get_db)):
     stats = leaderboard(season_id, db=db)
     success = append_leaderboard_to_sheet(season_id, stats)
     return {"status": "success" if success else "error"}
