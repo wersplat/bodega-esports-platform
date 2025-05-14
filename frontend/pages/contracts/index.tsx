@@ -8,7 +8,7 @@ import { ContractModal } from "@/components/contracts/contract-modal"
 import { ContractFilter } from "@/components/contracts/contract-filter"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import { Pagination } from "@/components/ui/pagination"
+
 import { useAuth } from "@/components/auth/auth-provider"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 
