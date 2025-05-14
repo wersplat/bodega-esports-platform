@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import ContractsTable from '@/components/contracts/contracts-table';
+import { ContractsTable } from '@/components/contracts/contracts-table'; // ✅ fixed import
 import ContractFilter from '@/components/contracts/contract-filter';
 
 function MyContracts() {
