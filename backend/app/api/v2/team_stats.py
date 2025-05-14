@@ -3,7 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.api.v2.base import raise_error, not_found_error
 from app.api.v2.responses import ListResponse, SingleResponse
-from app.models import Team, PlayerStats, TeamMember, Profile
+from app.models import Team, TeamMember, Profile
+from app.models.models import PlayerStat as PlayerStats
 from sqlalchemy import func, select, desc
 from typing import Optional
 from pydantic import BaseModel, Field

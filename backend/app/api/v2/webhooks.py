@@ -10,7 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.v2.base import not_found_error, raise_error
 from app.api.v2.responses import ListResponse, SingleResponse
 from app.database import get_db
-from app.models import Player, PlayerStats, Team, Webhook
+from app.models import Player, Team, Webhook
+from app.models.models import PlayerStat as PlayerStats
 
 router = APIRouter(
     prefix="/api/v2",
