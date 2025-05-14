@@ -5,8 +5,6 @@ from sqlalchemy import Column, String, Boolean, Date, DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, Mapped
 from app.models.base import Base
-
-# Type hints
 from typing import List, Optional, TypeVar
 from datetime import datetime
 from enum import Enum
@@ -340,3 +338,21 @@ class TeamMember(Base):
 
     def __repr__(self) -> str:
         return f"<TeamMember id={self.id} profile_id={self.profile_id} team_id={self.team_id} status={self.status}>"
+    
+    # Add to models.py
+
+class TeamInvitation(Base):
+    __tablename__ = 'team_invitations'
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    team_id = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
+    email = Column(String, nullable=False)
+    role = Column(String, nullable=False)
+    token = Column(String, nullable=False, unique=True)
+    status = Column(String, default="pending")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    accepted_at = Column(DateTime(timezone=True), nullable=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='SET NULL'), nullable=True)
+
+    def __repr__(self) -> str:
+        return f"<TeamInvitation id={self.id} email={self.email} role={self.role} status={self.status}>"
