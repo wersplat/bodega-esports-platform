@@ -18,7 +18,7 @@ interface ContractModalProps {
   isContractAdmin?: boolean
 }
 
-export function ContractModal({ isOpen, onClose, contract, onSave, isContractAdmin }: ContractModalProps) {
+export function ContractModal({ isOpen, onClose, contract, onSave, isContractAdmin, isLoading = false, error }: ContractModalProps & { isLoading?: boolean; error?: string | null }) {
   const [formData, setFormData] = useState({
     player: "",
     team: "",
@@ -94,6 +94,22 @@ export function ContractModal({ isOpen, onClose, contract, onSave, isContractAdm
       fileUrl,
     })
     onClose()
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
   }
 
   return (

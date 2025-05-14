@@ -15,7 +15,7 @@ interface ContractsTableProps {
   isContractAdmin?: boolean
 }
 
-export function ContractsTable({ contracts, onEditContract, onDeleteContract, isContractAdmin }: ContractsTableProps) {
+export function ContractsTable({ contracts, onEditContract, onDeleteContract, isContractAdmin, isLoading = false, error }: ContractsTableProps & { isLoading?: boolean; error?: string | null }) {
   const formatDate = (dateString: string): string => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -35,6 +35,22 @@ export function ContractsTable({ contracts, onEditContract, onDeleteContract, is
       default:
         return "bg-gray-500/10 text-gray-500 border-gray-500/20";
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
   }
 
   return (
