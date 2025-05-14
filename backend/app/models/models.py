@@ -162,6 +162,7 @@ class Team(Base):
     match_submissions: Mapped[List['MatchSubmission']] = relationship("MatchSubmission", back_populates="team", lazy="selectin")
     home_matches: Mapped[List['Match']] = relationship("Match", foreign_keys=['Match.team1_id'], back_populates="team1", lazy="selectin")
     away_matches: Mapped[List['Match']] = relationship("Match", foreign_keys=['Match.team2_id'], back_populates="team2", lazy="selectin")
+    webhooks = relationship("Webhook", back_populates="team", lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<Team id={self.id} name={self.name} status={self.status}>"

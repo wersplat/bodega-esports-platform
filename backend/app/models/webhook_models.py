@@ -38,9 +38,9 @@ class Webhook(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     url = Column(String, nullable=False)
     secret = Column(String, nullable=False)
-    events = Column(JSON, nullable=False)
+    event_types = Column(JSON, nullable=False)
     team_id = Column(Integer, ForeignKey('teams.id'), nullable=True)
-    player_id = Column(Integer, ForeignKey('players.id'), nullable=True)
+    # player_id = Column(Integer, ForeignKey('players.id'), nullable=True)  # Commented out if Player model does not exist
     active = Column(Boolean, default=True)
     retry_count = Column(Integer, default=3)
     retry_delay = Column(Integer, default=60)
@@ -56,11 +56,11 @@ class Webhook(Base):
         back_populates="webhooks",
         lazy="selectin"
     )
-    player = relationship(
-        "Player",
-        back_populates="webhooks",
-        lazy="selectin"
-    )
+    # player = relationship(
+    #     "Player",
+    #     back_populates="webhooks",
+    #     lazy="selectin"
+    # )
     # Back references
     events = relationship("WebhookEvent", back_populates="webhook", lazy="selectin")
 
