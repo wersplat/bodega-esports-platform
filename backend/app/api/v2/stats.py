@@ -1,34 +1,59 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.api.v2.base import raise_error, not_found_error
+from app.api.v2.base import raise_error, not_found_error, conflict_error
 from app.api.v2.responses import ListResponse
 from app.models import PlayerStats, Player, Team
 from sqlalchemy import func, select
-from typing import List, Optional
-from pydantic import BaseModel
+from typing import List, Optional, Dict, Any, Union
+from pydantic import BaseModel, Field
 from datetime import datetime
+from enum import Enum
 
 router = APIRouter(
     prefix="/api/v2",
     tags=["Stats"],
     responses={
         404: {"description": "Stats not found"},
-        400: {"description": "Invalid parameters"}
+        400: {"description": "Invalid parameters"},
+        409: {"description": "Stats conflict"}
     }
 )
 
+class StatType(str, Enum):
+    POINTS = "points"
+    ASSISTS = "assists"
+    REBOUNDS = "rebounds"
+    BLOCKS = "blocks"
+    STEALS = "steals"
+    FG_PERCENTAGE = "fg_percentage"
+    THREE_PERCENTAGE = "three_percentage"
+    FT_PERCENTAGE = "ft_percentage"
+
 class LeaderboardEntry(BaseModel):
-    player_id: str
-    player_name: str
-    team_name: str
-    games_played: int = Field(alias="gamesPlayed")
-    points_per_game: float = Field(alias="ppg")
-    assists_per_game: float = Field(alias="apg")
-    rebounds_per_game: float = Field(alias="rpg")
-    steals_per_game: float = Field(alias="spg")
-    blocks_per_game: float = Field(alias="bpg")
-    field_goal_percentage: float = Field(alias="fgp")
+    player_id: str = Field(description="Player ID")
+    player_name: str = Field(description="Player name")
+    team_name: str = Field(description="Team name")
+    team_id: str = Field(description="Team ID")
+    games_played: int = Field(alias="gamesPlayed", description="Number of games played")
+    points_per_game: float = Field(alias="ppg", description="Points per game")
+    assists_per_game: float = Field(alias="apg", description="Assists per game")
+    rebounds_per_game: float = Field(alias="rpg", description="Rebounds per game")
+    steals_per_game: float = Field(alias="spg", description="Steals per game")
+    blocks_per_game: float = Field(alias="bpg", description="Blocks per game")
+    field_goal_percentage: float = Field(alias="fgp", description="Field goal percentage")
+    three_point_percentage: float = Field(alias="3pp", description="Three-point percentage")
+    free_throw_percentage: float = Field(alias="ftp", description="Free throw percentage")
+    last_updated: datetime = Field(description="Last update timestamp")
+
+class StatFilter(BaseModel):
+    stat_type: Optional[StatType] = Field(default=None, description="Type of stat to filter")
+    min_games: Optional[int] = Field(default=None, description="Minimum number of games played")
+    season_id: Optional[int] = Field(default=None, description="Season ID to filter")
+    league_id: Optional[int] = Field(default=None, description="League ID to filter")
+    team_id: Optional[str] = Field(default=None, description="Team ID to filter")
+    start_date: Optional[datetime] = Field(default=None, description="Start date for stats")
+    end_date: Optional[datetime] = Field(default=None, description="End date for stats")
     three_point_percentage: float = Field(alias="tpg")
 
 class LeaderboardResponse(BaseModel):

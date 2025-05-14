@@ -19,13 +19,15 @@ interface PerformanceChartProps {
 export function PerformanceChart({ userId }: PerformanceChartProps) {
   const [data, setData] = useState<PerformanceData[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchPerformanceData() {
       try {
         setIsLoading(true)
+        setError(null)
 
-        const { data, error } = await supabase
+        const { data: stats, error } = await supabase
           .from("player_match_stats")
           .select(`
             matches(date, home_team, away_team),
@@ -41,9 +43,9 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
           throw error
         }
 
-        if (data) {
+        if (stats) {
           // Transform the data for the chart
-          const chartData = data.map((item: any, index: number) => {
+          const chartData = stats.map((item: any, index: number) => {
             const match = item.matches as any
             const opponent = match.home_team === "Team Alpha" ? match.away_team : match.home_team
 
@@ -58,8 +60,9 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
 
           setData(chartData)
         }
-      } catch (error) {
-        // console.error("Error fetching performance data:", error)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch performance data")
+        console.error("Error fetching performance data:", err)
       } finally {
         setIsLoading(false)
       }
@@ -68,22 +71,29 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
     fetchPerformanceData()
   }, [userId])
 
-  // Sample data for demonstration
-  const sampleData = [
-    { game: "Game 1", gameLabel: "vs Team Beta", points: 22, assists: 6, rebounds: 3 },
-    { game: "Game 2", gameLabel: "vs Team Gamma", points: 15, assists: 4, rebounds: 5 },
-    { game: "Game 3", gameLabel: "vs Team Delta", points: 19, assists: 7, rebounds: 4 },
-    { game: "Game 4", gameLabel: "vs Team Epsilon", points: 24, assists: 3, rebounds: 6 },
-    { game: "Game 5", gameLabel: "vs Team Zeta", points: 12, assists: 6, rebounds: 3 },
-    { game: "Game 6", gameLabel: "vs Team Eta", points: 18, assists: 5, rebounds: 7 },
-    { game: "Game 7", gameLabel: "vs Team Theta", points: 21, assists: 4, rebounds: 5 },
-    { game: "Game 8", gameLabel: "vs Team Iota", points: 17, assists: 8, rebounds: 4 },
-    { game: "Game 9", gameLabel: "vs Team Kappa", points: 25, assists: 3, rebounds: 6 },
-    { game: "Game 10", gameLabel: "vs Team Lambda", points: 20, assists: 5, rebounds: 5 },
-  ]
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    )
+  }
 
-  // Use sample data if no real data is available
-  const displayData = data.length > 0 ? data : sampleData
+  if (error) {
+    return (
+      <div className="text-red-500 text-center p-4 rounded-lg border border-red-200">
+        {error}
+      </div>
+    )
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="text-gray-500 text-center p-4">
+        No performance data available
+      </div>
+    )
+  }
 
   return (
     <div className="h-64">
@@ -105,7 +115,7 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
         className="h-full"
       >
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={displayData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="game" />
             <YAxis />
@@ -119,4 +129,4 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
       </ChartContainer>
     </div>
   )
-} 
+}

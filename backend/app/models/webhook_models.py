@@ -1,34 +1,90 @@
-from sqlalchemy import Column, String, JSON, Integer, DateTime, ForeignKey, Float, Boolean
+from sqlalchemy import Column, String, JSON, Integer, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-from datetime import datetime
-from uuid import UUID
-
 from app.models.base import Base
+from datetime import datetime
+from uuid import UUID, uuid4
+from typing import List, Optional
+from enum import Enum
 
-Base = declarative_base()
+from app.models import Team, Player
+
+T = TypeVar('T')
+
+class WebhookEventType(str, Enum):
+    TEAM_UPDATE = "team_update"
+    TEAM_MEMBER_UPDATE = "team_member_update"
+    ROSTER_UPDATE = "roster_update"
+    TEAM_RANKING = "team_ranking"
+    PLAYER_UPDATE = "player_update"
+    PLAYER_STATS = "player_stats"
+    PLAYER_RANKING = "player_ranking"
+    GAME_SCHEDULE = "game_schedule"
+    GAME_RESULT = "game_result"
+    GAME_STATS = "game_stats"
+    LEAGUE_UPDATE = "league_update"
+    SEASON_UPDATE = "season_update"
+    ADMIN_NOTIFICATION = "admin_notification"
+    SYSTEM_ALERT = "system_alert"
 
 class Webhook(Base):
     __tablename__ = 'webhooks'
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    url = Column(String, nullable=False)
-    secret = Column(String, nullable=False)
-    events = Column(JSON, nullable=False)
-    team_id = Column(Integer, ForeignKey('teams.id'), nullable=True)
-    player_id = Column(Integer, ForeignKey('players.id'), nullable=True)
-    active = Column(Boolean, default=True)
-    retry_count = Column(Integer, default=3)
-    retry_delay = Column(Integer, default=60)
-    rate_limit = Column(Integer, default=100)
-    last_retry = Column(DateTime, nullable=True)
-    last_error = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id: UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    url: str = Column(String, nullable=False)
+    secret: str = Column(String, nullable=False)
+    events: List[str] = Column(JSON, nullable=False)
+    team_id: Optional[int] = Column(Integer, ForeignKey('teams.id'), nullable=True)
+    player_id: Optional[int] = Column(Integer, ForeignKey('players.id'), nullable=True)
+    active: bool = Column(Boolean, default=True)
+    retry_count: int = Column(Integer, default=3)
+    retry_delay: int = Column(Integer, default=60)
+    rate_limit: int = Column(Integer, default=100)
+    last_retry: Optional[datetime] = Column(DateTime, nullable=True)
+    last_error: Optional[str] = Column(String, nullable=True)
+    created_at: datetime = Column(DateTime, default=datetime.utcnow)
+    updated_at: datetime = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    team = relationship("Team", back_populates="webhooks")
-    player = relationship("Player", back_populates="webhooks")
+    team: Optional[Team] = relationship(
+        "Team",
+        back_populates="webhooks",
+        lazy="selectin"
+    )
+    player: Optional[Player] = relationship(
+        "Player",
+        back_populates="webhooks",
+        lazy="selectin"
+    )
+
+    # Back references
+    events = relationship("WebhookEvent", back_populates="webhook", lazy="selectin")
+
+class WebhookEvent(Base):
+    __tablename__ = 'webhook_events'
+
+    id: UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    webhook_id: UUID = Column(UUID(as_uuid=True), ForeignKey('webhooks.id'), nullable=False)
+    event_type: str = Column(String, nullable=False)
+    payload: Dict[str, Any] = Column(JSON, nullable=False)
+    attempt: int = Column(Integer, default=1)
+    max_attempts: int = Column(Integer, default=3)
+    status: str = Column(String, default="pending")
+    error: Optional[str] = Column(String, nullable=True)
+    created_at: datetime = Column(DateTime, default=datetime.utcnow)
+    last_attempt: Optional[datetime] = Column(DateTime, nullable=True)
+
+    # Relationships
+    webhook: Webhook = relationship(
+        "Webhook",
+        back_populates="events",
+        lazy="selectin"
+    )
+    player = relationship(
+        "Player",
+        back_populates="webhooks",
+        foreign_keys=[player_id],
+        lazy="selectin"
+    )
     retries = relationship("WebhookRetry", back_populates="webhook", cascade="all, delete-orphan")
     health = relationship("WebhookHealth", back_populates="webhook", uselist=False, cascade="all, delete-orphan")
     analytics = relationship("WebhookAnalytics", back_populates="webhook", uselist=False, cascade="all, delete-orphan")

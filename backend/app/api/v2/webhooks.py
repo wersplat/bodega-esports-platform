@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.api.v2.base import raise_error, not_found_error
+from app.api.v2.base import raise_error, not_found_error, conflict_error
 from app.api.v2.responses import SingleResponse, ListResponse
 from app.models import Webhook, Team, Player, TeamMember, PlayerStats
 from sqlalchemy import func, select, and_, or_, desc
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from datetime import datetime
 from enum import Enum
@@ -16,7 +16,8 @@ router = APIRouter(
     tags=["Webhooks"],
     responses={
         404: {"description": "Webhook not found"},
-        400: {"description": "Invalid webhook configuration"}
+        400: {"description": "Invalid webhook configuration"},
+        409: {"description": "Webhook conflict"}
     }
 )
 
@@ -29,6 +30,44 @@ class WebhookType(str, Enum):
     
     # Player-related events
     PLAYER_UPDATE = "player_update"
+    PLAYER_STATS = "player_stats"
+    PLAYER_RANKING = "player_ranking"
+    
+    # Game-related events
+    GAME_SCHEDULE = "game_schedule"
+    GAME_RESULT = "game_result"
+    GAME_STATS = "game_stats"
+    
+    # League-related events
+    LEAGUE_UPDATE = "league_update"
+    SEASON_UPDATE = "season_update"
+    
+    # Admin events
+    ADMIN_NOTIFICATION = "admin_notification"
+    SYSTEM_ALERT = "system_alert"
+
+class WebhookConfig(BaseModel):
+    url: HttpUrl = Field(description="Webhook URL")
+    secret: str = Field(description="Webhook secret")
+    events: List[WebhookType] = Field(description="List of events to subscribe to")
+    team_id: Optional[int] = Field(default=None, description="Team ID to filter events")
+    player_id: Optional[str] = Field(default=None, description="Player ID to filter events")
+    active: bool = Field(default=True, description="Webhook active status")
+    retry_count: int = Field(default=3, description="Number of retry attempts")
+    retry_delay: int = Field(default=60, description="Delay between retries in seconds")
+    rate_limit: int = Field(default=100, description="Maximum requests per minute")
+    last_retry: Optional[datetime] = Field(default=None, description="Timestamp of last retry")
+    last_error: Optional[str] = Field(default=None, description="Last error message")
+    created_at: datetime = Field(default_factory=datetime.utcnow, description="Creation timestamp")
+    updated_at: datetime = Field(default_factory=datetime.utcnow, description="Last update timestamp")
+
+class WebhookEvent(BaseModel):
+    event_type: WebhookType = Field(description="Type of event")
+    timestamp: datetime = Field(description="Event timestamp")
+    data: Dict[str, Any] = Field(description="Event data")
+    webhook_id: str = Field(description="Webhook ID")
+    attempt: int = Field(default=1, description="Delivery attempt number")
+    max_attempts: int = Field(default=3, description="Maximum delivery attempts")
     STATS_UPDATE = "stats_update"
     ACHIEVEMENT_UPDATE = "achievement_update"
     

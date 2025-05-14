@@ -5,7 +5,7 @@ from app.api.v2.base import raise_error, not_found_error, conflict_error
 from app.api.v2.responses import ListResponse, SingleResponse
 from app.models import Team, TeamMember, TeamInvitation, Profile, Season, PlayerStats
 from sqlalchemy import func, select, and_, or_, desc
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union
 from pydantic import BaseModel, Field, EmailStr
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -27,11 +27,67 @@ class Role(str, Enum):
     MANAGER = "manager"
     CAPTAIN = "captain"
 
+# Team Models
+class TeamBase(BaseModel):
+    id: int = Field(description="Team ID")
+    name: str = Field(description="Team name")
+    season_id: int = Field(description="Season ID")
+    league_id: int = Field(description="League ID")
+    created_by: str = Field(description="Creator's profile ID")
+    created_at: datetime = Field(description="Creation timestamp")
+    updated_at: datetime = Field(description="Last update timestamp")
+    status: str = Field(description="Team status")
+
+    class Config:
+        orm_mode = True
+
 class TeamCreate(BaseModel):
-    name: str = Field(min_length=1, max_length=100)
-    season_id: int
-    description: Optional[str] = Field(max_length=500)
-    logo_url: Optional[str]
+    name: str = Field(min_length=1, max_length=100, description="Team name")
+    season_id: int = Field(description="Season ID")
+    league_id: int = Field(description="League ID")
+    logo_url: Optional[str] = Field(default=None, description="Team logo URL")
+    description: Optional[str] = Field(default=None, description="Team description")
+    status: str = Field(default="active", description="Team status")
+
+    class Config:
+        orm_mode = True
+
+class TeamUpdate(BaseModel):
+    name: Optional[str] = Field(default=None, description="Team name")
+    logo_url: Optional[str] = Field(default=None, description="Team logo URL")
+    description: Optional[str] = Field(default=None, description="Team description")
+    status: Optional[str] = Field(default=None, description="Team status")
+
+    class Config:
+        orm_mode = True
+
+# Team Member Models
+class TeamMemberBase(BaseModel):
+    id: int = Field(description="Team member ID")
+    team_id: int = Field(description="Team ID")
+    profile_id: str = Field(description="Profile ID")
+    role: Role = Field(description="Member role")
+    joined_at: datetime = Field(description="Join date")
+    status: str = Field(description="Member status")
+
+    class Config:
+        orm_mode = True
+
+class TeamMemberCreate(BaseModel):
+    team_id: int = Field(description="Team ID")
+    profile_id: str = Field(description="Profile ID")
+    role: Role = Field(default=Role.PLAYER, description="Member role")
+    status: str = Field(default="active", description="Member status")
+
+    class Config:
+        orm_mode = True
+
+class TeamMemberUpdate(BaseModel):
+    role: Optional[Role] = Field(default=None, description="Member role")
+    status: Optional[str] = Field(default=None, description="Member status")
+
+    class Config:
+        orm_mode = True
     created_by: Optional[str] = Field(description="ID of the user creating the team")
 
 class TeamUpdate(BaseModel):

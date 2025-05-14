@@ -1,23 +1,32 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.api.v2.base import raise_error, not_found_error
+from app.api.v2.base import raise_error, not_found_error, conflict_error
 from app.api.v2.responses import ListResponse, SingleResponse
 from app.models import Team, PlayerStats, TeamMember, Profile
 from sqlalchemy import func, select, and_, or_, desc
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel
+from typing import List, Optional, Dict, Any, Union
+from pydantic import BaseModel, Field
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
+from enum import Enum
 
 router = APIRouter(
     prefix="/api/v2",
     tags=["Team Stats"],
     responses={
         404: {"description": "Team not found"},
-        400: {"description": "Invalid parameters"}
+        400: {"description": "Invalid parameters"},
+        409: {"description": "Conflict"}
     }
 )
+
+class StatType(str, Enum):
+    POINTS = "points"
+    ASSISTS = "assists"
+    REBOUNDS = "rebounds"
+    BLOCKS = "blocks"
+    STEALS = "steals"
 
 class StatFilter(BaseModel):
     start_date: Optional[date] = None
@@ -25,10 +34,23 @@ class StatFilter(BaseModel):
     season_id: Optional[int] = None
     player_id: Optional[str] = None
     min_games: Optional[int] = None
+    stat_type: Optional[StatType] = None
 
 class PlayerStatsOut(BaseModel):
     player_id: str
     name: str
+    team_id: str
+    team_name: str
+    games_played: int
+    points_per_game: float = Field(alias="ppg")
+    assists_per_game: float = Field(alias="apg")
+    rebounds_per_game: float = Field(alias="rpg")
+    steals_per_game: float = Field(alias="spg")
+    blocks_per_game: float = Field(alias="bpg")
+    field_goal_percentage: float = Field(alias="fgp")
+    three_point_percentage: float = Field(alias="3pp")
+    free_throw_percentage: float = Field(alias="ftp")
+    last_updated: datetime
     position: Optional[str]
     jersey_number: Optional[int]
     games_played: int

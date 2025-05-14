@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from typing import Optional, AsyncContextManager
+from contextlib import asynccontextmanager
 
 # Load environment
 load_dotenv()
@@ -46,9 +48,28 @@ if DATABASE_URL:
 else:
     analytics_engine = None
     AnalyticsSessionLocal = None
-    print("Warning: DATABASE_URL not set. Analytics DB will not be available.")
+
+# Database connection context manager
+@asynccontextmanager
+async def get_db_session() -> AsyncContextManager[AsyncSession]:
+    session = SessionLocal()
+    try:
+        yield session
+    except Exception as e:
+        await session.rollback()
+        raise
+    finally:
+        await session.close()
 
 # Test database connection
+async def test_connection():
+    try:
+        async with engine.begin() as conn:
+            await conn.execute("SELECT 1")
+        print("Database connection successful")
+    except Exception as e:
+        print(f"Database connection failed: {e}")
+        raise
 async def test_connection():
     try:
         async with engine.begin() as conn:

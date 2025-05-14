@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.api.v2.base import raise_error, not_found_error
+from app.api.v2.base import raise_error, not_found_error, conflict_error
 from app.api.v2.responses import ListResponse, SingleResponse
 from app.models import Player, Team, PlayerStats, Profile, TeamMember, Event, Award
 from sqlalchemy import func, select, and_, or_, desc, distinct
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union
 from pydantic import BaseModel, Field, EmailStr
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
@@ -16,7 +16,8 @@ router = APIRouter(
     tags=["Players"],
     responses={
         404: {"description": "Player not found"},
-        400: {"description": "Invalid parameters"}
+        400: {"description": "Invalid parameters"},
+        409: {"description": "Player conflict"}
     }
 )
 
@@ -28,7 +29,27 @@ class Position(str, Enum):
     BIG = "big"
 
 class PlayerBase(BaseModel):
-    id: int
+    id: int = Field(description="Player ID")
+    profile_id: str = Field(description="Profile ID")
+    team_id: Optional[int] = Field(default=None, description="Team ID")
+    position: Position = Field(description="Player position")
+    jersey_number: Optional[int] = Field(default=None, description="Jersey number")
+    status: str = Field(description="Player status")
+    created_at: datetime = Field(description="Creation timestamp")
+    updated_at: datetime = Field(description="Last update timestamp")
+
+class PlayerCreate(BaseModel):
+    profile_id: str = Field(description="Profile ID")
+    team_id: Optional[int] = Field(default=None, description="Team ID")
+    position: Position = Field(description="Player position")
+    jersey_number: Optional[int] = Field(default=None, description="Jersey number")
+    status: str = Field(default="active", description="Player status")
+
+class PlayerUpdate(BaseModel):
+    team_id: Optional[int] = Field(default=None, description="Team ID")
+    position: Optional[Position] = Field(default=None, description="Player position")
+    jersey_number: Optional[int] = Field(default=None, description="Jersey number")
+    status: Optional[str] = Field(default=None, description="Player status")
     name: str
     position: str
     number: Optional[int]

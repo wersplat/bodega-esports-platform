@@ -1,15 +1,30 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.api.v2.base import raise_error
+from app.api.v2.base import raise_error, not_found_error
 from app.api.v2.responses import ListResponse
 from app.models.models import PlayerStat, Match, Team, Profile
 from sqlalchemy import func, select
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 from datetime import datetime
+from enum import Enum
 
-router = APIRouter(prefix="/api/v2", tags=["Stats Charts"])
+router = APIRouter(
+    prefix="/api/v2",
+    tags=["Stats Charts"],
+    responses={
+        404: {"description": "Data not found"},
+        400: {"description": "Invalid parameters"}
+    }
+)
+
+class StatType(str, Enum):
+    POINTS = "points"
+    ASSISTS = "assists"
+    REBOUNDS = "rebounds"
+    BLOCKS = "blocks"
+    STEALS = "steals"
 
 class TopScorer(BaseModel):
     profile_id: str
@@ -19,6 +34,7 @@ class TopScorer(BaseModel):
     highest_score: Optional[int]
     team_name: Optional[str]
     team_id: Optional[int]
+    last_updated: datetime
 
 class TeamWin(BaseModel):
     team_id: int
@@ -29,6 +45,7 @@ class TeamWin(BaseModel):
     points_scored: int
     points_against: int
     goal_difference: int
+    last_updated: datetime
 
 class StatProgression(BaseModel):
     date: datetime

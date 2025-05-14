@@ -1,33 +1,44 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.api.v2.base import raise_error, not_found_error
+from app.api.v2.base import raise_error, not_found_error, conflict_error
 from app.api.v2.responses import ListResponse, SingleResponse
 from app.models import Event, Team, League, Player, EventResult
-from sqlalchemy import func, select, and_
-from typing import List, Optional, Dict
-from pydantic import BaseModel
+from sqlalchemy import func, select, and_, or_
+from typing import List, Optional, Dict, Any, Union
+from pydantic import BaseModel, Field
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
+from enum import Enum
 
 router = APIRouter(
     prefix="/api/v2",
     tags=["Events"],
     responses={
         404: {"description": "Event not found"},
-        400: {"description": "Invalid date range"}
+        400: {"description": "Invalid date range"},
+        409: {"description": "Event conflict"}
     }
 )
 
+class EventStatus(str, Enum):
+    SCHEDULED = "scheduled"
+    LIVE = "live"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+    POSTPONED = "postponed"
+
 class EventBase(BaseModel):
-    id: int
-    title: str
-    date: datetime
-    venue: Optional[str]
-    status: str
-    teams: List[Dict[str, str]]
-    league: Optional[Dict[str, str]]
-    season: Optional[Dict[str, str]]
+    id: int = Field(description="Event ID")
+    title: str = Field(description="Event title")
+    date: datetime = Field(description="Event date and time")
+    venue: Optional[str] = Field(default=None, description="Event venue")
+    status: EventStatus = Field(description="Event status")
+    teams: List[Dict[str, str]] = Field(description="Participating teams")
+    league: Optional[Dict[str, str]] = Field(default=None, description="League information")
+    season: Optional[Dict[str, str]] = Field(default=None, description="Season information")
+    created_at: datetime = Field(description="Event creation timestamp")
+    updated_at: datetime = Field(description="Event last update timestamp")
     
     class Config:
         orm_mode = True
