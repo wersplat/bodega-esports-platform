@@ -35,57 +35,55 @@ class WebhookEventType(str, Enum):
 class Webhook(Base):
     __tablename__ = 'webhooks'
 
-    id: UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    url: str = Column(String, nullable=False)
-    secret: str = Column(String, nullable=False)
-    events: List[str] = Column(JSON, nullable=False)
-    team_id: Optional[int] = Column(Integer, ForeignKey('teams.id'), nullable=True)
-    player_id: Optional[int] = Column(Integer, ForeignKey('players.id'), nullable=True)
-    active: bool = Column(Boolean, default=True)
-    retry_count: int = Column(Integer, default=3)
-    retry_delay: int = Column(Integer, default=60)
-    rate_limit: int = Column(Integer, default=100)
-    last_retry: Optional[datetime] = Column(DateTime, nullable=True)
-    last_error: Optional[str] = Column(String, nullable=True)
-    created_at: datetime = Column(DateTime, default=datetime.utcnow)
-    updated_at: datetime = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    url = Column(String, nullable=False)
+    secret = Column(String, nullable=False)
+    events = Column(JSON, nullable=False)
+    team_id = Column(Integer, ForeignKey('teams.id'), nullable=True)
+    player_id = Column(Integer, ForeignKey('players.id'), nullable=True)
+    active = Column(Boolean, default=True)
+    retry_count = Column(Integer, default=3)
+    retry_delay = Column(Integer, default=60)
+    rate_limit = Column(Integer, default=100)
+    last_retry = Column(DateTime, nullable=True)
+    last_error = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    team: Optional[Team] = relationship(
+    team = relationship(
         "Team",
         back_populates="webhooks",
         lazy="selectin"
     )
-    player: Optional[Player] = relationship(
+    player = relationship(
         "Player",
         back_populates="webhooks",
         lazy="selectin"
     )
-
     # Back references
     events = relationship("WebhookEvent", back_populates="webhook", lazy="selectin")
 
 class WebhookEvent(Base):
     __tablename__ = 'webhook_events'
 
-    id: UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    webhook_id: UUID = Column(UUID(as_uuid=True), ForeignKey('webhooks.id'), nullable=False)
-    event_type: str = Column(String, nullable=False)
-    payload: Dict[str, Any] = Column(JSON, nullable=False)
-    attempt: int = Column(Integer, default=1)
-    max_attempts: int = Column(Integer, default=3)
-    status: str = Column(String, default="pending")
-    error: Optional[str] = Column(String, nullable=True)
-    created_at: datetime = Column(DateTime, default=datetime.utcnow)
-    last_attempt: Optional[datetime] = Column(DateTime, nullable=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    webhook_id = Column(UUID(as_uuid=True), ForeignKey('webhooks.id'), nullable=False)
+    event_type = Column(String, nullable=False)
+    payload = Column(JSON, nullable=False)
+    attempt = Column(Integer, default=1)
+    max_attempts = Column(Integer, default=3)
+    status = Column(String, default="pending")
+    error = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_attempt = Column(DateTime, nullable=True)
 
     # Relationships
-    webhook: Webhook = relationship(
+    webhook = relationship(
         "Webhook",
         back_populates="events",
         lazy="selectin"
     )
-    # Note: Removed incorrect player relationship that referenced undefined player_id
     retries = relationship("WebhookRetry", back_populates="webhook", cascade="all, delete-orphan")
     health = relationship("WebhookHealth", back_populates="webhook", uselist=False, cascade="all, delete-orphan")
     analytics = relationship("WebhookAnalytics", back_populates="webhook", uselist=False, cascade="all, delete-orphan")
