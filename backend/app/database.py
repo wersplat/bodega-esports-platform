@@ -1,3 +1,4 @@
+print("IMPORTING DATABASE.PY")
 import os
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
@@ -89,14 +90,6 @@ async def get_db_session() -> AsyncContextManager[AsyncSession]:
         await session.close()
 
 # Test database connection
-async def test_connection():
-    try:
-        async with engine.begin() as conn:
-            await conn.execute("SELECT 1")
-        print("Database connection successful")
-    except Exception as e:
-        print(f"Database connection failed: {e}")
-        raise
 async def test_connection():
     try:
         async with engine.begin() as conn:
