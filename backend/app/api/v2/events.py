@@ -1,12 +1,13 @@
 # FastAPI imports
+from asyncio import Event
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 # Database imports
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import func, select, and_
+from sqlalchemy import Date, func, select, and_
 
 # Project imports
-from app.models import Team, League, Event
+from app.models import Team, League
 from app.api.v2.base import raise_error, not_found_error, conflict_error
 from app.api.v2.responses import ListResponse, SingleResponse
 from app.database import get_db
@@ -17,6 +18,8 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from enum import Enum
 from dateutil.relativedelta import relativedelta
+
+from backend.app.schemas import player
 
 router = APIRouter(
     prefix="/api/v2",
@@ -63,8 +66,8 @@ class EventOut(EventBase):
 
 @router.get("/events", response_model=ListResponse[EventBase])
 async def list_events(
-    start_date: Optional[date] = Query(None, description="Start date for filtering"),
-    end_date: Optional[date] = Query(None, description="End date for filtering"),
+    start_date: Optional[Date] = Query(None, description="Start date for filtering"),
+    end_date: Optional[Date] = Query(None, description="End date for filtering"),
     team_id: Optional[int] = Query(None, description="Filter by team ID"),
     league_id: Optional[int] = Query(None, description="Filter by league ID"),
     page: int = Query(1, ge=1),
@@ -176,7 +179,7 @@ async def get_event(
         results = results_result.scalars().all()
         
         # Get lineups
-        lineups_stmt = select(Player)
+        lineups_stmt = select(player)
         lineups_stmt = lineups_stmt.join(EventResult)
         lineups_stmt = lineups_stmt.where(EventResult.event_id == event_id)
         lineups_result = await db.execute(lineups_stmt)
