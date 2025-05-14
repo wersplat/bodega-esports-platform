@@ -9,8 +9,9 @@ function LeagueDetails() {
 
   const [league, setLeague] = useState<League | null>(null);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
-  const [error, setError] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchLeague = useCallback(async () => {
     try {
@@ -19,7 +20,7 @@ function LeagueDetails() {
       const data = await res.json();
       setLeague(data);
     } catch (err) {
-      setError('Failed to fetch league details');
+
       toast.error('Failed to fetch league details');
     } finally {
       setLoading(false);
@@ -58,6 +59,15 @@ function LeagueDetails() {
     fetchData();
   }, [fetchLeague, fetchRegistrations, id]);
 
+  if (loading) {
+    return (
+      <div className="main-content">
+        {error && <div className="error-message" style={{ color: 'red', marginBottom: '1em' }}>{error}</div>}
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <div className="main-content">
       {league ? (
@@ -73,22 +83,8 @@ function LeagueDetails() {
             <ul style={{ listStyle: 'none', padding: 0 }}>
               {registrations.map((reg) => (
                 <li key={reg.id} style={{ marginBottom: '30px', background: '#222b3a', color: '#f8fafc', padding: '20px', borderRadius: '8px', boxShadow: '0 0 6px rgba(0,0,0,0.25)' }}>
-                  <h3>{reg.team_name}</h3>
-                  <p style={{ color: '#cbd5e1' }}>{reg.description}</p>
-                  {reg.players?.length > 0 ? (
-                    <div style={{ marginTop: '10px' }}>
-                      <h4>Roster</h4>
-                      <ul style={{ paddingLeft: '20px' }}>
-                        {reg.players.map((player) => (
-                          <li key={player.id} style={{ color: '#f8fafc' }}>
-                            {player.name} {player.gamertag && `(${player.gamertag})`}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : (
-                    <p style={{ marginTop: '10px', color: '#cbd5e1' }}>No players added yet.</p>
-                  )}
+                  <h3>{reg.team.name}</h3>
+{/* Description and players removed: not present in Registration type */}
                 </li>
               ))}
             </ul>
