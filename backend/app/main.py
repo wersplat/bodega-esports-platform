@@ -21,7 +21,7 @@ from app.api.leaderboard import router as leaderboard_router
 from app.api.v2.match_submissions import router as match_submissions_router
 from app.api.v2.meta import router as meta_router
 from app.api.v2.players import router as players_router
-from app.api.v2.player_stats import router as player_stats_router # type: ignore
+from app.routers.player_stats import router as player_stats_router # type: ignore
 from app.api.v2.profiles import router as profiles_router
 from app.api.v2.teams import router as teams_router
 from app.api.v2.webhooks import router as webhooks_router

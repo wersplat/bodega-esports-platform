@@ -33,7 +33,7 @@ class TeamOut(BaseModel):
     
     class Config:
         from_attributes = True
-        allow_population_by_field_name = True
+        validate_by_name = True
 
 class TeamListResponse(BaseModel):
     items: List[TeamOut]

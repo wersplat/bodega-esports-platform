@@ -138,7 +138,7 @@ class TeamOut(BaseModel):
     
     class Config:
         from_attributes = True
-        allow_population_by_field_name = True
+        validate_by_name = True
 
 class TeamRoster(BaseModel):
     team_id: int
@@ -201,7 +201,7 @@ class TeamOut(BaseModel):
     
     class Config:
         from_attributes = True
-        allow_population_by_field_name = True
+        validate_by_name = True
 
 @router.get(
     "/teams/user",
