@@ -37,6 +37,16 @@ if DATABASE_URL:
         echo=True,
         future=True,
     )
+    AnalyticsSessionLocal = sessionmaker(
+        bind=analytics_engine,
+        class_=AsyncSession,
+        expire_on_commit=False,
+        autoflush=False,
+    )
+else:
+    analytics_engine = None
+    AnalyticsSessionLocal = None
+    print("Warning: DATABASE_URL not set. Analytics DB will not be available.")
 
 # Test database connection
 async def test_connection():
@@ -47,10 +57,6 @@ async def test_connection():
     except Exception as e:
         print(f"Database connection failed: {e}")
         raise
-else:
-    analytics_engine = None
-    AnalyticsSessionLocal = None
-    print("Warning: DATABASE_URL not set. Analytics DB will not be available.")
 
 # Dependency for FastAPI
 async def get_db():
