@@ -10,8 +10,8 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
+from app.models.base import Base
 from app.models.models import Match, Team
-import logging
 from app.utils.wp_auth import verify_wp_user
 
 # Initialize logger
@@ -137,7 +137,7 @@ class WPSyncTeam(BaseModel):
 # ─── health check ───────────────────────────────────────────────────────────────
 @router.get("/health")
 async def health_check():
-    logger.info("Health check requested")
+    logging.info("Health check requested")
     return {
         "status": "ok",
         "timestamp": datetime.utcnow().isoformat(),
@@ -150,7 +150,7 @@ async def cleanup_old_syncs(
     db: AsyncSession = Depends(get_db),
     days_to_keep: int = Query(30, ge=1, le=90, description="Number of days to keep data")
 ):
-    logger.info(f"Cleaning up old sync attempts older than {days_to_keep} days")
+    logging.info(f"Cleaning up old sync attempts older than {days_to_keep} days")
     try:
         async with db.begin():
             await db.execute(
@@ -165,10 +165,10 @@ async def cleanup_old_syncs(
                 "DELETE FROM sync_requests WHERE created_at < NOW() - INTERVAL :days",
                 {"days": f"{days_to_keep} days"}
             )
-        logger.info("Cleanup completed successfully")
+        logging.info("Cleanup completed successfully")
         return {"status": "success", "message": f"Cleaned up data older than {days_to_keep} days"}
     except Exception as e:
-        logger.error(f"Error cleaning up old syncs: {str(e)}")
+        logging.error(f"Error cleaning up old syncs: {str(e)}")
         raise HTTPException(500, "Internal server error")
 
 # ─── status endpoint ────────────────────────────────────────────────────────────
@@ -177,7 +177,7 @@ async def get_sync_status(
     wp_id: str,
     db: AsyncSession = Depends(get_db)
 ):
-    logger.info(f"Checking sync status for wp_id={wp_id}")
+    logging.info(f"Checking sync status for wp_id={wp_id}")
     try:
         result = await db.execute(
             select(sync_requests)
@@ -198,7 +198,7 @@ async def get_sync_status(
             "last_error": request.last_error
         }
     except Exception as e:
-        logger.error(f"Error fetching sync status for wp_id={wp_id}: {str(e)}")
+        logging.error(f"Error fetching sync status for wp_id={wp_id}: {str(e)}")
         raise HTTPException(500, "Internal server error")
 
 # ─── retry endpoint ────────────────────────────────────────────────────────────
@@ -207,7 +207,7 @@ async def retry_sync(
     wp_id: str,
     db: AsyncSession = Depends(get_db)
 ):
-    logger.info(f"Attempting to retry sync for wp_id={wp_id}")
+    logging.info(f"Attempting to retry sync for wp_id={wp_id}")
     try:
         result = await db.execute(
             select(sync_requests).where(sync_requests.c.wp_id == wp_id)
@@ -231,7 +231,7 @@ async def retry_sync(
             raise HTTPException(400, f"Unknown sync type: {request.type}")
             
     except Exception as e:
-        logger.error(f"Error retrying sync for wp_id={wp_id}: {str(e)}")
+        logging.error(f"Error retrying sync for wp_id={wp_id}: {str(e)}")
         raise HTTPException(500, "Internal server error")
 
 # ─── team sync endpoint ────────────────────────────────────────────────────────────
@@ -252,7 +252,7 @@ async def sync_team(
     db: AsyncSession = Depends(get_db),
     wp_user: dict = Depends(verify_wp_user),
 ):
-    logger.info(f"WP-Sync /teams called for wp_id={team_data.wp_id}")
+    logging.info(f"WP-Sync /teams called for wp_id={team_data.wp_id}")
     
     try:
         async with db.begin():
@@ -264,7 +264,7 @@ async def sync_team(
             if existing:
                 existing.name = team_data.name
                 await db.flush()
-                logger.info(f"Updated team wp_id={team_data.wp_id} with name={team_data.name}")
+                logging.info(f"Updated team wp_id={team_data.wp_id} with name={team_data.name}")
                 payload = {"status": "updated", "team_id": str(existing.id)}
             else:
                 new = Team(
@@ -273,7 +273,7 @@ async def sync_team(
                 )
                 db.add(new)
                 await db.flush()
-                logger.info(f"Created team wp_id={team_data.wp_id} with name={team_data.name}")
+                logging.info(f"Created team wp_id={team_data.wp_id} with name={team_data.name}")
                 payload = {"status": "created", "team_id": str(new.id)}
 
         return JSONResponse(
@@ -286,7 +286,7 @@ async def sync_team(
         )
 
     except Exception as e:
-        logger.exception(f"Error syncing team wp_id={team_data.wp_id}: {str(e)}")
+        logging.exception(f"Error syncing team wp_id={team_data.wp_id}: {str(e)}")
         raise HTTPException(500, "Internal server error")
 
 # ─── batch processing endpoint ──────────────────────────────────────────────────────
@@ -308,10 +308,10 @@ async def sync_matches_batch(
     wp_user: dict = Depends(verify_wp_user),
     batch_size: int = Query(50, ge=1, le=100, description="Number of items per batch")
 ):
-    logger.info(f"Batch sync requested for {len(matches_data)} matches with batch size {batch_size}")
+    logging.info(f"Batch sync requested for {len(matches_data)} matches with batch size {batch_size}")
     
     # Token verification is handled by verify_wp_admin dependency
-    logger.info(f"Authenticated as WordPress user: {wp_user['wp_username']} (ID: {wp_user['wp_user_id']})")
+    logging.info(f"Authenticated as WordPress user: {wp_user['wp_username']} (ID: {wp_user['wp_user_id']})")
 
     results = []
     async with db.begin():
