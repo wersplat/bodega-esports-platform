@@ -26,35 +26,6 @@ class TeamResponse(TypedDict):
     status: str
     team_id: str
 
-# ─── rate limiter ──────────────────────────────────────────────────────────────
-class RateLimiter:
-    def __init__(self, max_requests: int, window: timedelta):
-        self.max_requests = max_requests
-        self.window = window
-        self.requests: dict[str, dict] = {}
-
-    async def __call__(self, request: Request):
-        ip = request.client.host
-        now = datetime.utcnow()
-
-        entry = self.requests.get(ip)
-        if not entry or entry["reset"] <= now:
-            entry = {"count": 0, "reset": now + self.window}
-            self.requests[ip] = entry
-
-        if entry["count"] >= self.max_requests:
-            reset_time = entry["reset"]
-            raise HTTPException(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail="Rate limit exceeded. Please try again later.",
-                headers={"Retry-After": str(int((reset_time - now).total_seconds()))}
-            )
-
-        entry["count"] += 1
-        return True
-
-rate_limiter = RateLimiter(max_requests=100, window=timedelta(minutes=1))
-
 # ─── router setup ─────────────────────────────────────────────────────────────
 router = APIRouter(
     prefix="/api/v2/wp-sync",
@@ -66,6 +37,44 @@ router = APIRouter(
         500: {"description": "Internal Server Error"},
     },
 )
+
+# ─── rate limiter ─────────────────────────────────────────────────────────────
+class RateLimiter:
+    def __init__(self, max_requests: int = 100, window: int = 60):
+        self.max_requests = max_requests
+        self.window = window
+        self.requests = {}
+
+    async def __call__(self, request: Request):
+        ip = request.client.host
+        now = datetime.utcnow()
+        
+        # Clean up old entries
+        self.requests = {
+            k: v for k, v in self.requests.items() 
+            if v["reset"] > now
+        }
+        
+        if ip not in self.requests:
+            self.requests[ip] = {
+                "count": 1,
+                "reset": now + timedelta(seconds=self.window)
+            }
+            return True
+            
+        if self.requests[ip]["count"] >= self.max_requests:
+            reset_time = self.requests[ip]["reset"]
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Rate limit exceeded. Please try again later.",
+                headers={"Retry-After": str(int((reset_time - now).total_seconds()))}
+            )
+            
+        self.requests[ip]["count"] += 1
+        return True
+
+# Initialize rate limiter
+rate_limiter = RateLimiter(max_requests=100, window=60)  # 100 requests per minute
 
 # ─── sync requests table ──────────────────────────────────────────────────────
 sync_requests = Table(
