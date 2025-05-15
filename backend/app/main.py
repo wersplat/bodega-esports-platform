@@ -27,6 +27,7 @@ from app.api.v2.teams import router as teams_router
 from app.api.v2.webhooks import router as webhooks_router
 from app.api.v2.stats_charts import router as stats_charts_router
 from app.api.v2.forms import router as forms_router
+from app.api.v2.wp_sync import router as wp_sync_router
 from app.utils.auth import router as auth_router
 # Remove: from app.api.v2.rosters import router as rosters_router
 # Remove: from app.api.v2.stats import router as stats_router
@@ -92,6 +93,25 @@ app_instance.include_router(profiles_router, prefix="/api/users", tags=["users"]
 app_instance.include_router(stats_charts_router, prefix="/api/stats_charts", tags=["stats_charts"])
 app_instance.include_router(forms_router, prefix="/api/forms", tags=["forms"])
 app_instance.include_router(webhooks_router, prefix="/api/webhooks", tags=["webhooks"])
+app_instance.include_router(wp_sync_router, prefix="/api/v2/wp-sync", tags=["WordPress Sync"])
+
+# === Error Handling ===
+@app_instance.exception_handler(HTTPException)
+async def http_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+        headers=getattr(exc, "headers", None)
+    )
+
+@app_instance.exception_handler(Exception)
+async def generic_exception_handler(request, exc):
+    logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"},
+        headers={"X-Error": "Internal server error"}
+    )
 
 # === Scheduler ===
 import logging
