@@ -119,3 +119,17 @@ def root():
 @app_instance.get("/ping")
 def ping():
     return {"message": "pong"}
+
+@app_instance.get("/health")
+def health():
+    return {"status": "ok"}
+
+@app_instance.get("/health/live")
+def live():
+    return {"status": "ok"}
+
+@app_instance.get("/health/ready")
+def ready():
+    return {"status": "ok"}
+
+app = app_instance

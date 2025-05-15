@@ -1,14 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
-# Always ensure we're in the backend folder
+# Move into wherever start.sh lives
 cd "$(dirname "$0")"
 
-# Export Python path
-export PYTHONPATH=$PYTHONPATH:$(pwd)
+# Debug output
+echo "🔍 Working dir: $(pwd)"
+echo "🔍 Files here:"
+ls -la
+echo "🔍 PYTHONPATH: $PYTHONPATH"
+echo "🔍 PORT: $PORT"
 
-# Default port to 10000 if not set
-export PORT=${PORT:-10000}
-
-# Start Uvicorn with FastAPI app
-uvicorn app.main:app --host 0.0.0.0 --port $PORT
+# Now actually run Uvicorn
+exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-10000}"
