@@ -26,32 +26,6 @@ class TeamResponse(TypedDict):
     status: str
     team_id: str
 
-router = APIRouter(
-    prefix="/api/v2/wp-sync",
-    tags=["WordPress Sync"],
-    responses={
-        401: {"description": "Unauthorized"},
-        400: {"description": "Bad Request"},
-        429: {"description": "Too Many Requests"},
-        500: {"description": "Internal Server Error"},
-    },
-)
-
-# ─── sync requests table ───────────────────────────────────────────────────────
-sync_requests = Table(
-    "sync_requests",
-    Base.metadata,
-    Column("id", String, primary_key=True),
-    Column("wp_id", String, nullable=False),
-    Column("type", String, nullable=False),  # 'match' or 'team'
-    Column("status", String, nullable=False),
-    Column("payload", JSONB, nullable=False),
-    Column("created_at", DateTime, nullable=False),
-    Column("updated_at", DateTime, nullable=False),
-    Column("attempts", Integer, nullable=False, default=0),
-    Column("last_error", String),
-)
-
 # ─── rate limiter ──────────────────────────────────────────────────────────────
 class RateLimiter:
     def __init__(self, max_requests: int, window: timedelta):
@@ -80,6 +54,33 @@ class RateLimiter:
         return True
 
 rate_limiter = RateLimiter(max_requests=100, window=timedelta(minutes=1))
+
+# ─── router setup ─────────────────────────────────────────────────────────────
+router = APIRouter(
+    prefix="/api/v2/wp-sync",
+    tags=["WordPress Sync"],
+    responses={
+        401: {"description": "Unauthorized"},
+        400: {"description": "Bad Request"},
+        429: {"description": "Too Many Requests"},
+        500: {"description": "Internal Server Error"},
+    },
+)
+
+# ─── sync requests table ──────────────────────────────────────────────────────
+sync_requests = Table(
+    "sync_requests",
+    Base.metadata,
+    Column("id", String, primary_key=True),
+    Column("wp_id", String, nullable=False),
+    Column("type", String, nullable=False),  # 'match' or 'team'
+    Column("status", String, nullable=False),
+    Column("payload", JSONB, nullable=False),
+    Column("created_at", DateTime, nullable=False),
+    Column("updated_at", DateTime, nullable=False),
+    Column("attempts", Integer, nullable=False, default=0),
+    Column("last_error", String),
+)
 
 # ─── auth setup ───────────────────────────────────────────────────────────────
 
