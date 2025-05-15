@@ -11,11 +11,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.models import Match, Team
-from app.utils.logging import get_logger
+import logging
 from app.utils.wp_auth import verify_wp_user
 
 # Initialize logger
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 # ─── type definitions ───────────────────────────────────────────────────────────
 class MatchResponse(TypedDict):
