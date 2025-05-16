@@ -1,23 +1,25 @@
-/* eslint-disable no-unused-vars */
 import '../styles/globals.css'
-// import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/components/auth/auth-provider'
 import { Sidebar } from '@/components/ui/sidebar'
 import { useEffect } from 'react'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { Drawer, DrawerTrigger, DrawerContent } from '@/components/ui/drawer'
-import { PLASMIC } from '@/plasmic-init'
+import * as Sentry from '@sentry/nextjs'
 
-export default function App({ Component, pageProps }) {
+function MyApp({ Component, pageProps }) {
   useEffect(() => {
     document.body.classList.add('dark')
+    // Global error handler
+    const handleError = (error) => {
+      Sentry.captureException(error)
+    }
+    window.addEventListener('error', handleError)
+    return () => window.removeEventListener('error', handleError)
   }, [])
 
   const isMobile = useIsMobile()
 
   return (
-    // Uncomment if you add a ThemeProvider in the future
-    // <ThemeProvider>
     <AuthProvider>
       <div className="flex min-h-screen">
         {isMobile ? (
@@ -45,6 +47,8 @@ export default function App({ Component, pageProps }) {
         )}
       </div>
     </AuthProvider>
-    // </ThemeProvider>
   )
 }
+
+const SentryApp = Sentry.withProfiler(MyApp)
+export default SentryApp
