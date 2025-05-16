@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-from typing import List, Optional, TypedDict
+from typing import List, Optional, TypedDict, Dict, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.responses import JSONResponse
@@ -11,7 +11,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.base import Base
-from app.models.models import Match, Team
+# Import models using string literals to avoid circular imports
+Match = None  # Will be imported later when needed
+Team = None  # Will be imported later when needed
 from app.utils.wp_auth import verify_wp_user
 
 # Initialize logger
