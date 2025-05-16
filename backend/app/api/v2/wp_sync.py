@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models.base import Base
 from app.utils.wp_auth import verify_wp_user
-
+from app.models.models import Team
 # Initialize logger
 logger = logging.getLogger(__name__)
 
@@ -35,9 +35,6 @@ router = APIRouter(
         500: {"description": "Internal Server Error"},
     },
 )
-
-# Import Team after router is defined to avoid circular imports
-from app.models.models import Team
 
 # ─── sync requests table ──────────────────────────────────────────────────────
 sync_requests = Table(
@@ -175,8 +172,7 @@ async def get_sync_status(
         raise HTTPException(500, "Internal server error")
 
 # ─── team sync endpoint ────────────────────────────────────────────────────────────
-@router.post(
-    "/teams",
+@router.post("/teams",
     response_model=TeamResponse,
     responses={
         200: {"description": "created or updated"},
