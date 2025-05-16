@@ -154,10 +154,10 @@ def start_scheduler():
 
 start_scheduler()
 
-@app.get("/sentry-debug")
+@app_instance.get("/sentry-debug")
 async def trigger_error():
     division_by_zero = 1 / 0
-    
+
 @app_instance.get("/")
 def root():
     return {"message": "Welcome to the Bodega Esports Platform API!"}
