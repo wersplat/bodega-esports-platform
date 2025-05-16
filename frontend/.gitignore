@@ -24,3 +24,6 @@ dist
 vite.config.js
 index.html
 vercel.json
+
+# Sentry Config File
+.env.sentry-build-plugin

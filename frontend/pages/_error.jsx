@@ -1,5 +1,15 @@
 // frontend/pages/_error.jsx
-export default function Error({ statusCode }) {
+
+import * as Sentry from "@sentry/nextjs";
+import Error from "next/error";
+
+CustomError.getInitialProps = async (contextData) => {
+  await Sentry.captureUnderscoreErrorException(contextData);
+
+  return Error.getInitialProps(contextData);
+};
+
+export default function CustomError({ statusCode }) {
   return (
     <div className="main-content">
       <h1 className="text-3xl font-bold text-[#ef4444]">❌ Error</h1>
@@ -11,8 +21,3 @@ export default function Error({ statusCode }) {
     </div>
   );
 }
-
-Error.getInitialProps = ({ res, err }) => {
-  const statusCode = res?.statusCode || err?.statusCode || 404;
-  return { statusCode };
-};
