@@ -2,6 +2,8 @@
 
 import 'dotenv/config';
 import * as Sentry from "@sentry/node";
+import { NodeOptions } from "@sentry/node";
+import { RewriteFrames } from "@sentry/integrations";
 import { Client, GatewayIntentBits, Collection, Interaction } from 'discord.js';
 import { createLogger, transports, format } from 'winston';
 import { readdirSync } from 'fs';
@@ -31,6 +33,23 @@ client.on("messageCreate", (msg) => {
     throw new Error("Discord bot Sentry test crash");
   }
 });
+
+const sentryOptions: NodeOptions = {
+  dsn: process.env.SENTRY_DISCORD_DSN,
+  integrations: [
+    new RewriteFrames({
+      root: global.__dirname,
+    }) as any,
+  ],
+  tracesSampleRate: 1.0,
+  environment: process.env.NODE_ENV || "development",
+  release: "discord-bot@1.0.0",
+};
+
+Sentry.init(sentryOptions);
+
+export default Sentry;
+
 
 // --- Load Commands ---
 const commandsDir = join(__dirname, 'commands');
