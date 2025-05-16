@@ -1,6 +1,6 @@
 /* eslint-env node */
 
-let startTime = Date.now();
+const startTime = Date.now();
 
 export default function handler(req, res) {
   const uptimeSeconds = Math.floor((Date.now() - startTime) / 1000);
