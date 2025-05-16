@@ -1,12 +1,12 @@
-import path from 'path';
-import { env } from 'node:process';
+const path = require('path');
+const { env } = require('node:process');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['kvkmepmsloyekfqwdcgq.supabase.co'], // Add your Supabase domain or other image domains
+    domains: NEXT_PUBLIC_SUPABASE_URL, // Add your Supabase domain or other image domains
   },
   env: {
     SUPABASE_URL: env.SUPABASE_URL || '',
