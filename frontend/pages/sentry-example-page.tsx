@@ -44,6 +44,15 @@ export default function Page() {
 
         <button
           type="button"
+          onClick={() => {
+            throw new Error("Client-side Sentry test error");
+          }}
+        >
+          <span>Trigger Frontend Error</span>
+</button>
+
+        <button
+          type="button"
           onClick={async () => {
             await Sentry.startSpan({
               name: 'Example Frontend Span',
