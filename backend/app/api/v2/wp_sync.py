@@ -171,39 +171,6 @@ async def get_sync_status(
         logging.error(f"Error fetching sync status for wp_id={wp_id}: {str(e)}")
         raise HTTPException(500, "Internal server error")
 
-# ─── retry endpoint ────────────────────────────────────────────────────────────
-@router.post("/retry/{wp_id}")
-async def retry_sync(
-    wp_id: str,
-    db: AsyncSession = Depends(get_db)
-):
-    logging.info(f"Attempting to retry sync for wp_id={wp_id}")
-    try:
-        result = await db.execute(
-            select(sync_requests).where(sync_requests.c.wp_id == wp_id)
-        )
-        request = result.fetchone()
-        if not request:
-            raise HTTPException(404, "No failed sync request found")
-            
-        if request.status == "success":
-            raise HTTPException(400, "No need to retry successful sync")
-            
-        # Re-process the sync
-        payload = request.payload
-        if request.type == "match":
-            match_data = WPSyncMatch(**payload)
-            return await sync_match(match_data, db, request.authorization)
-        elif request.type == "team":
-            team_data = WPSyncTeam(**payload)
-            return await sync_team(team_data, db, request.authorization)
-        else:
-            raise HTTPException(400, f"Unknown sync type: {request.type}")
-            
-    except Exception as e:
-        logging.error(f"Error retrying sync for wp_id={wp_id}: {str(e)}")
-        raise HTTPException(500, "Internal server error")
-
 # ─── team sync endpoint ────────────────────────────────────────────────────────────
 @router.post(
     "/teams",
@@ -255,6 +222,39 @@ async def sync_team(
 
     except Exception as e:
         logging.exception(f"Error syncing team wp_id={team_data.wp_id}: {str(e)}")
+        raise HTTPException(500, "Internal server error")
+
+# ─── retry endpoint ────────────────────────────────────────────────────────────
+@router.post("/retry/{wp_id}")
+async def retry_sync(
+    wp_id: str,
+    db: AsyncSession = Depends(get_db)
+):
+    logging.info(f"Attempting to retry sync for wp_id={wp_id}")
+    try:
+        result = await db.execute(
+            select(sync_requests).where(sync_requests.c.wp_id == wp_id)
+        )
+        request = result.fetchone()
+        if not request:
+            raise HTTPException(404, "No failed sync request found")
+            
+        if request.status == "success":
+            raise HTTPException(400, "No need to retry successful sync")
+            
+        # Re-process the sync
+        payload = request.payload
+        if request.type == "match":
+            match_data = WPSyncMatch(**payload)
+            return await sync_match(match_data, db, request.authorization)
+        elif request.type == "team":
+            team_data = WPSyncTeam(**payload)
+            return await sync_team(team_data, db, request.authorization)
+        else:
+            raise HTTPException(400, f"Unknown sync type: {request.type}")
+            
+    except Exception as e:
+        logging.error(f"Error retrying sync for wp_id={wp_id}: {str(e)}")
         raise HTTPException(500, "Internal server error")
 
 # ─── batch processing endpoint ──────────────────────────────────────────────────────
