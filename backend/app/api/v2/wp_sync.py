@@ -11,7 +11,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.base import Base
-from app.models.models import Team
 from app.utils.wp_auth import verify_wp_user
 
 # Initialize logger
@@ -36,6 +35,9 @@ router = APIRouter(
         500: {"description": "Internal Server Error"},
     },
 )
+
+# Import Team after router is defined to avoid circular imports
+from app.models.models import Team
 
 # ─── sync requests table ──────────────────────────────────────────────────────
 sync_requests = Table(
