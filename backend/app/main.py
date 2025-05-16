@@ -1,5 +1,5 @@
 print("STARTING MAIN.PY")
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger  # REMOVE if not used below
