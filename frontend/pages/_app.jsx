@@ -6,7 +6,7 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { Drawer, DrawerTrigger, DrawerContent } from '@/components/ui/drawer'
 import * as Sentry from '@sentry/nextjs'
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ pageProps }) {
   useEffect(() => {
     document.body.classList.add('dark')
     // Global error handler
@@ -50,5 +50,7 @@ function MyApp({ Component, pageProps }) {
   )
 }
 
-const SentryApp = Sentry.withProfiler(MyApp)
-export default SentryApp
+// Named export for Fast Refresh
+const AppWithSentry = Sentry.withProfiler(MyApp)
+
+export default AppWithSentry
