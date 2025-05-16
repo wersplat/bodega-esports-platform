@@ -1,6 +1,7 @@
 // discord-bot/main.ts
 
 import 'dotenv/config';
+import * as Sentry from "@sentry/node";
 import { Client, GatewayIntentBits, Collection, Interaction } from 'discord.js';
 import { createLogger, transports, format } from 'winston';
 import { readdirSync } from 'fs';
@@ -8,6 +9,7 @@ import { join } from 'path';
 import { registerCommands } from './utils/registerCommands';
 import { startScheduler } from './utils/scheduler';
 import fetch from 'node-fetch';
+
 
 // --- Logger Setup ---
 const logger = createLogger({
@@ -23,12 +25,20 @@ const logger = createLogger({
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
 
+
+client.on("messageCreate", (msg) => {
+  if (msg.content === "!crash") {
+    throw new Error("Discord bot Sentry test crash");
+  }
+});
+
 // --- Load Commands ---
 const commandsDir = join(__dirname, 'commands');
 for (const file of readdirSync(commandsDir).filter(f => f.endsWith('.ts') || f.endsWith('.js'))) {
   const { default: cmd } = require(join(commandsDir, file));
   client.commands.set(cmd.data.name, cmd);
 }
+
 
 (async () => {
   try {
