@@ -6,7 +6,8 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { Drawer, DrawerTrigger, DrawerContent } from '@/components/ui/drawer'
 import * as Sentry from '@sentry/nextjs'
 
-function MyApp({ pageProps }) {
+// eslint-disable-next-line no-unused-vars
+function MyApp({ Component, pageProps }) {
   useEffect(() => {
     document.body.classList.add('dark')
     // Global error handler
