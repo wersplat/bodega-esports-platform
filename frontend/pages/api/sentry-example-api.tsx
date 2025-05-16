@@ -11,7 +11,7 @@ class SentryExampleAPIError extends Error {
 // A faulty API route to test Sentry's error monitoring
 export default function handler(
   _req: NextApiRequest,
-  res: NextApiResponse
+  _res: NextApiResponse
 ) {
   throw new SentryExampleAPIError("This error is raised on the backend called by the example page.");
   // Note: The line below is unreachable due to the throw above
