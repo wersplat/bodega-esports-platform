@@ -1,4 +1,7 @@
 print("STARTING MAIN.PY")
+import sentry_sdk
+from sentry_sdk.integrations.fastapi import FastApiIntegration
+from sentry_sdk import capture_exception
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -41,6 +44,24 @@ async def lifespan(app: FastAPI):
     yield
 
 app_instance = FastAPI(lifespan=lifespan)
+
+# --- Sentry Setup ---
+sentry_sdk.init(
+     dsn="https://667d0a143ec1895e4c1279da4585325a@o4509330775277568.ingest.us.sentry.io/4509330779078656",
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    # Set profile_session_sample_rate to 1.0 to profile 100%
+    # of profile sessions.
+    profile_session_sample_rate=1.0,
+    # Set profile_lifecycle to "trace" to automatically
+    # run the profiler on when there is an active transaction
+    profile_lifecycle="trace",
+    integrations=[FastApiIntegration()],
+)
 
 # --- Analytics DB Table Creation ---
 from app.database import analytics_engine
@@ -106,6 +127,7 @@ async def http_exception_handler(request, exc):
 
 @app_instance.exception_handler(Exception)
 async def generic_exception_handler(request, exc):
+    capture_exception(exc)  # ← this is the missing piece
     logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
     return JSONResponse(
         status_code=500,
@@ -132,6 +154,10 @@ def start_scheduler():
 
 start_scheduler()
 
+@app.get("/sentry-debug")
+async def trigger_error():
+    division_by_zero = 1 / 0
+    
 @app_instance.get("/")
 def root():
     return {"message": "Welcome to the Bodega Esports Platform API!"}

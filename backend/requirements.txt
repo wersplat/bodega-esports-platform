@@ -17,6 +17,4 @@ pymysql
 supabase
 asyncpg
 pydantic[email]
-
-
-
+sentry-sdk
