@@ -13,7 +13,7 @@ export default function handler(
   _req: NextApiRequest,
   _res: NextApiResponse
 ) {
-  throw new SentryExampleAPIError("This error is raised on the backend called by the example page.");
+  throw new SentryExampleAPIError("This error is raised on the frontend called by the example page.");
   // Note: The line below is unreachable due to the throw above
   // res.status(200).json({ name: "John Doe" });
 }
