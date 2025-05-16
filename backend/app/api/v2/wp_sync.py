@@ -11,9 +11,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.base import Base
-# Import models using string literals to avoid circular imports
-Match = None  # Will be imported later when needed
-Team = None  # Will be imported later when needed
 from app.utils.wp_auth import verify_wp_user
 
 # Initialize logger
@@ -35,48 +32,9 @@ router = APIRouter(
     responses={
         401: {"description": "Unauthorized"},
         400: {"description": "Bad Request"},
-        429: {"description": "Too Many Requests"},
         500: {"description": "Internal Server Error"},
     },
 )
-
-# ─── rate limiter ─────────────────────────────────────────────────────────────
-class RateLimiter:
-    def __init__(self, max_requests: int = 100, window: int = 60):
-        self.max_requests = max_requests
-        self.window = window
-        self.requests = {}
-
-    async def __call__(self, request: Request):
-        ip = request.client.host
-        now = datetime.utcnow()
-        
-        # Clean up old entries
-        self.requests = {
-            k: v for k, v in self.requests.items() 
-            if v["reset"] > now
-        }
-        
-        if ip not in self.requests:
-            self.requests[ip] = {
-                "count": 1,
-                "reset": now + timedelta(seconds=self.window)
-            }
-            return True
-            
-        if self.requests[ip]["count"] >= self.max_requests:
-            reset_time = self.requests[ip]["reset"]
-            raise HTTPException(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail="Rate limit exceeded. Please try again later.",
-                headers={"Retry-After": str(int((reset_time - now).total_seconds()))}
-            )
-            
-        self.requests[ip]["count"] += 1
-        return True
-
-# Initialize rate limiter
-rate_limiter = RateLimiter(max_requests=100, window=60)  # 100 requests per minute
 
 # ─── sync requests table ──────────────────────────────────────────────────────
 sync_requests = Table(
@@ -249,13 +207,11 @@ async def retry_sync(
 # ─── team sync endpoint ────────────────────────────────────────────────────────────
 @router.post(
     "/teams",
-    dependencies=[Depends(rate_limiter)],
     response_model=TeamResponse,
     responses={
         200: {"description": "created or updated"},
         400: {"description": "bad request"},
         401: {"description": "unauthorized"},
-        429: {"description": "rate limit exceeded"},
         500: {"description": "internal server error"},
     },
 )
@@ -304,13 +260,11 @@ async def sync_team(
 # ─── batch processing endpoint ──────────────────────────────────────────────────────
 @router.post(
     "/matches/batch",
-    dependencies=[Depends(rate_limiter)],
     response_model=List[MatchResponse],
     responses={
         200: {"description": "batch processed"},
         400: {"description": "bad request"},
         401: {"description": "unauthorized"},
-        429: {"description": "rate limit exceeded"},
         500: {"description": "internal server error"},
     },
 )
