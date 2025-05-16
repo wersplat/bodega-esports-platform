@@ -17,11 +17,11 @@ from app.models.models import Team
 logger = logging.getLogger(__name__)
 
 # ─── type definitions ───────────────────────────────────────────────────────────
-class MatchResponse(TypedDict):
+class MatchResponse(BaseModel):
     status: str
     match_id: str
 
-class TeamResponse(TypedDict):
+class TeamResponse(BaseModel):
     status: str
     team_id: str
 
@@ -172,7 +172,8 @@ async def get_sync_status(
         raise HTTPException(500, "Internal server error")
 
 # ─── team sync endpoint ────────────────────────────────────────────────────────────
-@router.post("/teams",
+@router.post(
+    "/teams",
     response_model=TeamResponse,
     responses={
         200: {"description": "created or updated"},
