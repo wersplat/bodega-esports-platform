@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
@@ -16,7 +16,11 @@ const events = [
 
 const WebhookManager: React.FC = () => {
   return (
-    <Card title="Webhook Management" description="Configure external integrations">
+    <Card>
+  <CardHeader>
+    <CardTitle>Webhook Management</CardTitle>
+    <CardDescription>Configure external integrations</CardDescription>
+  </CardHeader>
       <div className="p-4 space-y-4">
         <div className="space-y-2">
           <Label className="text-sm font-medium">Discord Webhook URL</Label>

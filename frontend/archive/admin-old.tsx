@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Check, Save, Settings, X } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+
+
+
+
+
+
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import SidebarLayoutWrapper from "@/components/SidebarLayoutWrapper";
@@ -66,15 +66,27 @@ const Admin: React.FC = () => {
         {/* ...cards... */}
       </div>
       {/* Team Approvals Table */}
-      <Card title="Team Approvals" description="Review and approve team registrations">
+      <Card>
+  <CardHeader>
+    <CardTitle>Team Approvals</CardTitle>
+    <CardDescription>Review and approve team registrations</CardDescription>
+  </CardHeader>
         {/* ...table content... */}
       </Card>
       {/* Stat Adjustments */}
-      <Card title="Stat Adjustments" description="Manually adjust player stats">
+      <Card>
+  <CardHeader>
+    <CardTitle>Stat Adjustments</CardTitle>
+    <CardDescription>Manually adjust player stats</CardDescription>
+  </CardHeader>
         {/* ...stat adjustment content... */}
       </Card>
       {/* Admin Activity Log */}
-      <Card title="Admin Activity Log" description="Recent administrative actions">
+      <Card>
+  <CardHeader>
+    <CardTitle>Admin Activity Log</CardTitle>
+    <CardDescription>Recent administrative actions</CardDescription>
+  </CardHeader>
         {/* ...activity log content... */}
       </Card>
     </div>

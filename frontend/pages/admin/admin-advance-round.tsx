@@ -69,8 +69,6 @@ const AdminAdvanceRound: React.FC = () => {
         <Select
           value={selectedLeague}
           onValueChange={(value) => setSelectedLeague(value)}
-          className="form-input"
-          style={{ marginBottom: '20px' }}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select League" />

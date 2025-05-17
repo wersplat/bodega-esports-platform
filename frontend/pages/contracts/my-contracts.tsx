@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ContractsTable } from '@/components/contracts/contracts-table';
-import { ContractFilter } from '@/components/contracts/contract-filter';
+
 
 import type { Contract } from '../../types/contract';
 
@@ -30,21 +30,6 @@ const MyContracts: React.FC = () => {
     }
   };
 
-  const act = async (id: string, newStatus: string): Promise<void> => {
-    try {
-      const res = await fetch(`https://api.bodegacatsgc.gg/contracts/${id}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (!res.ok) throw new Error('Failed to update contract status');
-      setContracts(contracts.map((c) => (c.id === id ? { ...c, status: (['active', 'pending', 'expired'].includes(newStatus) ? newStatus : 'pending') as 'active' | 'pending' | 'expired' } : c)));
-
-    } catch (err) {
-      // Handle error (was: console.error(err))
-      // Add specific error handling logic here
-    }
-  };
 
   if (loading) return <div className="main-content text-[#cbd5e1]">Loading…</div>;
 

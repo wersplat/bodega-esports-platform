@@ -4,7 +4,7 @@ import { Sidebar } from '@/components/ui/sidebar';
 import { useEffect } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Drawer, DrawerTrigger, DrawerContent } from '@/components/ui/drawer';
-import { PLASMIC } from '@/plasmic-init';
+
 import type { AppProps } from 'next/app';
 
 const App = ({ Component, pageProps }: AppProps) => {

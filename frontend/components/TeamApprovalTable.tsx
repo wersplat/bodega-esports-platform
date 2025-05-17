@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
@@ -21,7 +21,11 @@ export default function TeamApprovalTable() {
   ];
 
   return (
-    <Card title="Team Approvals" description="Review and approve team registrations">
+    <Card>
+  <CardHeader>
+    <CardTitle>Team Approvals</CardTitle>
+    <CardDescription>Review and approve team registrations</CardDescription>
+  </CardHeader>
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>

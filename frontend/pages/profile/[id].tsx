@@ -9,7 +9,7 @@ import { Edit, Save, X } from "lucide-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { supabase } from "@/lib/supabase"
 import { AvatarUpload } from "@/components/auth/avatar-upload"
-import { StatsDisplay } from "@/components/stats-display"
+
 import { RecentMatches } from "@/components/recent-matches"
 import { Achievements } from "@/components/achievements"
 import { PerformanceChart } from "@/components/performance-chart"
@@ -273,7 +273,7 @@ export default function UserProfilePage() {
           </div>
         )}
       </Card>
-      {profile.stats && <StatsDisplay stats={profile.stats} />}
+      
       <RecentMatches userId={userId} />
       <Achievements userId={userId} />
       <PerformanceChart userId={userId} />

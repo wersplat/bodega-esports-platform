@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Checkbox } from '@/components/ui/checkbox';
+
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+
 import type { NextPage } from 'next';
 
 interface Match {
@@ -83,7 +83,7 @@ const AdminSubmitResult: NextPage = () => {
         marginLeft: 'auto',
         marginRight: 'auto'
       }}>
-        <Select value={selectedMatch} onValueChange={(value) => setSelectedMatch(value)} className="form-input" required>
+        <Select value={selectedMatch} onValueChange={(value) => setSelectedMatch(value)} required>
           <SelectTrigger>
             <SelectValue placeholder="Select Match" />
           </SelectTrigger>

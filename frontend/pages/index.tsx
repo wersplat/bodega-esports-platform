@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PlasmicComponent, PlasmicRootProvider } from "@plasmicapp/loader-nextjs";

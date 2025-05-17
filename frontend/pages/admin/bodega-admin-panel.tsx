@@ -2,37 +2,18 @@
 import { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Check, Save, Settings, X } from "lucide-react";
-import { Checkbox } from '@/components/ui/checkbox';
+
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabase: SupabaseClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '');
-
-interface Team {
-  id: number;
-  name: string;
-  captain: string;
-  division: string;
-  players: number;
-  date: string;
-}
-
-interface Session {
-  access_token: string;
-}
-
-interface ProfileResponse {
-  data: {
-    is_admin: boolean;
-  };
-}
 
 const BodegaAdminPanel: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -127,7 +108,11 @@ const BodegaAdminPanel: NextPage = () => {
       </div>
 
       {/* Team Approvals Table */}
-      <Card title="Team Approvals" description="Review and approve team registrations">
+      <Card>
+  <CardHeader>
+    <CardTitle>Team Approvals</CardTitle>
+    <CardDescription>Review and approve team registrations</CardDescription>
+  </CardHeader>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -197,7 +182,11 @@ const BodegaAdminPanel: NextPage = () => {
 
       {/* League Settings and Webhook Management */}
       <div className="grid gap-6 md:grid-cols-2 my-8">
-        <Card title="League Settings" description="Configure league parameters">
+        <Card>
+  <CardHeader>
+    <CardTitle>League Settings</CardTitle>
+    <CardDescription>Configure league parameters</CardDescription>
+  </CardHeader>
           <div className="p-4 space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
@@ -241,7 +230,11 @@ const BodegaAdminPanel: NextPage = () => {
             </div>
           </div>
         </Card>
-        <Card title="Webhook Management" description="Configure webhooks for league events">
+        <Card>
+  <CardHeader>
+    <CardTitle>Webhook Management</CardTitle>
+    <CardDescription>Configure webhooks for league events</CardDescription>
+  </CardHeader>
           <div className="p-4 space-y-4">
             <div className="space-y-2">
               <Label className="text-sm font-medium">Webhook URL</Label>
@@ -258,7 +251,11 @@ const BodegaAdminPanel: NextPage = () => {
       </div>
 
       {/* Stat Adjustments */}
-      <Card title="Stat Adjustments" description="Manually adjust player stats">
+      <Card>
+  <CardHeader>
+    <CardTitle>Stat Adjustments</CardTitle>
+    <CardDescription>Manually adjust player stats</CardDescription>
+  </CardHeader>
         <div className="p-4 space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
@@ -320,7 +317,11 @@ const BodegaAdminPanel: NextPage = () => {
       </Card>
 
       {/* Admin Activity Log */}
-      <Card title="Admin Activity Log" description="Recent administrative actions">
+      <Card>
+  <CardHeader>
+    <CardTitle>Admin Activity Log</CardTitle>
+    <CardDescription>Recent administrative actions</CardDescription>
+  </CardHeader>
         <div className="p-4 divide-y divide-[#0f172a]">
           {[
             { action: "Approved team registration", admin: "Admin User", date: "May 12, 2023 9 14:32" },

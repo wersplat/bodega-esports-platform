@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -18,7 +18,11 @@ export default function LeagueSettingsForm() {
   ];
 
   return (
-    <Card title="League Settings" description="Configure league parameters">
+    <Card>
+      <CardHeader>
+        <CardTitle>League Settings</CardTitle>
+        <CardDescription>Configure league parameters</CardDescription>
+      </CardHeader>
       <div className="p-4 space-y-4">
         <div className="grid gap-4 md:grid-cols-2">
           {fields.map(([label, value, type], idx) => (

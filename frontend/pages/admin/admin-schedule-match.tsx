@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Checkbox } from '@/components/ui/checkbox';
+
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+
+
 import type { NextPage } from 'next';
 
 interface League {
@@ -119,7 +119,7 @@ const AdminScheduleMatch: NextPage = () => {
         marginLeft: 'auto',
         marginRight: 'auto'
       }}>
-        <Select value={selectedLeague} onValueChange={(value) => setSelectedLeague(value)} className="form-input" required>
+        <Select value={selectedLeague} onValueChange={(value) => setSelectedLeague(value)} required>
           <SelectTrigger>
             <SelectValue placeholder="Select League" />
           </SelectTrigger>
@@ -130,7 +130,7 @@ const AdminScheduleMatch: NextPage = () => {
           </SelectContent>
         </Select>
 
-        <Select value={homeTeam} onValueChange={(value) => setHomeTeam(value)} className="form-input" required disabled={!selectedLeague}>
+        <Select value={homeTeam} onValueChange={(value) => setHomeTeam(value)} required disabled={!selectedLeague}>
           <SelectTrigger>
             <SelectValue placeholder="Select Home Team" />
           </SelectTrigger>
@@ -141,7 +141,7 @@ const AdminScheduleMatch: NextPage = () => {
           </SelectContent>
         </Select>
 
-        <Select value={awayTeam} onValueChange={(value) => setAwayTeam(value)} className="form-input" required disabled={!selectedLeague}>
+        <Select value={awayTeam} onValueChange={(value) => setAwayTeam(value)} required disabled={!selectedLeague}>
           <SelectTrigger>
             <SelectValue placeholder="Select Away Team" />
           </SelectTrigger>
