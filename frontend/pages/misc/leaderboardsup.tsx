@@ -31,7 +31,7 @@ const LeaderboardStatic: React.FC = () => {
     if (selectedSeason) {
       fetchLeaderboard();
     }
-  }, [selectedSeason]);
+  }, [selectedSeason, fetchLeaderboard]);
 
   const fetchSeasons = async (): Promise<void> => {
     try {
