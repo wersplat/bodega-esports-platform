@@ -107,8 +107,7 @@ const config = /** @type {const} */ ({
     'public',
     '*.d.ts',
   ],
-};
+});
 
 // Use CommonJS export for ESLint compatibility
-// eslint-disable-next-line no-undef
 module.exports = config;

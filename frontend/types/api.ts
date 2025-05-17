@@ -1,4 +1,4 @@
-import { Team, TeamMember, TeamStats } from './team';
+import type { Team, TeamMember, TeamStats } from './team';
 import { ApiError } from './error';
 
 // Base response type for all API responses
@@ -18,6 +18,8 @@ export interface PaginatedResponse<T> {
 
 // Team related types
 export interface TeamApiResponse extends ApiResponse<{ item: Team }> {}
+
+export type { Team } from './team';
 
 export interface TeamMembersApiResponse extends ApiResponse<{ items: TeamMember[] }> {}
 

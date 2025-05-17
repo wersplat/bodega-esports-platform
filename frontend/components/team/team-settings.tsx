@@ -12,6 +12,7 @@ import { TeamLogoUpload } from "./team-logo-upload"
 import type { Team } from "@/types/team"
 import { useTeam } from "@/hooks/use-team"
 import { supabase } from "@/lib/supabase"
+import type { TeamInvite } from "@/types/team"
 
 interface TeamSettingsProps {
   team: Team
@@ -33,7 +34,7 @@ export function TeamSettings({ team, isAdmin, onUpdateTeam }: TeamSettingsProps)
   })
 
   const { resendInvite, cancelInvite } = useTeam(team.id)
-  const [pendingInvites, setPendingInvites] = useState<any[]>([])
+  const [pendingInvites, setPendingInvites] = useState<TeamInvite[]>([])
   const [inviteLoading, setInviteLoading] = useState(false)
   const [inviteMessage, setInviteMessage] = useState("")
 
@@ -51,7 +52,7 @@ export function TeamSettings({ team, isAdmin, onUpdateTeam }: TeamSettingsProps)
     fetchInvites()
   }, [team?.id])
 
-  async function handleResend(invite: any) {
+  async function handleResend(invite: TeamInvite) {
     setInviteLoading(true)
     setInviteMessage("")
     try {

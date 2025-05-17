@@ -2,27 +2,16 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
-import React from "react"
-import { useState, useEffect } from "react"
-import { supabase } from "@/lib/supabase"
-
-interface Match {
-  id: string
-  opponent: string
-  date: string
-  pts: number
-  ast: number
-  reb: number
-  stl: number
-  blk: number
-}
+import React, { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import type { RecentMatch } from "@/types/match";
 
 interface RecentMatchesProps {
   userId: string
 }
 
 export const RecentMatches: React.FC<RecentMatchesProps> = ({ userId }) => {
-  const [matches, setMatches] = useState<Match[]>([])
+  const [matches, setMatches] = useState<RecentMatch[]>([]);
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -45,8 +34,8 @@ export const RecentMatches: React.FC<RecentMatchesProps> = ({ userId }) => {
 
         if (data) {
           // Transform the data to match our Match interface
-          const formattedMatches = data.map((item: any) => {
-            const match = item.matches as any
+          const formattedMatches = data.map((item: RecentMatch) => {
+            const match = item.matches as RecentMatch
             const isHomeTeam = match.home_team !== "Team Alpha" // Placeholder logic
 
             return {
@@ -61,7 +50,7 @@ export const RecentMatches: React.FC<RecentMatchesProps> = ({ userId }) => {
             }
           })
 
-          setMatches(formattedMatches)
+          setMatches(formattedMatches as RecentMatch[]);
         }
       } catch (error) {
         setError("Failed to load match data")

@@ -7,8 +7,9 @@ import {
   LinearScale,
   BarElement,
   Title,
-  Tooltip,
-  Legend
+  Tooltip, 
+  Legend,
+  ChartData
 } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -23,7 +24,7 @@ interface TopScorersChartProps {
 }
 
 const TopScorersChart: React.FC<TopScorersChartProps> = ({ seasonId }) => {
-  const [chartData, setChartData] = useState<any>(null);
+  const [chartData, setChartData] = useState<ChartData<'bar'> | null>(null);
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 
   useEffect(() => {

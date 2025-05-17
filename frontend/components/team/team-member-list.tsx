@@ -30,12 +30,7 @@ interface TeamMemberListProps {
   }) => Promise<{ success: boolean; message: string }>
   onUpdateMember: (
     memberId: string,
-    updates: {
-      role?: "captain" | "coach" | "player" | "manager"
-      position?: string
-      jersey_number?: number
-      status?: "active" | "injured" | "inactive"
-    },
+    updates: Partial<TeamMember>
   ) => Promise<{ success: boolean; message: string }>
   onRemoveMember: (memberId: string) => Promise<{ success: boolean; message: string }>
 }
@@ -105,7 +100,7 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
     for (const id of selectedIds) {
       const member = members.find((m) => m.id === id)
       if (field === "role" && member?.role === "captain") { skipped++ } else {
-        const result = await onUpdateMember(id, { [field]: value })
+        const result = await onUpdateMember(id, { [field]: value } as Partial<TeamMember>)
         if (result.success) updated++
       }
     }
@@ -157,6 +152,7 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
     setMessage(null)
 
     try {
+      const updates: Partial<TeamMember> = {}
       const updates: any = {}
       if (editRole !== selectedMember.role) updates.role = editRole
       if (editPosition !== selectedMember.position) updates.position = editPosition || null

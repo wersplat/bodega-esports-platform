@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from "recharts"
 import { supabase } from "@/lib/supabase"
+import type { PerformanceStat } from "@/types/stats"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
 interface PerformanceData {
@@ -17,7 +18,7 @@ interface PerformanceChartProps {
 }
 
 export function PerformanceChart({ userId }: PerformanceChartProps) {
-  const [data, setData] = useState<PerformanceData[]>([])
+  const [stats, setStats] = useState<PerformanceStat[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -45,7 +46,7 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
 
         if (stats) {
           // Transform the data for the chart
-          const chartData = stats.map((item: any, index: number) => {
+          const chartData = stats.map((item: PerformanceStat, index: number) => {
             const match = item.matches as any
             const opponent = match.home_team === "Team Alpha" ? match.away_team : match.home_team
 
@@ -58,7 +59,7 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
             }
           })
 
-          setData(chartData)
+          setStats(chartData as PerformanceStat[])
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch performance data")

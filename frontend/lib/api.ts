@@ -1,170 +1,126 @@
-import { User } from '@supabase/supabase-js';
+import { ApiResponse, UserProfile, Team, Match, League, TeamStanding, PaginatedResponse } from '@/types/api';
+import { toApiError } from '@/types/error';
 
-// Base API configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.bodegacatsgc.gg';
-
-// Common response type for API calls
-type ApiResponse<T> = {
-  data?: T;
-  error?: {
-    message: string;
-    status?: number;
-  };
+const DEFAULT_HEADERS = {
+  'Content-Type': 'application/json',
+  Accept: 'application/json',
 };
 
-// Type definitions for different entities
-export interface PlayerProfile {
-  id: string;
-  display_name: string;
-  username: string;
-  platform?: string;
-  gamer_tag?: string;
-  positions?: string[];
-  career_history?: string;
-  team_id?: string;
-  team_name?: string;
-  created_at: string;
-  updated_at: string;
-}
+class ApiClient {
+  private baseUrl: string;
+  private defaultHeaders: Record<string, string>;
 
-export interface Team {
-  id: string;
-  name: string;
-  tag: string;
-  logo_url?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-/**
- * Fetches the current user's profile
- */
-export const getPlayerProfile = async (): Promise<ApiResponse<PlayerProfile>> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch profile: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return { data };
-  } catch (error) {
-    console.error('Error fetching player profile:', error);
-    return { 
-      error: { 
-        message: error instanceof Error ? error.message : 'Failed to fetch profile' 
-      } 
-    };
+  constructor(baseUrl: string, defaultHeaders: Record<string, string> = {}) {
+    this.baseUrl = baseUrl.replace(/\/+$/, '');
+    this.defaultHeaders = { ...DEFAULT_HEADERS, ...defaultHeaders };
   }
-};
 
-/**
- * Fetches team information by ID
- */
-export const getTeamById = async (teamId: string): Promise<ApiResponse<Team>> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/teams/${teamId}`, {
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch team: ${response.statusText}`);
+  async request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
+    try {
+      const response = await fetch(url, {
+        ...options,
+        credentials: 'include',
+        headers: {
+          ...this.defaultHeaders,
+          ...options.headers,
+        },
+      });
+      if (response.status === 204) {
+        return {} as ApiResponse<T>;
+      }
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        return { error: toApiError({ ...data, status: response.status }) };
+      }
+      return { data };
+    } catch (error) {
+      return { error: toApiError(error) };
     }
-
-    const data = await response.json();
-    return { data };
-  } catch (error) {
-    console.error('Error fetching team:', error);
-    return { 
-      error: { 
-        message: error instanceof Error ? error.message : 'Failed to fetch team' 
-      } 
-    };
   }
-};
 
-/**
- * Updates player profile
- */
-export const updatePlayerProfile = async (
-  profileData: Partial<PlayerProfile>
-): Promise<ApiResponse<PlayerProfile>> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/profile`, {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(profileData),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to update profile: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return { data };
-  } catch (error) {
-    console.error('Error updating player profile:', error);
-    return { 
-      error: { 
-        message: error instanceof Error ? error.message : 'Failed to update profile' 
-      } 
-    };
+  get<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, { ...options, method: 'GET' });
   }
-};
-
-// Add more API functions as needed
-
-/**
- * Helper function to handle API requests with auth
- */
-async function fetchWithAuth<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<ApiResponse<T>> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  post<T>(endpoint: string, body?: unknown, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, {
       ...options,
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      method: 'POST',
+      body: body ? JSON.stringify(body) : undefined,
     });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(
-        errorData.message || `Request failed with status ${response.status}`
-      );
-    }
-
-    const data = await response.json();
-    return { data };
-  } catch (error) {
-    console.error(`API Error (${endpoint}):`, error);
-    return { 
-      error: { 
-        message: error instanceof Error ? error.message : 'API request failed',
-      } 
-    };
+  }
+  put<T>(endpoint: string, body: unknown, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+  }
+  patch<T>(endpoint: string, body: Partial<unknown>, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
+  }
+  delete<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   }
 }
 
-// Example usage of fetchWithAuth:
-/*
-export const getPlayerStats = async (playerId: string) => {
-  return fetchWithAuth<PlayerStats>(`/players/${playerId}/stats`);
+export const api = new ApiClient(API_BASE_URL);
+
+export const authApi = {
+  getProfile: (): Promise<ApiResponse<UserProfile>> => api.get('/auth/me'),
+  updateProfile: (data: Partial<UserProfile>): Promise<ApiResponse<UserProfile>> => api.patch('/auth/me', data),
 };
-*/
+
+export const teamsApi = {
+  getTeams: (params?: { page?: number; pageSize?: number; search?: string }): Promise<ApiResponse<PaginatedResponse<Team>>> => {
+    let endpoint = '/teams';
+    if (params) {
+      const searchParams = new URLSearchParams();
+      if (params.page !== undefined) searchParams.append('page', String(params.page));
+      if (params.pageSize !== undefined) searchParams.append('pageSize', String(params.pageSize));
+      if (params.search) searchParams.append('search', params.search);
+      const queryString = searchParams.toString();
+      if (queryString) endpoint += `?${queryString}`;
+    }
+    return api.get(endpoint);
+  },
+  getTeamById: (id: string): Promise<ApiResponse<Team>> => api.get(`/teams/${id}`),
+  createTeam: (data: Omit<Team, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Team>> => api.post('/teams', data),
+  updateTeam: (id: string, data: Partial<Team>): Promise<ApiResponse<Team>> => api.patch(`/teams/${id}`, data),
+  deleteTeam: (id: string): Promise<ApiResponse<void>> => api.delete(`/teams/${id}`),
+};
+
+export const matchesApi = {
+  getMatches: (params?: { teamId?: string; leagueId?: string; status?: string; page?: number; limit?: number }): Promise<ApiResponse<PaginatedResponse<Match>>> => {
+    let endpoint = '/matches';
+    if (params) {
+      const searchParams = new URLSearchParams();
+      if (params.teamId) searchParams.append('teamId', params.teamId);
+      if (params.leagueId) searchParams.append('leagueId', params.leagueId);
+      if (params.status) searchParams.append('status', params.status);
+      if (params.page !== undefined) searchParams.append('page', String(params.page));
+      if (params.limit !== undefined) searchParams.append('limit', String(params.limit));
+      const queryString = searchParams.toString();
+      if (queryString) endpoint += `?${queryString}`;
+    }
+    return api.get(endpoint);
+  },
+  getMatchById: (id: string): Promise<ApiResponse<Match>> => api.get(`/matches/${id}`),
+};
+
+export const leaguesApi = {
+  getLeagues: (params?: { status?: string }): Promise<ApiResponse<League[]>> => {
+    let endpoint = '/leagues';
+    if (params && params.status) {
+      endpoint += `?status=${encodeURIComponent(params.status)}`;
+    }
+    return api.get(endpoint);
+  },
+  getLeagueById: (id: string): Promise<ApiResponse<League>> => api.get(`/leagues/${id}`),
+  getStandings: (leagueId: string): Promise<ApiResponse<TeamStanding[]>> => api.get(`/leagues/${leagueId}/standings`),
+};
