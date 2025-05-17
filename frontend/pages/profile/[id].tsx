@@ -1,187 +1,155 @@
-"use client"
+import { GetServerSideProps, NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Edit, Save, X } from "lucide-react";
+import { useAuth } from "@/components/auth/auth-provider";
+import { supabase } from "@/lib/supabase";
+import { AvatarUpload } from "@/components/auth/avatar-upload";
+import { RecentMatches } from "@/components/recent-matches";
+import { Achievements } from "@/components/achievements";
+import { PerformanceChart } from "@/components/performance-chart";
+import { getPlayerProfile, PlayerProfile, Team } from '@/lib/api';
 
-import { useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Edit, Save, X } from "lucide-react"
-import { useAuth } from "@/components/auth/auth-provider"
-import { supabase } from "@/lib/supabase"
-import { AvatarUpload } from "@/components/auth/avatar-upload"
+type ProfilePageProps = {
+  initialProfile: PlayerProfile | null;
+  initialTeam: Team | null;
+  error?: string;
+};
 
-import { RecentMatches } from "@/components/recent-matches"
-import { Achievements } from "@/components/achievements"
-import { PerformanceChart } from "@/components/performance-chart"
-// import type { UserProfile, Team } from "@/types/user"
+export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (context) => {
+  const { id } = context.params as { id: string };
+  
+  try {
+    // Fetch profile data
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-type UserProfile = {
-  id: string
-  username?: string
-  full_name?: string
-  bio?: string
-  position?: string
-  jersey_number?: number | string
-  avatar_url?: string | null
-  team_id?: string | null
-  stats?: any
-  [key: string]: any
-}
+    if (profileError || !profile) {
+      return { notFound: true };
+    }
 
-type Team = {
-  id: string
-  name: string
-  [key: string]: any
-}
+    // Fetch team data if user has a team
+    let team = null;
+    if (profile.team_id) {
+      const { data: teamData } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('id', profile.team_id)
+        .single();
+      
+      team = teamData;
+    }
 
-export default function UserProfilePage() {
-  const params = useParams()
-  const router = useRouter()
-  const { user } = useAuth()
-  const userId = params?.id as string
+    return {
+      props: {
+        initialProfile: profile,
+        initialTeam: team,
+      },
+    };
+  } catch (error) {
+    console.error('Error in getServerSideProps:', error);
+    return {
+      notFound: true,
+    };
+  }
+};
 
-  const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [team, setTeam] = useState<Team | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [isEditing, setIsEditing] = useState(false)
-
-  // Form state
+const UserProfilePage: NextPage<ProfilePageProps> = ({
+  initialProfile,
+  initialTeam,
+  error: initialError,
+}) => {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { id: userId } = router.query as { id: string };
+  
+  const [profile, setProfile] = useState(initialProfile);
+  const [team, setTeam] = useState(initialTeam);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(initialError || null);
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     full_name: "",
     bio: "",
     position: "",
     jersey_number: "",
-  })
+  });
 
-  const isOwnProfile = user?.id === userId
+  const isOwnProfile = user?.id === userId;
 
   useEffect(() => {
-    async function fetchUserProfile() {
-      try {
-        setIsLoading(true)
-        setError(null)
-
-        // Fetch user profile
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", userId)
-          .single()
-
-        if (profileError) {
-          if (profileError.code === "PGRST116") {
-            // Profile not found
-            router.push("/404")
-            return
-          }
-          throw profileError
-        }
-
-        setProfile(profileData as UserProfile)
-
-        // Initialize form data
-        setFormData({
-          username: profileData.username || "",
-          full_name: profileData.full_name || "",
-          bio: profileData.bio || "",
-          position: profileData.position || "",
-          jersey_number: profileData.jersey_number?.toString() || "",
-        })
-
-        // Fetch team data if user has a team
-        if (profileData.team_id) {
-          const { data: teamData, error: teamError } = await supabase
-            .from("teams")
-            .select("*")
-            .eq("id", profileData.team_id)
-            .single()
-
-          if (teamError) {
-            setError("Failed to load team data")
-          } else {
-            setTeam(teamData as Team)
-          }
-        }
-      } catch (err: any) {
-        setError("Failed to load profile")
-        setError(err.message || "Failed to load profile")
-      } finally {
-        setIsLoading(false)
-      }
+    if (profile) {
+      setFormData({
+        username: profile.username || "",
+        full_name: profile.full_name || "",
+        bio: profile.bio || "",
+        position: profile.position || "",
+        jersey_number: profile.jersey_number?.toString() || "",
+      });
     }
-
-    fetchUserProfile()
-  }, [userId, router])
+  }, [profile]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleAvatarChange = async (url: string | null) => {
-    if (!profile) return
+    if (!profile) return;
 
     try {
-      const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", profile.id)
+      const { error } = await supabase
+        .from("profiles")
+        .update({ avatar_url: url })
+        .eq("id", profile.id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setProfile({ ...profile, avatar_url: url })
+      setProfile({ ...profile, avatar_url: url });
     } catch (err) {
-      console.error("Error updating avatar:", err)
+      console.error("Error updating avatar:", err);
+      setError("Failed to update avatar");
     }
-  }
+  };
 
   const handleSaveProfile = async () => {
-    if (!profile) return
+    if (!profile) return;
 
     try {
-      setIsLoading(true)
+      setIsLoading(true);
 
       const updates = {
         username: formData.username,
         full_name: formData.full_name,
         bio: formData.bio,
         position: formData.position,
-        jersey_number: formData.jersey_number ? Number.parseInt(formData.jersey_number) : undefined,
+        jersey_number: formData.jersey_number ? Number(formData.jersey_number) : null,
         updated_at: new Date().toISOString(),
-      }
+      };
 
-      const { error } = await supabase.from("profiles").update(updates).eq("id", profile.id)
+      const { error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("id", profile.id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setProfile({ ...profile, ...updates })
-      setIsEditing(false)
+      setProfile({ ...profile, ...updates });
+      setIsEditing(false);
     } catch (err: any) {
-      console.error("Error updating profile:", err)
-      setError(err.message || "Failed to update profile")
+      console.error("Error updating profile:", err);
+      setError(err.message || "Failed to update profile");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-16 h-16 border-4 border-t-[#e11d48] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Error Loading Profile</h2>
-          <p className="text-[#94a3b8] mb-4">{error}</p>
-          <Button onClick={() => router.push("/")}>Return to Dashboard</Button>
-        </div>
-      </div>
-    )
-  }
+  };
 
   if (!profile) {
     return (
@@ -192,91 +160,171 @@ export default function UserProfilePage() {
           <Button onClick={() => router.push("/")}>Return to Dashboard</Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto py-8">
-      <Card className="p-6 bg-[#1e293b] rounded-lg shadow-md">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="flex flex-col items-center gap-4">
-            <AvatarUpload avatarUrl={profile.avatar_url ?? null} onAvatarChange={handleAvatarChange} />
-            <div className="text-center">
-              <h1 className="text-2xl font-bold text-[#f8fafc]">{profile.full_name || profile.username}</h1>
-              <p className="text-[#94a3b8]">{profile.bio}</p>
+    <div className="container mx-auto px-4 py-8">
+      <Card className="p-6 mb-6">
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex-shrink-0">
+            <AvatarUpload
+              uid={profile.id}
+              url={profile.avatar_url}
+              size={150}
+              onUpload={handleAvatarChange}
+              disabled={!isOwnProfile || !isEditing}
+            />
+          </div>
+          
+          <div className="flex-1">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h1 className="text-2xl font-bold">
+                  {isEditing ? (
+                    <Input
+                      name="full_name"
+                      value={formData.full_name}
+                      onChange={handleInputChange}
+                      placeholder="Full Name"
+                      className="text-2xl font-bold p-2 mb-2"
+                    />
+                  ) : (
+                    profile.full_name || 'Unnamed Player'
+                  )}
+                </h1>
+                <p className="text-muted-foreground">
+                  @{isEditing ? (
+                    <Input
+                      name="username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      placeholder="Username"
+                      className="inline-block w-auto p-1 text-base"
+                    />
+                  ) : (
+                    profile.username || 'no-username'
+                  )}
+                </p>
+              </div>
+              
+              {isOwnProfile && (
+                <div>
+                  {isEditing ? (
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setIsEditing(false)}
+                        disabled={isLoading}
+                      >
+                        <X className="h-4 w-4 mr-1" /> Cancel
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        onClick={handleSaveProfile}
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          'Saving...'
+                        ) : (
+                          <>
+                            <Save className="h-4 w-4 mr-1" /> Save
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setIsEditing(true)}
+                    >
+                      <Edit className="h-4 w-4 mr-1" /> Edit Profile
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">Position</h3>
+                {isEditing ? (
+                  <Input
+                    name="position"
+                    value={formData.position}
+                    onChange={handleInputChange}
+                    placeholder="Position"
+                    className="mt-1"
+                  />
+                ) : (
+                  <p>{profile.position || 'Not specified'}</p>
+                )}
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">Jersey #</h3>
+                {isEditing ? (
+                  <Input
+                    name="jersey_number"
+                    type="number"
+                    value={formData.jersey_number}
+                    onChange={handleInputChange}
+                    placeholder="Jersey Number"
+                    className="mt-1"
+                  />
+                ) : (
+                  <p>{profile.jersey_number || '--'}</p>
+                )}
+              </div>
+              {team && (
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Team</h3>
+                  <p>{team.name}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4">
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Bio</h3>
+              {isEditing ? (
+                <textarea
+                  name="bio"
+                  value={formData.bio}
+                  onChange={handleInputChange}
+                  placeholder="Tell us about yourself..."
+                  className="w-full p-2 border rounded-md min-h-[100px]"
+                />
+              ) : (
+                <p className="whitespace-pre-line">{profile.bio || 'No bio provided.'}</p>
+              )}
             </div>
           </div>
-          <div className="flex flex-col gap-2 items-end">
-            {isOwnProfile && !isEditing && (
-              <Button onClick={() => setIsEditing(true)}>
-                <Edit className="mr-2 h-4 w-4" />
-                Edit Profile
-              </Button>
-            )}
-            {isEditing && (
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setIsEditing(false)}>
-                  <X className="mr-2 h-4 w-4" />
-                  Cancel
-                </Button>
-                <Button onClick={handleSaveProfile}>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save
-                </Button>
-              </div>
-            )}
-          </div>
         </div>
-        {isEditing && (
-          <form className="mt-6 space-y-4" onSubmit={e => { e.preventDefault(); handleSaveProfile(); }}>
-            <Input
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              placeholder="Username"
-              className="w-full bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]"
-            />
-            <Input
-              name="full_name"
-              value={formData.full_name}
-              onChange={handleInputChange}
-              placeholder="Full Name"
-              className="w-full bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]"
-            />
-            <Input
-              name="bio"
-              value={formData.bio}
-              onChange={handleInputChange}
-              placeholder="Bio"
-              className="w-full bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]"
-            />
-            <Input
-              name="position"
-              value={formData.position}
-              onChange={handleInputChange}
-              placeholder="Position"
-              className="w-full bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]"
-            />
-            <Input
-              name="jersey_number"
-              value={formData.jersey_number}
-              onChange={handleInputChange}
-              placeholder="Jersey Number"
-              className="w-full bg-[#273449] border border-[#334155] text-[#f8fafc] placeholder-[#94a3b8]"
-            />
-          </form>
-        )}
-        {team && (
-          <div className="mt-6">
-            <h2 className="text-lg font-bold text-[#f8fafc]">Team</h2>
-            <p className="text-[#94a3b8]">{team.name}</p>
-          </div>
-        )}
       </Card>
-      
-      <RecentMatches userId={userId} />
-      <Achievements userId={userId} />
-      <PerformanceChart userId={userId} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Recent Matches</h2>
+            <RecentMatches playerId={profile.id} />
+          </Card>
+        </div>
+        
+        <div className="space-y-6">
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Performance</h2>
+            <PerformanceChart playerId={profile.id} />
+          </Card>
+          
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Achievements</h2>
+            <Achievements playerId={profile.id} />
+          </Card>
+        </div>
+      </div>
     </div>
-  )
-} 
+  );
+};
+
+export default UserProfilePage;

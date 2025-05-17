@@ -1,13 +1,38 @@
-import React from "react";
+import { NextPage } from 'next';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Layout } from '@/components/layout';
+import { Home } from 'lucide-react';
 
-export default function Custom404() {
+const Custom404: NextPage = () => {
   return (
-    <div style={{ textAlign: "center", marginTop: 80 }}>
-      <h1 style={{ fontSize: 48, color: "#ef4444" }}>404</h1>
-      <h2 style={{ fontWeight: 600 }}>Page Not Found</h2>
-      <p style={{ color: "#94a3b8", marginTop: 12 }}>
-        Sorry, the page you are looking for does not exist.
-      </p>
-    </div>
+    <Layout>
+      <div className="flex min-h-[calc(100vh-200px)] items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-5xl font-bold text-center text-destructive">
+              404
+            </CardTitle>
+            <CardDescription className="text-center text-xl">
+              Page Not Found
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-muted-foreground">
+              Sorry, we couldn't find the page you're looking for.
+            </p>
+            <Button asChild>
+              <Link href="/" className="inline-flex items-center gap-2">
+                <Home className="h-4 w-4" />
+                Go Back Home
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </Layout>
   );
-}
+};
+
+export default Custom404;
