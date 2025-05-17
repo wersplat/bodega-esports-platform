@@ -1,0 +1,43 @@
+import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+
+import { getPlayerProfile } from '../../../../lib/api';
+import { PlayerProfile } from '../../../../components/player/player-profile';
+
+export const revalidate = 60; // Revalidate every 60 seconds
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  try {
+    const player = await getPlayerProfile(params.id);
+    return {
+      title: `${player.name} | Bodega Esports`,
+      description: `Player profile for ${player.name} - ${player.teamName}`,
+    };
+  } catch (error) {
+    return {
+      title: 'Player Not Found | Bodega Esports',
+      description: 'The requested player could not be found.',
+    };
+  }
+}
+
+export default async function PlayerPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  try {
+    const player = await getPlayerProfile(params.id);
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <PlayerProfile player={player} />
+      </div>
+    );
+  } catch (error) {
+    notFound();
+  }
+}
