@@ -1,16 +1,17 @@
 # Bodega Esports Platform  
 
-_05/01/2025_
+_05/17/2025_
 ---
 
 ![Node.js](https://img.shields.io/badge/node-18.x-blue?logo=node.js)
 ![TypeScript](https://img.shields.io/badge/type-checked-blue?logo=typescript)
 ![Discord.js](https://img.shields.io/npm/v/discord.js?label=discord.js&color=blueviolet)
 ![License](https://img.shields.io/github/license/wersplat/bodega-esports-platform)
-![Render](https://img.shields.io/badge/deployed-on%20render-3c4dff?logo=render)
+[![Railway Deployment](https://img.shields.io/badge/Deploy-Railway-blue)](https://railway.app/REPLACE_WITH_PROJECT_URL)
 ![CI](https://github.com/wersplat/bodega-esports-platform/actions/workflows/ci.yml/badge.svg?branch=react)
 [![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
 [![Discord](https://img.shields.io/discord/854734760877752330?label=Discord&logo=discord)](https://discord.gg/bodegacatsgc)
+[![Sentry Monitoring](https://img.shields.io/badge/Sentry-Monitoring-orange)](https://sentry.io/REPLACE_WITH_PROJECT_URL)
 ---
 
 ## 📊 Monitoring Status
@@ -29,8 +30,7 @@ Bodega Platform monitoring via [UptimeRobot Public Dashboard](https://stats.upti
 
 ## 🎯 Overview
 
-A full-stack, modular platform for managing competitive NBA 2K leagues.  
-Built to power the **Road to $25K** league, this system supports roster management, stat tracking, automated MVP calculations, leaderboard exports, and more—integrated with Discord, Supabase, and Google Sheets.
+Bodega Esports Platform is a full-stack web application designed for gaming tournament management. Its **frontend** is a Next.js-based React application providing a dynamic, component-driven UI. The **backend** is a Node.js/Express server exposing RESTful APIs. A separate **Discord bot** component uses Discord.js to facilitate community interactions (e.g., registering users, reporting scores). In a future update, an OCR (Optical Character Recognition) module (e.g., Tesseract) will be added to parse match screenshots and scoreboards automatically.
 
 ---
 
@@ -71,88 +71,118 @@ Built to power the **Road to $25K** league, this system supports roster manageme
 
 ## 📁 Folder Structure
 
-```text
+```plaintext
 bodega-esports-platform/
-├── .github/              # CI workflows
-├── Docs/                 # Project documentation
-├── OCR/                  # PaddleOCR parsing scripts
-├── backend/              # FastAPI backend
-│   └── app/
-│       ├── api/
-│       ├── db/
-│       ├── models/
-│       └── main.py
-├── deploy/               # Deployment notes
-├── discord-bot/          # Discord slash command bot
+├── frontend/            # Next.js application
+│   ├── app/             # Next.js App Router directory
+│   ├── public/          # Static assets
+│   ├── components/      # Shared React components
+│   ├── pages/           # Legacy pages (if any)
+│   ├── next.config.js   # Next.js configuration
+│   ├── tsconfig.json    # TypeScript config
+│   └── package.json     # Frontend dependencies
+├── backend/             # Node.js/Express server
+│   ├── src/
+│   ├── routes/
+│   └── package.json
+├── discord-bot/         # Discord bot (Node.js, Discord.js)
 │   ├── commands/
-│   ├── scripts/
-│   ├── utils/
-│   ├── main.ts
-│   └── .env.example
-├── frontend/             # Next.js frontend
-│   ├── components/
-│   ├── pages/
-│   ├── public/
-│   ├── styles/
-│   └── tailwind.config.js
-├── public/               # Shared static assets
-├── sprint1-testing/      # Legacy testing folder
-├── supabase/             # DB config, migrations, types
-├── .env.example
-├── CHANGELOG.md
+│   ├── index.js
+│   └── package.json
+├── ocr/                 # Placeholder for future OCR component
+├── package.json         # (Workspace or root metadata)
 └── README.md
 ```
 
 ---
 
-## 🧪 Local Setup
+## Setup and Installation
 
-### Backend
-
-```bash
-cd backend
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
+**Prerequisites:**
+- [Node.js](https://nodejs.org/) v16+ and npm  
+- Discord bot credentials (token, client ID)  
+- Environment variables managed via `.env` files in each module
 
 ### Frontend
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+1. Navigate to the `frontend` folder:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies and start the dev server:
+   ```bash
+   npm install
+   npm run dev
+   ```
+3. The app will run at `http://localhost:3000` by default. Configure API URL and other settings via `.env.local`, e.g.:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:5000/api
+   ```
+
+### Backend
+
+1. Open a new terminal and enter the `backend` folder:
+   ```bash
+   cd backend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Copy and configure environment variables:
+   ```bash
+   cp .env.example .env
+   # then edit .env to set PORT, DATABASE_URL, etc.
+   ```
+4. Start the server:
+   ```bash
+   npm run dev
+   ```
+5. The API will be available at `http://localhost:5000` (or your configured port).
 
 ### Discord Bot
 
-```bash
-cd discord-bot
-npm install
-npm run dev
-```
+1. In another terminal, go to the `discord-bot` folder:
+   ```bash
+   cd discord-bot
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Copy the environment template and configure:
+   ```bash
+   cp .env.example .env
+   # set DISCORD_TOKEN, CLIENT_ID, GUILD_ID, etc.
+   ```
+4. Deploy slash commands (if applicable):
+   ```bash
+   npm run deploy
+   ```
+5. Start the bot:
+   ```bash
+   npm start
+   ```
 
-Add a `.env` based on `.env.example` with:
+After these steps, you should have the frontend, backend, and Discord bot running locally. Each component has its own `.env` and scripts to manage development and production builds.
 
-- `DISCORD_TOKEN`
-- `CLIENT_ID`
-- `GUILD_ID`
-- `API_URL`
-- `HEALTHCHECKS_PING_URL`
+## Usage
 
----
+- **Frontend:** Browse to `http://localhost:3000`. Use the UI to view tournaments, teams, and scores.  
+- **Backend:** Interact with REST endpoints via HTTP clients (e.g., `curl`, Postman) under `/api`, e.g., `GET /api/teams`.  
+- **Discord Bot:** Invite the bot using its OAuth2 URL, then use configured slash commands in your Discord server (e.g., `/register`, `/report-score`).
 
-## 🚀 Deployment Notes
+## Future Work
 
-- All services (frontend, backend, bot) are deployed via **Render**
-- Render auto-builds from the appropriate subfolders:
-  - `frontend/` → Web Service
-  - `backend/` → Web Service
-  - `discord-bot/` → Background Worker
-- Uptime badge powered by Healthchecks.io (heartbeat ping)
-- CI via GitHub Actions (`check-builds.yml`)
+- **OCR Integration (Placeholder):** Add an OCR component (e.g., Tesseract) in `ocr/` to parse text from match screenshots and automate stat entry.  
+- **Deployment:** Replace badge placeholders with real Railway and Sentry URLs once deployed, and configure CI/CD pipelines accordingly.
 
+## References
+
+- [Next.js Documentation](https://nextjs.org/docs)  
+- [Express.js Guide](https://expressjs.com/)  
+- [Discord.js Getting Started](https://discord.js.org/#/)  
+- [Tesseract OCR](https://github.com/tesseract-ocr/tesseract)  
 ---
 
 ## 📄 License
