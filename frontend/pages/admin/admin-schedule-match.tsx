@@ -4,17 +4,28 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import type { NextPage } from 'next';
 
-function AdminScheduleMatch() {
+interface League {
+  id: string;
+  name: string;
+}
+
+interface Team {
+  id: string;
+  name: string;
+}
+
+const AdminScheduleMatch: NextPage = () => {
   const router = useRouter();
-  const [leagues, setLeagues] = useState([]);
-  const [teams, setTeams] = useState([]);
-  const [selectedLeague, setSelectedLeague] = useState('');
-  const [homeTeam, setHomeTeam] = useState('');
-  const [awayTeam, setAwayTeam] = useState('');
-  const [matchDate, setMatchDate] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [leagues, setLeagues] = useState<League[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [selectedLeague, setSelectedLeague] = useState<string>('');
+  const [homeTeam, setHomeTeam] = useState<string>('');
+  const [awayTeam, setAwayTeam] = useState<string>('');
+  const [matchDate, setMatchDate] = useState<string>('');
+  const [successMessage, setSuccessMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
     fetchLeagues();
@@ -28,7 +39,7 @@ function AdminScheduleMatch() {
     }
   }, [selectedLeague]);
 
-  const fetchLeagues = async () => {
+  const fetchLeagues = async (): Promise<void> => {
     try {
       const res = await fetch('https://api.bodegacatsgc.gg/leagues');
       const data = await res.json();
@@ -38,7 +49,7 @@ function AdminScheduleMatch() {
     }
   };
 
-  const fetchTeams = async (leagueId) => {
+  const fetchTeams = async (leagueId: string): Promise<void> => {
     try {
       const res = await fetch(`https://api.bodegacatsgc.gg/teams?league_id=${leagueId}`);
       const data = await res.json();
@@ -48,7 +59,7 @@ function AdminScheduleMatch() {
     }
   };
 
-  const handleSchedule = async (e) => {
+  const handleSchedule = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setSuccessMessage('');
     setErrorMessage('');
@@ -83,7 +94,7 @@ function AdminScheduleMatch() {
       setHomeTeam('');
       setAwayTeam('');
       setMatchDate('');
-    } catch (err) {
+    } catch (err: any) {
       setErrorMessage(err.message);
     }
   };
@@ -92,7 +103,7 @@ function AdminScheduleMatch() {
     <div className="main-content">
       <h1 className="page-title">Admin: Schedule a Match</h1>
       <button onClick={() => router.push('/admin')} className="form-button" style={{ marginBottom: '20px' }}>
-        ← Back to Admin Dashboard
+         Back to Admin Dashboard
       </button>
 
       <form onSubmit={handleSchedule} style={{
@@ -150,6 +161,6 @@ function AdminScheduleMatch() {
       </form>
     </div>
   );
-}
+};
 
 export default AdminScheduleMatch;

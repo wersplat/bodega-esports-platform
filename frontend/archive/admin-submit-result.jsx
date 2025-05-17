@@ -5,20 +5,28 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 
-function AdminSubmitResult() {
+import type { NextPage } from 'next';
+
+interface Match {
+  id: string;
+  team_a_name: string;
+  team_b_name: string;
+}
+
+const AdminSubmitResult: NextPage = () => {
   const router = useRouter();
-  const [matches, setMatches] = useState([]);
-  const [selectedMatch, setSelectedMatch] = useState('');
-  const [teamAScore, setTeamAScore] = useState('');
-  const [teamBScore, setTeamBScore] = useState('');
-  const [notes, setNotes] = useState('');
-  const [message, setMessage] = useState('');
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [selectedMatch, setSelectedMatch] = useState<string>('');
+  const [teamAScore, setTeamAScore] = useState<string>('');
+  const [teamBScore, setTeamBScore] = useState<string>('');
+  const [notes, setNotes] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
 
   useEffect(() => {
     fetchMatches();
   }, []);
 
-  const fetchMatches = async () => {
+  const fetchMatches = async (): Promise<void> => {
     try {
       const res = await fetch('https://api.bodegacatsgc.gg/matches/pending');
       const data = await res.json();
@@ -28,7 +36,7 @@ function AdminSubmitResult() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (!selectedMatch || teamAScore === '' || teamBScore === '') {
       setMessage('Please fill out all required fields.');
@@ -101,3 +109,4 @@ function AdminSubmitResult() {
 }
 
 export default AdminSubmitResult;
+

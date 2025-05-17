@@ -1,6 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
-function LeagueTeams() {
+interface League {
+  id: string | number;
+  name: string;
+}
+
+interface Team {
+  id: string | number;
+  name: string;
+  wins: number;
+  losses: number;
+}
+
+const LeagueTeams = () => {
   const [leagues, setLeagues] = useState([]);
   const [selectedLeague, setSelectedLeague] = useState('');
   const [teams, setTeams] = useState([]);
@@ -56,6 +68,6 @@ function LeagueTeams() {
       </div>
     </div>
   );
-}
+};
 
 export default LeagueTeams;

@@ -1,5 +1,6 @@
 // Refactored from bodega-esport2.0/app/admin/page.tsx
 import { useEffect, useState } from 'react';
+import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,17 +11,36 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '');
+const supabase: SupabaseClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '');
 
-export default function BodegaAdminPanel() {
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
+interface Team {
+  id: number;
+  name: string;
+  captain: string;
+  division: string;
+  players: number;
+  date: string;
+}
+
+interface Session {
+  access_token: string;
+}
+
+interface ProfileResponse {
+  data: {
+    is_admin: boolean;
+  };
+}
+
+const BodegaAdminPanel: NextPage = () => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfile = async (): Promise<void> => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         const token = session?.access_token;

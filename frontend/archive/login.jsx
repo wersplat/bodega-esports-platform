@@ -6,45 +6,26 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { supabase } from '../../supabaseClient';
 
-export default function Register() {
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const handleRegister = async (e) => {
+  const handleEmailLogin = async (e) => {
     e.preventDefault();
     setError(null);
-    if (password !== confirmPassword) {
-      setError("Passwords don't match");
-      return;
-    }
     setIsLoading(true);
     try {
-      const { error: signUpError, data } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            full_name: `${firstName} ${lastName}`,
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
       });
-      if (signUpError) throw signUpError;
-      if (data.user && !data.session) {
-        router.push('/public/verify-email');
-        return;
-      }
+      if (error) throw error;
       router.push('/');
     } catch (err) {
-      setError(err.message || 'An error occurred during registration');
+      setError(err.message || 'An error occurred during sign in');
     } finally {
       setIsLoading(false);
     }
@@ -67,41 +48,19 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <Card className="w-full max-w-md">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold">Create an Account</h1>
-          <p className="text-[#94a3b8] mt-1">Join Bodega Esports Road to $25K</p>
+          <h1 className="text-2xl font-bold">Bodega Esports</h1>
+          <p className="text-[#94a3b8] mt-1">Road to $25K</p>
         </div>
         {error && (
           <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-500 text-sm">{error}</div>
         )}
-        <form className="space-y-4" onSubmit={handleRegister}>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="firstName" className="text-sm font-medium">First Name</label>
-              <Input
-                id="firstName"
-                placeholder="John"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="lastName" className="text-sm font-medium">Last Name</label>
-              <Input
-                id="lastName"
-                placeholder="Doe"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+        <form className="space-y-4" onSubmit={handleEmailLogin}>
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium">Email</label>
             <Input
               id="email"
               type="email"
-              placeholder="john.doe@example.com"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -112,39 +71,25 @@ export default function Register() {
             <Input
               id="password"
               type="password"
-              placeholder="Create a password"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          <div className="space-y-2">
-            <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id="terms"
-              className="h-4 w-4 rounded border-[#94a3b8] bg-[#1e293b] text-[#e11d48] focus:ring-[#e11d48]"
-              required
-            />
-            <label htmlFor="terms" className="text-sm text-[#94a3b8]">
-              I agree to the{' '}
-              <Link href="/terms" className="text-[#e11d48] hover:underline">Terms of Service</Link>{' '}
-              and{' '}
-              <Link href="/privacy" className="text-[#e11d48] hover:underline">Privacy Policy</Link>
-            </label>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="remember"
+                className="h-4 w-4 rounded border-[#94a3b8] bg-[#1e293b] text-[#e11d48] focus:ring-[#e11d48]"
+              />
+              <label htmlFor="remember" className="text-sm text-[#94a3b8]">Remember me</label>
+            </div>
+            <Link href="/public/forgot-password" className="text-sm text-[#e11d48] hover:underline">Forgot password?</Link>
           </div>
           <Button className="w-full" type="submit" disabled={isLoading}>
-            {isLoading ? 'Creating Account...' : 'Sign Up'}
+            {isLoading ? 'Signing In...' : 'Sign In'}
           </Button>
         </form>
         <div className="mt-6">
@@ -174,8 +119,8 @@ export default function Register() {
           </div>
         </div>
         <p className="mt-6 text-center text-sm text-[#94a3b8]">
-          Already have an account?{' '}
-          <Link href="/public/login" className="text-[#e11d48] hover:underline">Sign in</Link>
+          Don't have an account?{' '}
+          <Link href="/public/register" className="text-[#e11d48] hover:underline">Sign up</Link>
         </p>
       </Card>
     </div>
