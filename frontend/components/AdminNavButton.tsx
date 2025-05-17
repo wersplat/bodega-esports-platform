@@ -1,18 +1,20 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+'use client';
+
+import { useRouter } from 'next/navigation';
 
 interface AdminNavButtonProps {
   label: string;
   path: string;
+  className?: string;
 }
 
-function AdminNavButton({ label, path }: AdminNavButtonProps) {
-  const navigate = useNavigate();
+function AdminNavButton({ label, path, className = '' }: AdminNavButtonProps) {
+  const router = useRouter();
 
   return (
     <button
-      onClick={() => navigate(path)}
-      className="form-button flex items-center gap-2"
+      onClick={() => router.push(path)}
+      className={`form-button flex items-center gap-2 ${className}`}
     >
       <span>{label}</span>
     </button>

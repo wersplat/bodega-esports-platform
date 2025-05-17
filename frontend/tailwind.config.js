@@ -1,10 +1,9 @@
 /* eslint-env node */
-/* global module */
-
-const { fontFamily } = require("tailwindcss/defaultTheme");
+import { fontFamily } from 'tailwindcss/defaultTheme';
+import animate from 'tailwindcss-animate';
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -83,5 +82,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animate],
 };

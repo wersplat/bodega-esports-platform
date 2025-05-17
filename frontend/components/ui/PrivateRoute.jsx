@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { logError } from '../../utils/logger';
 
 // Hardcoded values for development
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const SUPABASE_URL = typeof window !== 'undefined' ? window.NEXT_PUBLIC_SUPABASE_URL : '';
+const SUPABASE_ANON_KEY = typeof window !== 'undefined' ? window.NEXT_PUBLIC_SUPABASE_ANON_KEY : '';
 
 function PrivateRoute({ children, requireAdmin = false }) {
+  const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -37,14 +38,17 @@ function PrivateRoute({ children, requireAdmin = false }) {
   }
 
   if (!user) {
-    return <Navigate to="/" />;
+    router.push('/');
+    return null;
   }
 
   if (requireAdmin && user.email !== 'c.werwaiss@gmail.com') {
-    return <Navigate to="/" />;
+    router.push('/');
+    return null;
   }
 
   return children;
 }
 
+// NOTE: This component is now redundant in Next.js routing. Consider removing it if you do not need route protection logic.
 export default PrivateRoute;

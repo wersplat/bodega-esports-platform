@@ -1,7 +1,7 @@
-// frontend/App.jsx
+
 
 import React, { useEffect } from 'react';
-import { RouterProvider } from 'react-router-dom';
+
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { theme } from '@/theme/theme';
@@ -11,7 +11,7 @@ const AppTheme = theme;
 
 // Components
 import Navbar from '@/components/Navbar';
-import { useLocation } from 'react-router-dom';
+
 
 // Pages
 import Login from '@/pages/Login';
@@ -75,41 +75,7 @@ function App() {
       {/* Always render Navbar */}
       <Navbar />
       <div className="main-content">
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/:id" element={<Dashboard />} />
-          <Route path="/leagues" element={<LeagueBrowser />} />
-          <Route path="/leagues/:id" element={<LeagueBrowser />} />
-          <Route path="/register-team" element={<RegisterTeam />} />
-          <Route path="/submit-player-stats" element={<SubmitPlayerStats />} />
-          <Route path="/submit-result" element={<SubmitResult />} />
-          <Route path="/matches" element={<Matches />} />
-          <Route path="/public-matches" element={<PublicMatches />} />
-          <Route path="/public-bracket" element={<PublicBracket />} />
-          <Route path="/champion" element={<Champion />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/standings" element={<Standings />} />
-          <Route path="/profile" element={<PlayerProfile />} />
-          <Route path="/league/:id" element={<LeagueTeams />} />
-          <Route path="/contracts/send" element={<OwnerSendContract />} />
-          <Route path="/contracts" element={<MyContracts />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin-review-matches" element={<AdminReviewMatches />} />
-          <Route path="/admin-submit-result" element={<AdminSubmitResult />} />
-          <Route path="/admin-create-league" element={<AdminCreateLeague />} />
-          <Route path="/admin-add-team" element={<AdminAddTeam />} />
-          <Route path="/admin-schedule-match" element={<AdminScheduleMatch />} />
-          <Route path="/admin-review-stats" element={<AdminReviewStats />} />
-          <Route path="/admin-roster-lock" element={<AdminRosterLock />} />
-          <Route path="/admin-discord-announce" element={<SendAnnouncement />} />
-          <Route path="/admin-manage-webhooks" element={<AdminManageWebhooks />} />
-          <Route path="/admin-review-board" element={<AdminReviewBoard />} />
-          <Route path="/admin-league-settings" element={<LeagueSettings />} />
-        </Routes>
+        
       </div>
     </>
   );
@@ -120,9 +86,7 @@ export default function AppWrapper() {
   return (
     <ThemeProvider theme={AppTheme}>
       <CssBaseline />
-      <Router>
-        <App />
-      </Router>
+      
     </ThemeProvider>
   );
 }

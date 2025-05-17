@@ -1,12 +1,14 @@
 // src/components/NotificationsBell.jsx
 
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+// NOTE: If you need SSR env vars, consider using process.env safely or next/config
+import Link from 'next/link';
 import { logError } from '../../utils/logger';
 
 // Hardcoded values for development
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// For SSR/CSR compatibility, read from window if available
+const SUPABASE_URL = typeof window !== 'undefined' ? window.NEXT_PUBLIC_SUPABASE_URL : '';
+const SUPABASE_ANON_KEY = typeof window !== 'undefined' ? window.NEXT_PUBLIC_SUPABASE_ANON_KEY : '';
 
 export default function NotificationsBell() {
   const [count, setCount] = useState(0);
@@ -45,7 +47,7 @@ export default function NotificationsBell() {
   }, []);
 
   return (
-    <Link to="/notifications" style={{ position: 'relative', fontSize: 20 }}>
+    <Link href="/notifications" style={{ position: 'relative', fontSize: 20 }}>
       🔔
       {count > 0 && (
         <span

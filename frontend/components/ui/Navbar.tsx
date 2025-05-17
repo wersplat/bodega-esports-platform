@@ -1,28 +1,42 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+'use client';
 
-const Navbar: React.FC = () => {
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+
+const Navbar = () => {
+  const pathname = usePathname();
+  
+  const navItems = [
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Leagues', href: '/leagues' },
+    { name: 'Matches', href: '/matches' },
+    { name: 'Profile', href: '/profile' },
+  ];
+
   return (
-    <header style={{ backgroundColor: '#333', color: '#fff', padding: '10px 20px' }}>
-      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <Link to="/" style={{ color: '#fff', textDecoration: 'none', fontSize: '20px', fontWeight: 'bold' }}>
+    <header className="bg-[#1e293b] text-white fixed top-0 left-0 right-0 z-40 h-16 shadow-md">
+      <nav className="container mx-auto h-full px-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <Link href="/" className="text-xl font-bold hover:text-gray-300 transition-colors">
             Bodega Esports
           </Link>
         </div>
-        <ul style={{ listStyle: 'none', display: 'flex', gap: '15px', margin: 0, padding: 0 }}>
-          <li>
-            <Link to="/dashboard" style={{ color: '#fff', textDecoration: 'none' }}>Dashboard</Link>
-          </li>
-          <li>
-            <Link to="/leagues" style={{ color: '#fff', textDecoration: 'none' }}>Leagues</Link>
-          </li>
-          <li>
-            <Link to="/matches" style={{ color: '#fff', textDecoration: 'none' }}>Matches</Link>
-          </li>
-          <li>
-            <Link to="/profile" style={{ color: '#fff', textDecoration: 'none' }}>Profile</Link>
-          </li>
+        
+        <ul className="flex items-center space-x-6">
+          {navItems.map((item) => (
+            <li key={item.href}>
+              <Link 
+                href={item.href}
+                className={cn(
+                  'text-sm font-medium hover:text-gray-300 transition-colors',
+                  pathname === item.href ? 'text-white border-b-2 border-[#e11d48]' : 'text-gray-300'
+                )}
+              >
+                {item.name}
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
     </header>
@@ -30,3 +44,15 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
+// Add this to your global CSS if not already present
+/*
+@layer components {
+  .nav-link {
+    @apply text-gray-300 hover:text-white px-3 py-2 text-sm font-medium;
+  }
+  .nav-link.active {
+    @apply text-white bg-gray-900;
+  }
+}
+*/

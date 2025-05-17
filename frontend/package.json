@@ -43,6 +43,7 @@
     "@radix-ui/react-toggle-group": "^1.1.7",
     "@radix-ui/react-tooltip": "^1.2.4",
     "@sentry/nextjs": "^9.19.0",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/supabase-js": "^2.49.4",
     "axios": "^1.8.4",
     "chart.js": "^4.4.1",
@@ -60,7 +61,6 @@
     "react-hook-form": "^7.56.2",
     "react-hot-toast": "^2.5.2",
     "react-resizable-panels": "^3.0.1",
-    "react-router-dom": "^7.5.3",
     "recharts": "^2.15.3",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.2.0",
@@ -69,6 +69,10 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/line-clamp": "^0.4.4",
+    "@tailwindcss/typography": "^0.5.16",
     "@types/axios": "^0.14.4",
     "@types/chart.js": "^2.9.41",
     "@types/jest": "^29.5.14",
@@ -80,7 +84,7 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.4",
-    "postcss": "^8.4.35",
-    "tailwindcss": "^3.4.3"
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17"
   }
 }

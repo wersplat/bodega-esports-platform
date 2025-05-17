@@ -1,53 +1,66 @@
-import React, { useEffect, useState, ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
-import { logError } from '../../utils/logger';
+'use client';
 
-const SUPABASE_URL: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+import { useEffect, useState, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '../auth/use-user';
+import { logError } from '@/utils/logger';
+import { Loader2 } from 'lucide-react';
 
 interface PrivateRouteProps {
   children: ReactNode;
   requireAdmin?: boolean;
+  redirectTo?: string;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, requireAdmin = false }) => {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const getUser = async () => {
-    try {
-      const response = await fetch(`${SUPABASE_URL}/auth/v1/session`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY ?? '',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY ?? ''}`
-        }
-      });
-      const session = await response.json();
-      setUser(session?.user ?? null);
-      setLoading(false);
-    } catch (error) {
-      logError('Error fetching session:', error);
-      setLoading(false);
-    }
-  };
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ 
+  children, 
+  requireAdmin = false, 
+  redirectTo = '/auth/login' 
+}) => {
+  const router = useRouter();
+  const { user, isLoading, isAdmin } = useUser();
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+  const [isChecking, setIsChecking] = useState<boolean>(true);
 
   useEffect(() => {
-    getUser();
-  }, []);
+    // Skip if still loading user data
+    if (isLoading) return;
 
-  if (loading) {
-    return <div>Loading...</div>;
+    // Check if user is authenticated
+    if (!user) {
+      router.push(redirectTo);
+      return;
+    }
+
+    // Check admin status if required
+    if (requireAdmin && !isAdmin) {
+      logError('Access denied: Admin privileges required');
+      router.push('/unauthorized');
+      return;
+    }
+
+    // User is authorized
+    setIsAuthorized(true);
+    setIsChecking(false);
+  }, [user, isLoading, isAdmin, requireAdmin, router, redirectTo]);
+
+  // Show loading state
+  if (isLoading || isChecking) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="sr-only">Loading...</span>
+      </div>
+    );
   }
 
-  if (!user) {
-    return <Navigate to="/" />;
+  // Render children if authorized
+  if (isAuthorized) {
+    return <>{children}</>;
   }
 
-  if (requireAdmin && user.email !== 'c.werwaiss@gmail.com') {
-    return <Navigate to="/" />;
-  }
-
-  return <>{children}</>;
+  // Default return (should redirect in most cases)
+  return null;
 };
 
 export default PrivateRoute;
