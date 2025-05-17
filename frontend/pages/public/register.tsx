@@ -14,10 +14,10 @@ export default function Register() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     if (password !== confirmPassword) {
@@ -45,7 +45,11 @@ export default function Register() {
       }
       router.push('/');
     } catch (err) {
-      setError(err.message || 'An error occurred during registration');
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An error occurred during registration');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +62,11 @@ export default function Register() {
       const { error } = await supabase.auth.signInWithOAuth({ provider: 'discord' });
       if (error) throw error;
     } catch (err) {
-      setError(err.message || 'An error occurred during Discord sign in');
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An error occurred during Discord sign in');
+      }
     } finally {
       setIsLoading(false);
     }

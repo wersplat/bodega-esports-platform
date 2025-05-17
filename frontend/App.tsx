@@ -10,39 +10,40 @@ import { theme } from '@/theme/theme';
 const AppTheme = theme;
 
 // Components
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/ui/Navbar';
 
 // Pages
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import Dashboard from '@/pages/Dashboard';
-import LeagueBrowser from '@/pages/LeagueBrowser';
-import RegisterTeam from '@/pages/RegisterTeam';
-import SubmitPlayerStats from '@/pages/SubmitPlayerStats';
-import SubmitResult from './pages/SubmitResult';
-import Matches from './pages/Matches';
-import PublicMatches from './pages/PublicMatches';
-import PublicBracket from './pages/PublicBracket';
-import Champion from './pages/Champion';
-import Leaderboard from './pages/Leaderboard';
-import Standings from './pages/Standings';
-import PlayerProfile from './pages/PlayerProfile';
-import LeagueTeams from './pages/LeagueTeams';
-import OwnerSendContract from './pages/OwnerSendContract';
-import MyContracts from './pages/MyContracts';
-import Notifications from './pages/Notifications';
-import Admin from './pages/Admin';
-import AdminReviewMatches from './pages/AdminReviewMatches';
-import AdminSubmitResult from './pages/AdminSubmitResult';
-import AdminCreateLeague from './pages/AdminCreateLeague';
-import AdminAddTeam from './pages/AdminAddTeam';
-import AdminScheduleMatch from './pages/AdminScheduleMatch';
-import AdminReviewStats from './pages/AdminReviewStats';
-import AdminRosterLock from './pages/AdminRosterLock';
-import SendAnnouncement from './pages/SendAnnouncement';
-import AdminManageWebhooks from './pages/AdminManageWebhooks';
-import AdminReviewBoard from './pages/AdminReviewBoard';
-import LeagueSettings from './pages/LeagueSettings';
+import Login from './pages/public/login';
+import Register from './pages/public/register';
+import Dashboard from './pages/index';
+import LeagueBrowser from './pages/leagues/league-browser';
+import RegisterTeam from './pages/teams/register-team';
+import SubmitPlayerStats from './pages/profile/submit-player-stats';
+// If you have a SubmitResult page, update the path accordingly, otherwise comment/remove
+// import SubmitResult from './pages/submit-result';
+// import Matches from './pages/matches';
+// import PublicMatches from './pages/public-matches';
+// import PublicBracket from './pages/public-bracket';
+// import Champion from './pages/champion';
+// import Leaderboard from './pages/leaderboard';
+// import Standings from './pages/standings';
+import PlayerProfile from './pages/profile/player-profile';
+import LeagueTeams from './pages/teams/league-teams';
+import OwnerSendContract from './pages/teams/owner-send-contract';
+// import MyContracts from './pages/my-contracts';
+import Notifications from './pages/notifications/notifications';
+import Admin from './pages/admin/admin';
+import AdminReviewMatches from './pages/admin/admin-review-matches';
+import AdminSubmitResult from './pages/admin/admin-submit-result';
+import AdminCreateLeague from './pages/admin/admin-create-league';
+import AdminAddTeam from './pages/admin/admin-add-team';
+import AdminScheduleMatch from './pages/admin/admin-schedule-match';
+import AdminReviewStats from './pages/admin/admin-review-stats';
+import AdminRosterLock from './pages/admin/admin-roster-lock';
+import SendAnnouncement from './pages/admin/admin-manage-webhooks';
+import AdminManageWebhooks from './pages/admin/admin-manage-webhooks';
+import AdminReviewBoard from './pages/admin/admin-review-board';
+import LeagueSettings from './pages/leagues/league-settings';
 
 function App() {
   const location = useLocation();
@@ -82,17 +83,11 @@ function App() {
           <Route path="/leagues/:id" element={<LeagueBrowser />} />
           <Route path="/register-team" element={<RegisterTeam />} />
           <Route path="/submit-player-stats" element={<SubmitPlayerStats />} />
-          <Route path="/submit-result" element={<SubmitResult />} />
-          <Route path="/matches" element={<Matches />} />
-          <Route path="/public-matches" element={<PublicMatches />} />
-          <Route path="/public-bracket" element={<PublicBracket />} />
-          <Route path="/champion" element={<Champion />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/standings" element={<Standings />} />
+          
           <Route path="/profile" element={<PlayerProfile />} />
           <Route path="/league/:id" element={<LeagueTeams />} />
           <Route path="/contracts/send" element={<OwnerSendContract />} />
-          <Route path="/contracts" element={<MyContracts />} />
+          
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-review-matches" element={<AdminReviewMatches />} />

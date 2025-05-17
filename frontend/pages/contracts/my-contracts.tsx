@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ContractsTable } from '@/components/contracts/contracts-table';
-import ContractFilter from '@/components/contracts/contract-filter';
+import { ContractFilter } from '@/components/contracts/contract-filter';
 
-interface Contract {
-  id: string;
-  status: string;
-  // Add other relevant fields as needed
-}
+import type { Contract } from '../../types/contract';
 
 const MyContracts: React.FC = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -21,7 +17,11 @@ const MyContracts: React.FC = () => {
       const res = await fetch('https://api.bodegacatsgc.gg/contracts/my');
       if (!res.ok) throw new Error('Failed to load contracts');
       const data = await res.json();
-      setContracts(data);
+      setContracts(data.map((c: any) => ({
+  ...c,
+  status: (['active', 'pending', 'expired'].includes(c.status) ? c.status : 'pending') as 'active' | 'pending' | 'expired',
+})));
+
     } catch (err) {
       // Handle error (was: console.error(err))
       // Add specific error handling logic here
@@ -38,7 +38,8 @@ const MyContracts: React.FC = () => {
         body: JSON.stringify({ status: newStatus }),
       });
       if (!res.ok) throw new Error('Failed to update contract status');
-      setContracts(contracts.map((c) => (c.id === id ? { ...c, status: newStatus } : c)));
+      setContracts(contracts.map((c) => (c.id === id ? { ...c, status: (['active', 'pending', 'expired'].includes(newStatus) ? newStatus : 'pending') as 'active' | 'pending' | 'expired' } : c)));
+
     } catch (err) {
       // Handle error (was: console.error(err))
       // Add specific error handling logic here
