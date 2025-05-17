@@ -10,7 +10,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   useEffect(() => {
-    if (!isLoading && !user && !pathname.startsWith("/auth")) {
+    if (!isLoading && !user && !(pathname ?? '').startsWith("/auth")) {
       router.push("/auth/login")
     }
   }, [user, isLoading, router, pathname])
@@ -26,7 +26,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (!user && !pathname.startsWith("/auth")) {
+  if (!user && !(pathname ?? '').startsWith("/auth")) {
     return null
   }
 

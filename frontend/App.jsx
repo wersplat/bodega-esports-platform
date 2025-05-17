@@ -1,11 +1,8 @@
-
-
 import React, { useEffect } from 'react';
-
+import { useRouter } from 'next/router';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { theme } from '@/theme/theme';
-
 // Create and use theme
 const AppTheme = theme;
 
@@ -15,38 +12,39 @@ import Navbar from '@/components/Navbar';
 
 // Pages
 import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import Dashboard from '@/pages/Dashboard';
-import LeagueBrowser from '@/pages/LeagueBrowser';
-import RegisterTeam from '@/pages/RegisterTeam';
-import SubmitPlayerStats from '@/pages/SubmitPlayerStats';
-import SubmitResult from './pages/SubmitResult';
-import Matches from './pages/Matches';
-import PublicMatches from './pages/PublicMatches';
-import PublicBracket from './pages/PublicBracket';
-import Champion from './pages/Champion';
-import Leaderboard from './pages/Leaderboard';
-import Standings from './pages/Standings';
-import PlayerProfile from './pages/PlayerProfile';
-import LeagueTeams from './pages/LeagueTeams';
-import OwnerSendContract from './pages/OwnerSendContract';
-import MyContracts from './pages/MyContracts';
-import Notifications from './pages/Notifications';
-import Admin from './pages/Admin';
-import AdminReviewMatches from './pages/AdminReviewMatches';
-import AdminSubmitResult from './pages/AdminSubmitResult';
-import AdminCreateLeague from './pages/AdminCreateLeague';
-import AdminAddTeam from './pages/AdminAddTeam';
-import AdminScheduleMatch from './pages/AdminScheduleMatch';
-import AdminReviewStats from './pages/AdminReviewStats';
-import AdminRosterLock from './pages/AdminRosterLock';
-import SendAnnouncement from './pages/SendAnnouncement';
-import AdminManageWebhooks from './pages/AdminManageWebhooks';
-import AdminReviewBoard from './pages/AdminReviewBoard';
-import LeagueSettings from './pages/LeagueSettings';
+import Register from '@/pages/register';
+import Dashboard from '@/pages/dashboard';
+import LeagueBrowser from '@/pages/league-browser';
+import RegisterTeam from '@/pages/register-team';
+import SubmitPlayerStats from '@/pages/submit-player-stats';
+import SubmitResult from '@/pages/submit-result';
+import Matches from '@/pages/matches';
+import PublicMatches from '@/pages/public-matches';
+import PublicBracket from '@/pages/public-bracket';
+import Champion from '@/pages/champion';
+import Leaderboard from '@/pages/leaderboard';
+import Standings from '@/pages/standings';
+import PlayerProfile from '@/pages/player-profile';
+import LeagueTeams from '@/pages/league-teams';
+import OwnerSendContract from '@/pages/owner-send-contract';
+import MyContracts from '@/pages/my-contracts';
+import Notifications from '@/pages/notifications';
+import Admin from '@/pages/admin';
+import AdminReviewMatches from '@/pages/admin-review-matches';
+import AdminSubmitResult from '@/pages/admin-submit-result';
+import AdminCreateLeague from '@/pages/admin-create-league';
+import AdminAddTeam from '@/pages/admin-add-team';
+import AdminScheduleMatch from '@/pages/admin-schedule-match';
+import AdminReviewStats from '@/pages/admin-review-stats';
+import AdminRosterLock from '@/pages/admin-roster-lock';
+import SendAnnouncement from '@/pages/send-announcement';
+import AdminManageWebhooks from '@/pages/admin-manage-webhooks';
+import AdminReviewBoard from '@/pages/admin-review-board';
+import LeagueSettings from '@/pages/league-settings';
 
 function App() {
-  const location = useLocation();
+  const router = useRouter();
+const pathname = router.pathname;
 
   useEffect(() => {
     const existing = document.getElementById('dynamic-theme');
@@ -58,17 +56,17 @@ function App() {
     link.href = '/combined-theme.css'; // Updated to use the combined theme file
 
     document.head.appendChild(link);
-  }, [location.pathname]);
+  }, [pathname]);
 
   useEffect(() => {
-    const themeClass = location.pathname.startsWith('/alt')
+    const themeClass = pathname.startsWith('/alt')
       ? 'theme-alt-dark'
-      : location.pathname.startsWith('/roadto24k')
+      : pathname.startsWith('/roadto24k')
       ? 'theme-roadto24k'
       : 'theme-dark';
 
     document.body.className = themeClass; // Dynamically set the theme class on the body element
-  }, [location.pathname]);
+  }, [pathname]);
 
   return (
     <>

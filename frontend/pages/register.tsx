@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { supabase } from '../../supabaseClient';
+import { supabase } from '@/lib/supabase';
 import React from 'react';
 
 export default function Register() {

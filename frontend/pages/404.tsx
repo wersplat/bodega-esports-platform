@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Layout } from '@/components/layout';
+import Layout from '@/components/layout/layout';
 import { Home } from 'lucide-react';
 
 const Custom404: NextPage = () => {

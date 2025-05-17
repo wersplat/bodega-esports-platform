@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
 import { Sidebar } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
+import { useMediaQuery } from '@/components/hooks/use-media-query';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -57,7 +56,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       {/* Mobile Drawer */}
       {isMobile && (
         <Drawer open={isOpen} onOpenChange={setIsOpen}>
-          <DrawerContent className="h-[80%]" side="left">
+          <DrawerContent className="h-[80%]">
             <div className="p-4">
               <Sidebar />
             </div>

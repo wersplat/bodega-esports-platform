@@ -1,17 +1,18 @@
-import { GetServerSideProps, NextPage } from 'next';
-import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Edit, Save, X } from "lucide-react";
-import { useAuth } from "@/components/auth/auth-provider";
-import { supabase } from "@/lib/supabase";
-import { AvatarUpload } from "@/components/auth/avatar-upload";
-import { RecentMatches } from "@/components/recent-matches";
-import { Achievements } from "@/components/achievements";
-import { PerformanceChart } from "@/components/performance-chart";
-import { getPlayerProfile, PlayerProfile, Team } from '@/lib/api';
+import { useRouter } from 'next/router';
+import type { GetServerSideProps, NextPage } from 'next';
+import { Edit, Save, X } from 'lucide-react';
+
+import { useAuth } from '@/components/auth/auth-provider';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { AvatarUpload } from '@/components/auth/avatar-upload';
+import { RecentMatches } from '@/components/team/recent-matches';
+import { Achievements } from '@/components/achievements';
+import { PerformanceChart } from '@/components/performance-chart';
+import { supabase } from '@/lib/supabase';
+import type { PlayerProfile, Team } from '@/lib/api';
 
 type ProfilePageProps = {
   initialProfile: PlayerProfile | null;

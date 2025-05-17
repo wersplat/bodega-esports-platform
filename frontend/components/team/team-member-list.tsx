@@ -153,7 +153,6 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
 
     try {
       const updates: Partial<TeamMember> = {}
-      const updates: any = {}
       if (editRole !== selectedMember.role) updates.role = editRole
       if (editPosition !== selectedMember.position) updates.position = editPosition || null
       if (editJerseyNumber !== String(selectedMember.jersey_number)) {
