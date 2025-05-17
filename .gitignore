@@ -19,3 +19,6 @@ backend/new.env/*
 backend\new.env
 backend/new.env
 backend/.env.new
+
+frontend/archive/*
+
