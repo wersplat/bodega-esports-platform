@@ -9,7 +9,6 @@ OCR/
 node_modules/
 id_rsa_bodega
 id_rsa_bodega.pub
-/archive
 
 # MkDocs build output
 site/
@@ -20,5 +19,5 @@ backend\new.env
 backend/new.env
 backend/.env.new
 
-frontend/archive/*
+
 
