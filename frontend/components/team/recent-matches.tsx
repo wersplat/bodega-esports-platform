@@ -33,24 +33,19 @@ export const RecentMatches: React.FC<RecentMatchesProps> = ({ userId }) => {
         }
 
         if (data) {
-          // Transform the data to match our Match interface
-          const formattedMatches = data.map((item: RecentMatch) => {
-            const match = item.matches as RecentMatch
-            const isHomeTeam = match.home_team !== "Team Alpha" // Placeholder logic
+          // Transform the data to match our RecentMatch interface
+          const formattedMatches = data.map((item: any) => ({
+            id: item.id,
+            opponent: item.opponent,
+            date: new Date(item.date).toLocaleDateString(),
+            pts: item.pts,
+            ast: item.ast,
+            reb: item.reb,
+            stl: item.stl,
+            blk: item.blk,
+          }));
 
-            return {
-              id: item.id,
-              opponent: isHomeTeam ? match.away_team : match.home_team,
-              date: new Date(match.date).toLocaleDateString(),
-              pts: item.points,
-              ast: item.assists,
-              reb: item.rebounds,
-              stl: item.steals,
-              blk: item.blocks,
-            }
-          })
-
-          setMatches(formattedMatches as RecentMatch[]);
+          setMatches(formattedMatches);
         }
       } catch (error) {
         setError("Failed to load match data")

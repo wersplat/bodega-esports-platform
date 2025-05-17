@@ -12,12 +12,11 @@ import { RecentMatches } from '@/components/team/recent-matches';
 import { Achievements } from '@/components/achievements';
 import { PerformanceChart } from '@/components/performance-chart';
 import { supabase } from '@/lib/supabase';
-import type { PlayerProfile, Team } from '@/lib/api';
+import type { UserProfile, Team } from '@/types/api';
 
 type ProfilePageProps = {
-  initialProfile: PlayerProfile | null;
+  initialProfile: UserProfile | null;
   initialTeam: Team | null;
-  error?: string;
 };
 
 export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (context) => {
@@ -64,16 +63,16 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (c
 const UserProfilePage: NextPage<ProfilePageProps> = ({
   initialProfile,
   initialTeam,
-  error: initialError,
+  
 }) => {
   const router = useRouter();
   const { user } = useAuth();
   const { id: userId } = router.query as { id: string };
   
   const [profile, setProfile] = useState(initialProfile);
-  const [team, setTeam] = useState(initialTeam);
+  const [team] = useState(initialTeam);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(initialError || null);
+  // const [error, setError] = useState<string | null>(initialError || null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
@@ -116,7 +115,7 @@ const UserProfilePage: NextPage<ProfilePageProps> = ({
       setProfile({ ...profile, avatar_url: url });
     } catch (err) {
       console.error("Error updating avatar:", err);
-      setError("Failed to update avatar");
+      // setError("Failed to update avatar");
     }
   };
 
@@ -146,7 +145,7 @@ const UserProfilePage: NextPage<ProfilePageProps> = ({
       setIsEditing(false);
     } catch (err: any) {
       console.error("Error updating profile:", err);
-      setError(err.message || "Failed to update profile");
+      // setError(err.message || "Failed to update profile");
     } finally {
       setIsLoading(false);
     }
@@ -170,11 +169,8 @@ const UserProfilePage: NextPage<ProfilePageProps> = ({
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-shrink-0">
             <AvatarUpload
-              uid={profile.id}
-              url={profile.avatar_url}
-              size={150}
-              onUpload={handleAvatarChange}
-              disabled={!isOwnProfile || !isEditing}
+              avatarUrl={profile.avatar_url ?? null}
+              onAvatarChange={handleAvatarChange}
             />
           </div>
           
@@ -308,19 +304,19 @@ const UserProfilePage: NextPage<ProfilePageProps> = ({
         <div className="lg:col-span-2">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Recent Matches</h2>
-            <RecentMatches playerId={profile.id} />
+            <RecentMatches userId={profile.id} />
           </Card>
         </div>
         
         <div className="space-y-6">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Performance</h2>
-            <PerformanceChart playerId={profile.id} />
+            <PerformanceChart userId={profile.id} />
           </Card>
           
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Achievements</h2>
-            <Achievements playerId={profile.id} />
+            <Achievements userId={profile.id} />
           </Card>
         </div>
       </div>

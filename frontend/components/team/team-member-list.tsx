@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Edit, Trash2, UserPlus } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import type { TeamMember } from "@/types/team"
+import type { TeamMember, TeamMemberStatus } from "@/types/team"
 import {
   Dialog,
   DialogContent,
@@ -28,7 +28,7 @@ interface TeamMemberListProps {
     position?: string
     jersey_number?: number
   }) => Promise<{ success: boolean; message: string }>
-  onUpdateMember: (
+  onUpdateMember?: (
     memberId: string,
     updates: Partial<TeamMember>
   ) => Promise<{ success: boolean; message: string }>
@@ -53,7 +53,7 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
   const [editRole, setEditRole] = useState<"captain" | "coach" | "player" | "manager">("player")
   const [editPosition, setEditPosition] = useState("")
   const [editJerseyNumber, setEditJerseyNumber] = useState("")
-  const [editStatus, setEditStatus] = useState<"active" | "injured" | "inactive">("active")
+  const [editStatus, setEditStatus] = useState<TeamMemberStatus>("active")
 
   // Bulk selection state
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -100,8 +100,11 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
     for (const id of selectedIds) {
       const member = members.find((m) => m.id === id)
       if (field === "role" && member?.role === "captain") { skipped++ } else {
-        const result = await onUpdateMember(id, { [field]: value } as Partial<TeamMember>)
-        if (result.success) updated++
+        let result;
+        if (onUpdateMember) {
+          result = await onUpdateMember(id, { [field]: value } as Partial<TeamMember>);
+          if (result && result.success) updated++;
+        }
       }
     }
     setBulkMessage(`Updated ${updated} member(s).${skipped ? ` Skipped ${skipped} captain(s).` : ""}`)
@@ -154,7 +157,7 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
     try {
       const updates: Partial<TeamMember> = {}
       if (editRole !== selectedMember.role) updates.role = editRole
-      if (editPosition !== selectedMember.position) updates.position = editPosition || null
+      if (editPosition !== selectedMember.position) updates.position = editPosition || undefined
       if (editJerseyNumber !== String(selectedMember.jersey_number)) {
         updates.jersey_number = editJerseyNumber ? Number.parseInt(editJerseyNumber) : null
       }
@@ -167,17 +170,19 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
         return
       }
 
-      const result = await onUpdateMember(selectedMember.id, updates)
-
-      if (result.success) {
+      let result;
+      if (onUpdateMember) {
+        result = await onUpdateMember(selectedMember.id, updates);
+      }
+      if (result && result.success) {
         setMessage({ type: "success", text: result.message })
         // Close dialog after a short delay
         setTimeout(() => {
           setIsEditDialogOpen(false)
           setMessage(null)
         }, 1500)
-      } else {
-        setMessage({ type: "error", text: result.message })
+      } else if (result) {
+        setMessage({ type: "error", text: result.message || "Failed to update member" })
       }
     } catch (error) {
       setMessage({ type: "error", text: "An unexpected error occurred" })
@@ -400,14 +405,14 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
                       {member.user.avatar_url ? (
                         <Image
                           src={member.user.avatar_url || "/placeholder.svg"}
-                          alt={member.user.full_name}
+                          alt={member.user.full_name || "Team member avatar"}
                           width={40}
                           height={40}
                           className="object-cover"
                         />
                       ) : (
                         <div className="text-xs text-[#94a3b8]">
-                          {member.user.full_name
+                          {(member.user.full_name || "NA")
                             .split(" ")
                             .map((n) => n[0])
                             .join("")
@@ -563,13 +568,14 @@ export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, 
               <select
                 id="edit-status"
                 value={editStatus}
-                onChange={(e) => setEditStatus(e.target.value as any)}
+                onChange={(e) => setEditStatus(e.target.value as TeamMemberStatus)}
                 className="col-span-3 h-10 rounded-md border border-[#0f172a] bg-[#1e293b] px-3 py-2 text-sm text-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#e11d48]"
                 disabled={selectedMember?.role === "captain"}
               >
                 <option value="active">Active</option>
                 <option value="injured">Injured</option>
                 <option value="inactive">Inactive</option>
+                <option value="pending">Pending</option>
               </select>
             </div>
           </div>

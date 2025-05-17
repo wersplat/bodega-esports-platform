@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ContractsTable } from '@/components/contracts/contracts-table';
 
 
-import type { Contract } from '../../types/contract';
+import type { Contract } from '@/types/contract';
 
 const MyContracts: React.FC = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);

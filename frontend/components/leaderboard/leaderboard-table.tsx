@@ -1,4 +1,4 @@
-import { LeaderboardEntry } from '@/lib/api';
+import type { LeaderboardEntry } from '@/lib/api/types';
 
 export function LeaderboardTable({ data }: { data: LeaderboardEntry[] }) {
   return (

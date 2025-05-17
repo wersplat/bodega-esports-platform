@@ -22,7 +22,7 @@ export default function TeamManagementPage() {
     error,
     isTeamAdmin,
     addTeamMember,
-    updateTeamMember,
+
     removeTeamMember,
     updateTeam,
   } = useTeam()
@@ -154,7 +154,6 @@ export default function TeamManagementPage() {
               members={members}
               isAdmin={isTeamAdmin}
               onAddMember={addTeamMember}
-              onUpdateMember={updateTeamMember}
               onRemoveMember={removeTeamMember}
             />
           </div>
@@ -165,8 +164,21 @@ export default function TeamManagementPage() {
         <TeamStatsDisplay
           stats={
             stats || {
+              team_id: '',
+              team_name: '',
+              matches_played: 0,
               wins: 0,
               losses: 0,
+              draws: 0,
+              win_rate: 0,
+              points_scored: 0,
+              points_conceded: 0,
+              point_differential: 0,
+              current_streak: 0,
+              longest_streak: 0,
+              home_record: { wins: 0, losses: 0, draws: 0 },
+              away_record: { wins: 0, losses: 0, draws: 0 },
+              last_5_matches: [],
               points_per_game: 0,
               assists_per_game: 0,
               rebounds_per_game: 0,

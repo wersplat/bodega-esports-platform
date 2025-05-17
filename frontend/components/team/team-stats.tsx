@@ -46,11 +46,11 @@ export function TeamStatsDisplay({ stats }: TeamStatsDisplayProps) {
 
           <div className="bg-[#0f172a] rounded-lg p-4 text-center">
             <p className="text-[#94a3b8] text-sm">Points Per Game</p>
-            <p className="text-2xl font-bold">{stats.points_per_game.toFixed(1)}</p>
+            <p className="text-2xl font-bold">{(stats.points_per_game ?? 0).toFixed(1)}</p>
             <div className="h-1 w-full bg-[#1e293b] mt-2">
               <div
                 className="h-full bg-[#e11d48]"
-                style={{ width: `${Math.min((stats.points_per_game / 150) * 100, 100)}%` }}
+                style={{ width: `${Math.min(((stats.points_per_game ?? 0) / 150) * 100, 100)}%` }}
               ></div>
             </div>
           </div>
@@ -58,19 +58,19 @@ export function TeamStatsDisplay({ stats }: TeamStatsDisplayProps) {
 
         <div className="grid grid-cols-4 gap-2">
           <div className="text-center">
-            <p className="text-lg font-bold">{stats.assists_per_game.toFixed(1)}</p>
+            <p className="text-2xl font-bold">{(stats.assists_per_game ?? 0).toFixed(1)}</p>
             <p className="text-xs text-[#94a3b8]">AST</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold">{stats.rebounds_per_game.toFixed(1)}</p>
+            <p className="text-2xl font-bold">{(stats.rebounds_per_game ?? 0).toFixed(1)}</p>
             <p className="text-xs text-[#94a3b8]">REB</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold">{stats.steals_per_game.toFixed(1)}</p>
+            <p className="text-2xl font-bold">{(stats.steals_per_game ?? 0).toFixed(1)}</p>
             <p className="text-xs text-[#94a3b8]">STL</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold">{stats.blocks_per_game.toFixed(1)}</p>
+            <p className="text-2xl font-bold">{(stats.blocks_per_game ?? 0).toFixed(1)}</p>
             <p className="text-xs text-[#94a3b8]">BLK</p>
           </div>
         </div>

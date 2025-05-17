@@ -1,18 +1,5 @@
 // Routing utilities for the Bodega Esports Platform
-import React from "react";
-import { Login as LoginPage } from '../pages/auth/login';
-import Dashboard from '../pages/admin/admin';
-import LeagueBrowser from '../pages/leagues/league-browser';
-import Matches from '../pages/matches/matches';
-import PlayerProfile from '../pages/profile/player-profile';
-import Teams from '../pages/teams';
-import AdminCreateLeague from '../pages/admin/admin-create-league.jsx';
-import AdminAddTeam from '../pages/admin/admin-add-team.jsx';
-import ScheduleMatch from '../pages/admin/admin-schedule-match.jsx';
-import ReviewStats from '../pages/admin/admin-review-stats.jsx';
-import RosterLock from '../pages/admin/admin-roster-lock.jsx';
-
-
+// Routing utilities for the Bodega Esports Platform
 
 // Route paths
 export const routes = {

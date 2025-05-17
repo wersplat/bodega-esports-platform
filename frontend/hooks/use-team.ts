@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/components/auth/auth-provider"
-import type { Team, TeamMember, TeamStats } from "@/types/team"
+import type { Team, TeamMember, TeamStats, TeamInvite } from "@/types/team"
 import type { TeamApiResponse, TeamMembersApiResponse, TeamStatsApiResponse } from "@/types/api"
 import axios, { AxiosResponse } from "axios"
 import { useRuntimeConfig } from "./use-runtime-config"
@@ -45,12 +45,15 @@ export function useTeam(teamId?: string) {
             if (responseData.error) {
               throw new Error(responseData.error.message)
             }
+            if (!responseData.data) {
+              throw new Error('Team data missing')
+            }
             const teamData = responseData.data.item
             if (!teamData) {
               throw new Error('Team data not found')
             }
             targetTeamId = teamData.id
-            userRoleRef.current = teamData.role
+            userRoleRef.current = teamData.role ?? null
             setTeam(teamData)
           } catch (error: any) {
             if (error.response?.status === 404) {
@@ -67,7 +70,14 @@ export function useTeam(teamId?: string) {
             if (responseData.error) {
               throw new Error(responseData.error.message)
             }
-            setTeam(responseData.data.item)
+            if (!responseData.data) {
+              throw new Error('Team data missing')
+            }
+            const teamData = responseData.data.item
+            if (!teamData) {
+              throw new Error('Team data not found')
+            }
+            setTeam(teamData)
           } catch (error: any) {
             throw error
           }
@@ -86,11 +96,14 @@ export function useTeam(teamId?: string) {
           if (responseData.error) {
             throw new Error(responseData.error.message)
           }
-          const teamMembers = responseData.data.items
-          if (!teamMembers) {
+          if (!responseData.data) {
+            throw new Error('Team members data missing')
+          }
+          const membersData = responseData.data.items
+          if (!membersData) {
             throw new Error('Team members data not found')
           }
-          setMembers(teamMembers.map((member: any) => ({
+          setMembers(membersData.map((member: any) => ({
             id: member.id,
             user_id: member.user_id,
             team_id: member.team_id,
@@ -118,6 +131,9 @@ export function useTeam(teamId?: string) {
           if (responseData.error) {
             throw new Error(responseData.error.message)
           }
+          if (!responseData.data) {
+            throw new Error('Team stats data missing')
+          }
           const statsData = responseData.data.item
           if (!statsData) {
             throw new Error('Team stats data not found')
@@ -125,8 +141,21 @@ export function useTeam(teamId?: string) {
           setStats(statsData)
         } catch (error: any) {
           setStats({
+            team_id: '',
+            team_name: '',
+            matches_played: 0,
             wins: 0,
             losses: 0,
+            draws: 0,
+            win_rate: 0,
+            points_scored: 0,
+            points_conceded: 0,
+            point_differential: 0,
+            current_streak: 0,
+            longest_streak: 0,
+            home_record: { wins: 0, losses: 0, draws: 0 },
+            away_record: { wins: 0, losses: 0, draws: 0 },
+            last_5_matches: [],
             points_per_game: 0,
             assists_per_game: 0,
             rebounds_per_game: 0,
@@ -175,91 +204,23 @@ export function useTeam(teamId?: string) {
     }
   }
 
-  // Resend invite
-  async function resendInvite(invite: any) {
-    if (!team) {
-      throw new Error('Team is not initialized');
-    }
-    const config = useRuntimeConfig()
-    await axios.post(`${config.apiBase}/api/${config.apiVersion}/teams/${team.id}/invites/resend`, {
-      email: invite.email,
-      teamId: invite.team_id,
-      role: invite.role,
-      token: invite.token,
-      invitedBy: invite.invited_by
-    })
-  }
-
-  // Cancel invite
-  async function cancelInvite(inviteId: string) {
-    await supabase
-      .from("team_invitations")
-      .update({ status: "cancelled", cancelled_at: new Date().toISOString() })
-      .eq("id", inviteId)
-  }
-
-  async function updateTeamMember(
-    memberId: string,
-    updates: {
-      role?: "captain" | "coach" | "player" | "manager"
-      position?: string
-      jersey_number?: number
-      status?: "active" | "injured" | "inactive"
-    },
-  ): Promise<{ success: boolean; message: string }> {
-    const isAdmin = userRoleRef.current === "captain" || userRoleRef.current === "coach" || userRoleRef.current === "manager"
-    if (!team || !isAdmin) {
-      return { success: false, message: "You don't have permission to update members" }
-    }
-
-    // Prevent demoting the only captain
-    const memberToUpdate = members.find((m: TeamMember) => m.id === memberId)
-    if (memberToUpdate && memberToUpdate.role === "captain" && updates.role && updates.role !== "captain") {
-      const numCaptains = members.filter((m) => m.role === "captain").length
-      if (numCaptains === 1) {
-        return { success: false, message: "Cannot demote the only team captain. Assign another captain first." }
-      }
-    }
-
-    try {
-      const { error } = await supabase.from("team_members").update(updates).eq("id", memberId)
-
-      if (error) {
-        throw error
-      }
-
-      // Update the member in local state
-      setMembers((prev: TeamMember[]) => prev.map((member) => (member.id === memberId ? { ...member, ...updates } : member)))
-
-      return { success: true, message: "Member updated successfully" }
-    } catch (err: any) {
-      console.error("Error updating team member:", err)
-      return { success: false, message: err.message || "Failed to update member" }
-    }
-  }
-
   async function removeTeamMember(memberId: string): Promise<{ success: boolean; message: string }> {
     const isAdmin = userRoleRef.current === "captain" || userRoleRef.current === "coach" || userRoleRef.current === "manager"
     if (!team || !isAdmin) {
       return { success: false, message: "You don't have permission to remove members" }
     }
-
     try {
       // Check if the member is the team captain
       const memberToRemove = members.find((m: TeamMember) => m.id === memberId)
       if (memberToRemove?.role === "captain") {
         return { success: false, message: "Cannot remove the team captain" }
       }
-
       const { error } = await supabase.from("team_members").delete().eq("id", memberId)
-
       if (error) {
         throw error
       }
-
       // Remove the member from local state
       setMembers((prev: TeamMember[]) => prev.filter((member: TeamMember) => member.id !== memberId))
-
       return { success: true, message: "Member removed successfully" }
     } catch (err: any) {
       console.error("Error removing team member:", err)
@@ -290,7 +251,37 @@ export function useTeam(teamId?: string) {
     }
   }
 
-  
+  async function resendInvite(invite: TeamInvite): Promise<{ success: boolean; message: string }> {
+    if (!team) {
+      throw new Error('Team is not initialized');
+    }
+    const config = useRuntimeConfig()
+    await axios.post(`${config.apiBase}/api/${config.apiVersion}/teams/${team.id}/invites/resend`, {
+      email: invite.email,
+      teamId: invite.team_id,
+      role: invite.role,
+      invitedBy: invite.invited_by
+    })
+
+    return { success: true, message: "Invite resent successfully" }
+  }
+
+  async function cancelInvite(inviteId: string): Promise<{ success: boolean; message: string }> {
+    if (!team) {
+      return { success: false, message: "Team is not initialized" }
+    }
+    try {
+      const { error } = await supabase.from("team_invitations").delete().eq("id", inviteId)
+      if (error) {
+        throw error
+      }
+      setMembers((prev: TeamMember[]) => prev.filter((member) => member.id !== inviteId)) // If you want to update members, adjust as needed
+      return { success: true, message: "Invitation cancelled successfully" }
+    } catch (err: any) {
+      return { success: false, message: err.message || "Failed to cancel invitation" }
+    }
+  }
+
   return {
     team,
     members,
@@ -299,10 +290,9 @@ export function useTeam(teamId?: string) {
     error,
     isTeamAdmin: userRoleRef.current === "captain" || userRoleRef.current === "coach" || userRoleRef.current === "manager",
     addTeamMember,
-    updateTeamMember,
     removeTeamMember,
     updateTeam,
     resendInvite,
     cancelInvite,
   } as const
-} 
+}

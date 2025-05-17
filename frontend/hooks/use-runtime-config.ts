@@ -9,7 +9,7 @@ export function useRuntimeConfig() {
   useEffect(() => {
     // Get config from environment
     const config = {
-      apiBase: process.env.NEXT_PUBLIC_API_BASE || '',
+      apiBase: process.env.NEXT_PUBLIC_API_BASE_URL || '',
       apiVersion: process.env.NEXT_PUBLIC_API_VERSION || 'v1'
     }
     setConfig(config)

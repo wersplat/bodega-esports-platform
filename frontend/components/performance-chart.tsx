@@ -3,22 +3,23 @@
 import { useState, useEffect } from "react"
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from "recharts"
 import { supabase } from "@/lib/supabase"
-import type { PerformanceStat } from "@/types/stats"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-
-interface PerformanceData {
-  game: string
-  points: number
-  assists: number
-  rebounds: number
+// Type for chart data
+interface ChartPerformanceData {
+  game: string;
+  gameLabel: string;
+  points: number;
+  assists: number;
+  rebounds: number;
 }
+
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
 interface PerformanceChartProps {
   userId: string
 }
 
 export function PerformanceChart({ userId }: PerformanceChartProps) {
-  const [stats, setStats] = useState<PerformanceStat[]>([])
+  const [stats, setStats] = useState<ChartPerformanceData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -46,9 +47,9 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
 
         if (stats) {
           // Transform the data for the chart
-          const chartData = stats.map((item: PerformanceStat, index: number) => {
-            const match = item.matches as any
-            const opponent = match.home_team === "Team Alpha" ? match.away_team : match.home_team
+          const chartData = stats.map((item: any, index: number) => {
+            const match = item.matches;
+            const opponent = match.home_team === "Team Alpha" ? match.away_team : match.home_team;
 
             return {
               game: `Game ${index + 1}`,
@@ -56,10 +57,10 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
               points: item.points,
               assists: item.assists,
               rebounds: item.rebounds,
-            }
-          })
+            };
+          });
 
-          setStats(chartData as PerformanceStat[])
+          setStats(chartData);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch performance data")
@@ -88,7 +89,7 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
     )
   }
 
-  if (data.length === 0) {
+  if (stats.length === 0) {
     return (
       <div className="text-gray-500 text-center p-4">
         No performance data available
@@ -116,7 +117,7 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
         className="h-full"
       >
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <LineChart data={stats} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="game" />
             <YAxis />

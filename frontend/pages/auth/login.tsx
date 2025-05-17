@@ -25,7 +25,7 @@ export function Login() {
     }
 
     // Check for error in URL
-    const errorMsg = searchParams.get("error")
+    const errorMsg = searchParams?.get("error")
     if (errorMsg) {
       setError(errorMsg)
     }
