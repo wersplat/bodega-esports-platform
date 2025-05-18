@@ -3,7 +3,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
 import React, { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+// TODO: Replace Supabase logic with backend API calls
 import type { RecentMatch } from "@/types/match";
 
 interface RecentMatchesProps {
@@ -21,20 +21,13 @@ export const RecentMatches: React.FC<RecentMatchesProps> = ({ userId }) => {
         setIsLoading(true)
         setError(null)
 
-        const { data, error } = await supabase
-          .from("matches")
-          .select("id, opponent, date, pts, ast, reb, stl, blk")
-          .eq("user_id", userId)
-          .order("date", { ascending: false })
-          .limit(5)
-
-        if (error) {
-          throw error
-        }
-
-        if (data) {
+        // TODO: Replace with actual backend endpoint to fetch recent matches
+        const response = await fetch(`/api/matches/recent?userId=${userId}&limit=5`)
+        const result = await response.json()
+        if (!response.ok) throw new Error(result.message || "Failed to load match data")
+        if (result.data) {
           // Transform the data to match our RecentMatch interface
-          const formattedMatches = data.map((item: any) => ({
+          const formattedMatches = result.data.map((item: any) => ({
             id: item.id,
             opponent: item.opponent,
             date: new Date(item.date).toLocaleDateString(),
@@ -43,9 +36,8 @@ export const RecentMatches: React.FC<RecentMatchesProps> = ({ userId }) => {
             reb: item.reb,
             stl: item.stl,
             blk: item.blk,
-          }));
-
-          setMatches(formattedMatches);
+          }))
+          setMatches(formattedMatches)
         }
       } catch (error) {
         setError("Failed to load match data")

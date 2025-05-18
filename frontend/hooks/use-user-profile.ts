@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { supabase } from "@/lib/supabase"
+// TODO: Replace Supabase logic with backend API calls
 import { useAuth } from "@/components/auth/auth-provider"
 import type { UserProfile, Team } from "@/types/user"
 
@@ -24,23 +24,19 @@ export function useUserProfile() {
         setError(null)
 
         // Fetch user profile from profiles table
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single()
+        // TODO: Replace with actual backend endpoint to fetch user profile
+        const res = await fetch(`/api/profile/${user.id}`)
+        const profileData = await res.json()
+        if (!res.ok) throw new Error(profileData.message || "Failed to fetch profile")
 
-        if (profileError) {
-          throw profileError
-        }
-
-        if (!profileData) {
+        if (!profileData || !profileData.id) {
           // Create a new profile if it doesn't exist
+          // TODO: Replace with actual backend endpoint to create user profile
           const newProfile = {
             id: user.id,
-            username: user.user_metadata?.full_name || user.email?.split("@")[0] || "",
-            full_name: user.user_metadata?.full_name || "",
-            avatar_url: user.user_metadata?.avatar_url || null,
+            username: user.name || user.email?.split("@")?.[0] || "",
+            full_name: user.name || "",
+            avatar_url: user.avatar_url || null,
             bio: null,
             position: null,
             team_id: null,
@@ -56,27 +52,26 @@ export function useUserProfile() {
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           }
-
-          const { error: insertError } = await supabase.from("profiles").insert([newProfile])
-
-          if (insertError) {
-            throw insertError
+          const res = await fetch(`/api/profile`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newProfile),
+          })
+          if (!res.ok) {
+            const errorData = await res.json()
+            throw new Error(errorData.message || "Failed to create profile")
           }
-
           setProfile(newProfile)
         } else {
           setProfile(profileData as UserProfile)
 
           // If user has a team, fetch team data
           if (profileData.team_id) {
-            const { data: teamData, error: teamError } = await supabase
-              .from("teams")
-              .select("*")
-              .eq("id", profileData.team_id)
-              .single()
-
-            if (teamError) {
-              console.error("Error fetching team data:", teamError)
+            // TODO: Replace with actual backend endpoint to fetch team data
+            const res = await fetch(`/api/teams/${profileData.team_id}`)
+            const teamData = await res.json()
+            if (!res.ok) {
+              console.error("Error fetching team data:", teamData.message)
             } else {
               setTeam(teamData as Team)
             }
@@ -100,16 +95,18 @@ export function useUserProfile() {
       setIsLoading(true)
       setError(null)
 
-      const { error } = await supabase
-        .from("profiles")
-        .update({
+      // TODO: Replace with actual backend endpoint to update profile
+      const res = await fetch(`/api/profile/${user.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           ...updates,
           updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.id)
-
-      if (error) {
-        throw error
+        }),
+      })
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.message || "Failed to update profile")
       }
 
       // Update local state

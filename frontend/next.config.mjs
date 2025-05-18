@@ -9,11 +9,9 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: [process.env.SUPABASE_URL].filter(Boolean),
+    domains: [],
   },
   env: {
-    SUPABASE_URL: process.env.SUPABASE_URL || '',
-    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
     API_BASE: process.env.API_BASE || 'https://api.bodegacatsgc.gg',
     API_VERSION: 'v2',
   },

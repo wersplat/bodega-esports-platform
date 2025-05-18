@@ -11,7 +11,7 @@ import { Save } from "lucide-react"
 import { TeamLogoUpload } from "./team-logo-upload"
 import type { Team } from "@/types/team"
 import { useTeam } from "@/hooks/use-team"
-import { supabase } from "@/lib/supabase"
+// TODO: Replace Supabase logic with backend API calls
 import type { TeamInvite } from "@/types/team"
 
 interface TeamSettingsProps {
@@ -41,13 +41,10 @@ export function TeamSettings({ team, isAdmin, onUpdateTeam }: TeamSettingsProps)
   useEffect(() => {
     async function fetchInvites() {
       if (!team?.id) return
-      const { data } = await supabase
-        .from("team_invitations")
-        .select("*")
-        .eq("team_id", team.id)
-        .eq("status", "pending")
-        .order("created_at", { ascending: false })
-      setPendingInvites(data || [])
+      // TODO: Replace with actual backend endpoint to fetch pending invites
+      const response = await fetch(`/api/teams/${team.id}/invites?status=pending`)
+      const result = await response.json()
+      setPendingInvites(result.data || [])
     }
     fetchInvites()
   }, [team?.id])

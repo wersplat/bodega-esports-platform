@@ -1,6 +1,5 @@
 import { Trophy } from "lucide-react"
 import { useEffect, useState } from "react"
-import { supabase } from "../supabaseClient"
 
 interface Achievement {
   id: string
@@ -21,24 +20,21 @@ export function Achievements({ userId }: AchievementsProps) {
     if (!userId) return
     setLoading(true)
     setError(null)
-    supabase
-      .from('achievements')
-      .select('*')
-      .eq('user_id', userId)
-      .then(({ data, error }) => {
-        if (error) {
-          setError('Failed to fetch achievements')
-          setAchievements([])
-        } else if (data) {
-          // Map data to Achievement[] if needed
-          setAchievements(
-            data.map((a: any) => ({
-              id: a.id,
-              title: a.title,
-              date: a.date,
-            }))
-          )
-        }
+    fetch(`/api/achievements?user_id=${encodeURIComponent(userId)}`)
+      .then(res => res.ok ? res.json() : Promise.reject("Failed to fetch achievements"))
+      .then((data) => {
+        setAchievements(
+          data.map((a: any) => ({
+            id: a.id,
+            title: a.title,
+            date: a.date,
+          }))
+        )
+        setLoading(false)
+      })
+      .catch(() => {
+        setError("Failed to fetch achievements")
+        setAchievements([])
         setLoading(false)
       })
   }, [userId])

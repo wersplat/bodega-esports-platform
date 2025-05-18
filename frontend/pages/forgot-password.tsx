@@ -4,7 +4,7 @@ import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
-import { supabase } from "@/lib/supabase"
+// TODO: Replace Supabase logic with backend API/auth-service calls
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
@@ -18,13 +18,17 @@ export default function ForgotPasswordPage() {
     setMessage(null)
     setIsLoading(true)
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
+      // TODO: Replace with actual backend forgot-password/magic link endpoint URL
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
           emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+        }),
       })
-      if (error) throw error
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.message || "Failed to send magic link.")
       setMessage("Check your email for a magic link to sign in or reset your password.")
     } catch (err: any) {
       setError(err.message || "Failed to send magic link.")

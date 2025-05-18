@@ -14,9 +14,7 @@ interface Team {
   description?: string;
 }
 
-// Replace with your actual Supabase URL and anon key
-const SUPABASE_URL = 'https://your-supabase-url.supabase.co';
-const SUPABASE_ANON_KEY = 'your-anon-key';
+import { API_BASE } from '../../config';
 
 const ViewRegisteredTeams: React.FC = () => {
   const [leagues, setLeagues] = useState<League[]>([]);
@@ -29,12 +27,7 @@ const ViewRegisteredTeams: React.FC = () => {
   const fetchLeagues = async (): Promise<void> => {
     setLoading(true);
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/leagues`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-        }
-      });
+      const response = await fetch(`${API_BASE}/api/v2/leagues`);
       const data = await response.json();
       setLeagues(data);
     } catch (error) {
@@ -47,12 +40,7 @@ const ViewRegisteredTeams: React.FC = () => {
   const fetchSeasons = async (leagueId: string): Promise<void> => {
     setLoading(true);
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/seasons?league_id=eq.${leagueId}`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-        }
-      });
+      const response = await fetch(`${API_BASE}/api/v2/seasons?league_id=${leagueId}`);
       const data = await response.json();
       setSeasons(data);
       setSelectedSeason(data[0]?.id || '');
@@ -65,12 +53,7 @@ const ViewRegisteredTeams: React.FC = () => {
 
   const fetchTeams = async (): Promise<void> => {
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/teams`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-        }
-      });
+      const response = await fetch(`${API_BASE}/api/v2/teams`);
       const data = await response.json();
       setTeams(data);
     } catch (error) {

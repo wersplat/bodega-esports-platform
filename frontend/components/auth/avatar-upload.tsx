@@ -2,8 +2,8 @@
 
 import React, { useState } from "react"
 import Image from "next/image"
-import { uploadAvatar, deleteAvatar } from "@/lib/supabase-storage"
 import { useAuth } from "@/components/auth/auth-provider"
+import { api } from "@/lib/api"
 import { Camera, Loader2 } from "lucide-react"
 
 interface AvatarUploadProps {
@@ -17,47 +17,46 @@ export function AvatarUpload({ avatarUrl, onAvatarChange }: AvatarUploadProps) {
   const [error, setError] = useState<string | null>(null)
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user) return
+    if (!user || typeof user !== 'object' || !('id' in user) || typeof user.id !== 'string') return;
 
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      setError("Please upload an image file")
-      return
+      setError("Please upload an image file");
+      return;
     }
 
     // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-      setError("Image size should be less than 2MB")
-      return
+      setError("Image size should be less than 2MB");
+      return;
     }
 
     try {
-      setIsUploading(true)
-      setError(null)
+      setIsUploading(true);
+      setError(null);
 
       // Delete existing avatar if there is one
       if (avatarUrl) {
-        await deleteAvatar(avatarUrl)
+        try {
+          await api.deleteAvatar(user.id, avatarUrl);
+        } catch {
+          // Ignore error, proceed to upload
+        }
       }
 
       // Upload new avatar
-      const newAvatarUrl = await uploadAvatar(file, user.id)
-
-      if (newAvatarUrl) {
-        onAvatarChange(newAvatarUrl)
-      } else {
-        throw new Error("Failed to upload image")
-      }
+      const result = await api.uploadAvatar(user.id, file);
+      if (!result.url) throw new Error(result.message || "Failed to upload image");
+      onAvatarChange(result.url);
     } catch (err: any) {
-      // console.error('Error uploading avatar:', err);
-      setError(err.message || "Failed to upload image")
+      setError(err.message || "Failed to upload image");
     } finally {
-      setIsUploading(false)
+      setIsUploading(false);
       // Reset the input
-      e.target.value = ""
+      e.target.value = "";
     }
   }
 
@@ -74,12 +73,9 @@ export function AvatarUpload({ avatarUrl, onAvatarChange }: AvatarUploadProps) {
           />
         ) : (
           <div className="flex items-center justify-center w-full h-full text-[#94a3b8]">
-            {user?.user_metadata?.full_name
-              ?.split(" ")
-              .map((n: string) => n[0])
-              .join("")
-              .toUpperCase()
-              .substring(0, 2) || "U"}
+            {typeof user === "object" && user && 'email' in user && typeof user.email === "string"
+              ? user.email.split("@")[0].substring(0, 2).toUpperCase()
+              : "U"}
           </div>
         )}
       </div>

@@ -17,8 +17,7 @@ interface Standing {
   winPct: string;
 }
 
-const SUPABASE_URL: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+import { API_BASE } from '../../config';
 
 const Standings: React.FC = () => {
   const [seasons, setSeasons] = useState<Season[]>([]);
@@ -31,12 +30,7 @@ const Standings: React.FC = () => {
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/seasons`, {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY ?? '',
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY ?? ''}`
-          }
-        });
+        const response = await fetch(`${API_BASE}/api/v2/seasons`);
         const data = await response.json();
         setSeasons(data);
         if (data.length > 0) {
@@ -49,12 +43,7 @@ const Standings: React.FC = () => {
 
   const fetchDivisions = useCallback(async () => {
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/divisions?season_id=eq.${selectedSeason}`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY ?? '',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY ?? ''}`
-        }
-      });
+      const response = await fetch(`${API_BASE}/api/v2/divisions?season_id=${selectedSeason}`);
       const data = await response.json();
       setDivisions(data);
       if (data.length > 0) {
@@ -66,20 +55,10 @@ const Standings: React.FC = () => {
   const fetchStandings = useCallback(async () => {
     setLoading(true);
     try {
-      const teamsResponse = await fetch(`${SUPABASE_URL}/rest/v1/teams?division_id=eq.${selectedDivision}`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY ?? '',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY ?? ''}`
-        }
-      });
+      const teamsResponse = await fetch(`${API_BASE}/api/v2/teams?division_id=${selectedDivision}`);
       const teams = await teamsResponse.json();
 
-      const matchesResponse = await fetch(`${SUPABASE_URL}/rest/v1/matches?season_id=eq.${selectedSeason}`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY ?? '',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY ?? ''}`
-        }
-      });
+      const matchesResponse = await fetch(`${API_BASE}/api/v2/matches?season_id=${selectedSeason}`);
       const matches = await matchesResponse.json();
 
       const teamRecords: Record<string, { name: string; wins: number; losses: number }> = {};

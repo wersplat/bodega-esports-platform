@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { useAuth } from "@/components/auth/auth-provider"
-import { supabase } from "@/lib/supabase"
+// TODO: Replace Supabase logic with backend API/auth-service calls
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("")
@@ -40,28 +40,25 @@ export default function RegisterPage() {
     setIsLoading(true)
 
     try {
-      // Register user
-      const { error: signUpError, data } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            full_name: `${firstName} ${lastName}`,
-          },
+      // TODO: Replace with actual backend registration endpoint URL
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          first_name: firstName,
+          last_name: lastName,
+          full_name: `${firstName} ${lastName}`,
           emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+        }),
       })
-
-      if (signUpError) throw signUpError
-
-      // For services that require email verification
-      if (data.user && !data.session) {
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.message || "Registration failed")
+      if (result.requiresVerification) {
         router.push("/auth/verify-email")
         return
       }
-
       router.push("/")
     } catch (error: any) {
       setError(error.message || "An error occurred during registration")

@@ -11,9 +11,6 @@ import { Check, Save, Settings, X } from "lucide-react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
-const supabase: SupabaseClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '');
 
 const BodegaAdminPanel: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -23,10 +20,9 @@ const BodegaAdminPanel: NextPage = () => {
   useEffect(() => {
     const fetchProfile = async (): Promise<void> => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
+        const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
         if (!token) throw new Error('No access token');
-        const res = await fetch("https://api.bodegacatsgc.gg/auth/me", {
+        const res = await fetch("/auth-service/auth/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -36,7 +32,6 @@ const BodegaAdminPanel: NextPage = () => {
         if (!data.is_admin) throw new Error("Access denied");
         setIsAdmin(true);
       } catch (error) {
-        // console.error("Error fetching profile:", error);
         router.push('/');
       } finally {
         setLoading(false);

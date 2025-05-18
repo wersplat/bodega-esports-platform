@@ -1,37 +1,29 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
+// This route proxies notification requests to the backend API, assuming auth is handled by auth-service
+export async function GET(req: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    
-    // Get the current user
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      );
+    // Forward the Authorization header (JWT) to the backend
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Fetch notifications for the current user
-    const { data: notifications, error } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .order('created_at', { ascending: false });
+    // Fetch notifications from backend API (assume endpoint exists)
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const response = await fetch(`${backendUrl}/api/v2/notifications`, {
+      headers: {
+        'Authorization': authHeader,
+        'Content-Type': 'application/json',
+      },
+    });
 
-    if (error) {
-      console.error('Error fetching notifications:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch notifications' },
-        { status: 500 }
-      );
+    if (!response.ok) {
+      return NextResponse.json({ error: 'Failed to fetch notifications' }, { status: response.status });
     }
 
-    return NextResponse.json(notifications || []);
+    const notifications = await response.json();
+    return NextResponse.json(notifications);
   } catch (error) {
     console.error('Error in notifications API route:', error);
     return NextResponse.json(

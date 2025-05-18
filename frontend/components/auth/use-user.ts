@@ -1,8 +1,23 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
+import { useState, useEffect } from 'react';
+
+// Define the User interface to match backend and UI usage
+export interface User {
+  id: string;
+  name?: string; // Full name if available
+  email: string;
+  avatarUrl?: string;
+  is_admin?: boolean;
+  // Add any additional properties used in your UI
+}
+
+// Define a minimal Session type if needed
+export interface Session {
+  user: User;
+  // Add any additional session properties as needed
+}
+
 
 interface Profile {
   id: string;
@@ -15,99 +30,44 @@ export function useUser() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const supabase = createClientComponentClient();
-
-  // Fetch user profile
-  const fetchUserProfile = useCallback(async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) throw error;
-
-      setProfile(data);
-      setIsAdmin(data?.is_admin ?? false);
-      return data;
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      return null;
-    }
-  }, [supabase]);
-
-  // Check admin status
-  const checkAdminStatus = useCallback(async (user: User | null) => {
-    if (!user) {
-      setIsAdmin(false);
-      return false;
-    }
-
-    try {
-      const profile = await fetchUserProfile(user.id);
-      const adminStatus = profile?.is_admin ?? false;
-      setIsAdmin(adminStatus);
-      return adminStatus;
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-      setIsAdmin(false);
-      return false;
-    }
-  }, [fetchUserProfile]);
-
-  // Get initial session and set up auth state listener
+  // TODO: Implement logic to fetch current user and session from your custom auth service
+  // Replace all Supabase session and auth state logic with your own
   useEffect(() => {
     let mounted = true;
-
     const getInitialSession = async () => {
       try {
-        setIsLoading(true);
-        const { data: { session } } = await supabase.auth.getSession();
-        
+        setIsLoading(true)
+        // TODO: Replace with actual backend endpoint to get current user/session
+        const res = await fetch('/api/auth/session')
+        const result = await res.json()
         if (mounted) {
-          setUser(session?.user ?? null);
-          if (session?.user) {
-            await checkAdminStatus(session.user);
-          }
+          setUser(result.user ?? null)
+          setProfile(result.profile ?? null)
+          setIsAdmin(result.profile?.is_admin ?? false)
         }
       } catch (error) {
-        console.error('Error getting session:', error);
+        console.error('Error getting session:', error)
       } finally {
         if (mounted) {
-          setIsLoading(false);
+          setIsLoading(false)
         }
       }
-    };
-
-    // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event: AuthChangeEvent, session: Session | null) => {
-        if (mounted) {
-          setUser(session?.user ?? null);
-          if (session?.user) {
-            await checkAdminStatus(session.user);
-          } else {
-            setProfile(null);
-            setIsAdmin(false);
-          }
-        }
-      }
-    );
-
-    // Initial session check
-    getInitialSession();
-
-    // Cleanup
+    }
+    getInitialSession()
+    // TODO: Set up custom auth event listeners if needed
     return () => {
-      mounted = false;
-      subscription?.unsubscribe();
-    };
-  }, [checkAdminStatus, supabase.auth]);
+      mounted = false
+      // TODO: Remove event listeners if any
+    }
+  }, [])
 
   // Sign out helper
   const signOut = async () => {
-    await supabase.auth.signOut();
+    // TODO: Replace with actual backend endpoint to sign out
+    await fetch('/api/auth/logout', { method: 'POST' })
+    setUser(null)
+    setProfile(null)
+    setIsAdmin(false)
   };
 
   return {
@@ -117,19 +77,18 @@ export function useUser() {
     isAdmin,
     isAuthenticated: !!user,
     signOut,
-    refresh: () => checkAdminStatus(user),
+    refresh: () => (user),
   };
 }
 
 // Helper function to get the current session
-export async function getSession(): Promise<Session | null> {
-  const supabase = createClientComponentClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  return session;
-}
+
 
 // Helper function to get the current user
 export async function getCurrentUser(): Promise<User | null> {
-  const session = await getSession();
-  return session?.user ?? null;
+  // TODO: Replace with actual backend endpoint to get current user
+  // Example: const res = await fetch('/api/auth/session');
+  // const result = await res.json();
+  // return result.user ?? null;
+  return null;
 }

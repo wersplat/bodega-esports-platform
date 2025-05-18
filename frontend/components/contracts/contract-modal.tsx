@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Upload } from "lucide-react"
 import type { Contract } from "@/types/contract"
-import { supabase } from "@/lib/supabase"
+// TODO: Replace Supabase logic with backend API calls
 
 interface ContractModalProps {
   isOpen: boolean
@@ -67,13 +67,18 @@ export function ContractModal({ isOpen, onClose, contract, onSave, isContractAdm
     setUploading(true)
     let fileUrl = contract?.fileUrl || ""
     if (formData.file) {
-      const fileExt = formData.file.name.split('.').pop()
-      const filePath = `contract-${Date.now()}.${fileExt}`
-      const { error: uploadError } = await supabase.storage.from("contracts").upload(filePath, formData.file)
-      if (!uploadError) {
-        const { data: publicUrlData } = supabase.storage.from("contracts").getPublicUrl(filePath)
-        fileUrl = publicUrlData.publicUrl
+      // TODO: Replace with actual backend endpoint to upload contract file
+      const uploadForm = new FormData()
+      uploadForm.append("file", formData.file)
+      const res = await fetch(`/api/contracts/upload`, {
+        method: "POST",
+        body: uploadForm,
+      })
+      const result = await res.json()
+      if (!res.ok || !result.url) {
+        throw new Error(result.message || "Failed to upload contract file")
       }
+      fileUrl = result.url
     }
     setUploading(false)
     await onSave({

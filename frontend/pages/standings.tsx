@@ -18,8 +18,7 @@ interface Standing {
   winPct: string;
 }
 
-const SUPABASE_URL: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+import { API_BASE } from '../config';
 
 const Standings: NextPage = () => {
   const [seasons, setSeasons] = useState<Season[]>([]);
@@ -32,17 +31,10 @@ const Standings: NextPage = () => {
 
   const fetchSeasons = useCallback(async (): Promise<void> => {
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/seasons?select=*`, {
-        headers: {
-          apikey: SUPABASE_ANON_KEY || '',
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        },
-      });
-      
+      const response = await fetch(`${API_BASE}/api/v2/seasons`);
       if (!response.ok) {
         throw new Error('Failed to fetch seasons');
       }
-      
       const data = await response.json();
       setSeasons(data);
       if (data.length > 0 && !selectedSeason) {
@@ -56,22 +48,11 @@ const Standings: NextPage = () => {
 
   const fetchDivisions = useCallback(async (): Promise<void> => {
     if (!selectedSeason) return;
-    
     try {
-      const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/divisions?season_id=eq.${selectedSeason}&select=*`,
-        {
-          headers: {
-            apikey: SUPABASE_ANON_KEY || '',
-            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          },
-        }
-      );
-      
+      const response = await fetch(`${API_BASE}/api/v2/divisions?season_id=${selectedSeason}`);
       if (!response.ok) {
         throw new Error('Failed to fetch divisions');
       }
-      
       const data = await response.json();
       setDivisions(data);
       if (data.length > 0 && !selectedDivision) {
@@ -85,27 +66,14 @@ const Standings: NextPage = () => {
 
   const fetchStandings = useCallback(async (): Promise<void> => {
     if (!selectedSeason || !selectedDivision) return;
-    
     setIsLoading(true);
     setError(null);
-    
     try {
-      const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/standings?season_id=eq.${selectedSeason}&division_id=eq.${selectedDivision}&select=*`,
-        {
-          headers: {
-            apikey: SUPABASE_ANON_KEY || '',
-            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          },
-        }
-      );
-      
+      const response = await fetch(`${API_BASE}/api/v2/standings?season_id=${selectedSeason}&division_id=${selectedDivision}`);
       if (!response.ok) {
         throw new Error('Failed to fetch standings');
       }
-      
       const data = await response.json();
-      
       // Transform data to match the expected format
       const formattedStandings = data.map((team: any) => ({
         name: team.team_name,
@@ -113,7 +81,6 @@ const Standings: NextPage = () => {
         losses: team.losses || 0,
         winPct: ((team.wins || 0) / ((team.wins || 0) + (team.losses || 1)) * 100).toFixed(1) + '%',
       }));
-      
       setStandings(prev => ({
         ...prev,
         [selectedDivision]: formattedStandings,

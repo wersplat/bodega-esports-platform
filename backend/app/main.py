@@ -110,6 +110,8 @@ app_instance.include_router(match_submissions_router, prefix="/api/match_submiss
 app_instance.include_router(meta_router, prefix="/api/meta", tags=["meta"])
 app_instance.include_router(player_stats_router, prefix="/api/player_stats", tags=["player_stats"])
 app_instance.include_router(profiles_router, prefix="/api/users", tags=["users"])
+from app.api.v2.media import router as media_router
+app_instance.include_router(media_router, prefix="/api/v2", tags=["Media"])
 # app_instance.include_router(stats_router, prefix="/api/stats", tags=["stats"])  # REMOVE: stats_router does not exist
 app_instance.include_router(stats_charts_router, prefix="/api/stats_charts", tags=["stats_charts"])
 app_instance.include_router(forms_router, prefix="/api/forms", tags=["forms"])

@@ -1,18 +1,14 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
-
-// If you get “Not implemented: request.cookies” you can switch to nodejs:
-// export const runtime = 'nodejs'
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
 
 const publicPaths = [
-  '/',                        // your “front face”
+  '/',
   '/auth/login',
   '/auth/register',
   '/auth/reset-password',
@@ -37,43 +33,36 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // wrap in try/catch so any supabase error ≠ crash your site
   try {
-    const response = NextResponse.next()
-
-    // pass cookies so getSession() actually works
-    const supabase = createMiddlewareClient({
-      req: request,
-      res: response,
-    })
-
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-
-    if (!session) {
+    // Try to get token from cookies (server) or fallback to localStorage (client)
+    const token = request.cookies.get('auth_token')?.value;
+    if (!token) {
       const loginUrl = request.nextUrl.clone()
       loginUrl.pathname = '/auth/login'
       loginUrl.searchParams.set('redirectedFrom', pathname)
       return NextResponse.redirect(loginUrl)
     }
-
+    // Check user/admin status via auth-service
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'}/auth-service/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) {
+      const loginUrl = request.nextUrl.clone()
+      loginUrl.pathname = '/auth/login'
+      loginUrl.searchParams.set('redirectedFrom', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+    const user = await res.json();
     if (adminPaths.some(p => pathname.startsWith(p))) {
-      const { data: userData } = await supabase
-        .from('profiles')
-        .select('is_admin')
-        .eq('id', session.user.id)
-        .single()
-
-      if (!userData?.is_admin) {
+      if (!user.is_admin) {
         return NextResponse.redirect(new URL('/', request.url))
       }
     }
-
-    return response
+    return NextResponse.next()
   } catch (err) {
     console.error('🛑 Middleware caught error:', err)
-    // fail open so your frontend still loads
     return NextResponse.next()
   }
 }

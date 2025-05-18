@@ -4,8 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import Image from "next/image"
-import { supabase } from "@/lib/supabase"
-import { v4 as uuidv4 } from "uuid"
+// TODO: Replace Supabase logic with backend API calls
 import { Camera, Loader2 } from "lucide-react"
 
 interface TeamLogoUploadProps {
@@ -40,24 +39,28 @@ export function TeamLogoUpload({ teamId, logoUrl, onLogoChange }: TeamLogoUpload
 
       // Delete existing logo if there is one
       if (logoUrl) {
-        const urlParts = logoUrl.split("/")
-        const filePath = `team-logos/${urlParts[urlParts.length - 1]}`
-        await supabase.storage.from("teams").remove([filePath])
+        // TODO: Replace with actual backend endpoint to delete previous team logo
+        await fetch(`/api/team-logos/delete`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: logoUrl }),
+        })
       }
 
       // Upload new logo
-      const fileExt = file.name.split(".").pop()
-      const fileName = `${teamId}-${uuidv4()}.${fileExt}`
-      const filePath = `team-logos/${fileName}`
-
-      const { error: uploadError } = await supabase.storage.from("teams").upload(filePath, file, { upsert: true })
-
-      if (uploadError) {
-        throw uploadError
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("teamId", teamId)
+      // TODO: Replace with actual backend endpoint to upload team logo
+      const res = await fetch(`/api/team-logos/upload`, {
+        method: "POST",
+        body: formData,
+      })
+      const result = await res.json()
+      if (!res.ok || !result.url) {
+        throw new Error(result.message || "Failed to upload image")
       }
-
-      const { data } = supabase.storage.from("teams").getPublicUrl(filePath)
-      onLogoChange(data.publicUrl)
+      onLogoChange(result.url)
     } catch (err: any) {
       // console.error('Error uploading logo:', err);
       setError(err.message || "Failed to upload image")

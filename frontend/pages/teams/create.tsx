@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/components/auth/auth-provider"
-import { supabase } from "@/lib/supabase"
-import { v4 as uuidv4 } from "uuid"
+import { api } from "@/lib/api"
 
 export default function CreateTeamPage() {
   const { user, isLoading: authLoading } = useAuth()
@@ -44,75 +43,71 @@ export default function CreateTeamPage() {
 
     try {
       // Check if user is already in a team
-      const { data: existingTeam } = await supabase
-        .from("team_members")
-        .select("team_id")
-        .eq("user_id", user.id)
-        .single()
-
-      if (existingTeam) {
+      // TODO: Replace with actual backend endpoint URL
+      const checkTeamRes = await fetch("/api/team_members/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: user.id }),
+      })
+      const checkTeamData = await checkTeamRes.json()
+      if (checkTeamData.exists) {
         setError("You are already a member of a team. You must leave your current team before creating a new one.")
         setIsSubmitting(false)
         return
       }
 
       // Create new team
-      const teamId = uuidv4()
-      const newTeam = {
-        id: teamId,
-        name: formData.name,
-        division: formData.division,
-        home_court: formData.homeCourt || null,
-        description: formData.description || null,
-        captain_id: user.id,
-        record: "0-0",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+      const team = await api.createTeam(formData);
+      if (team && typeof team === 'object' && 'id' in team && typeof team.id === 'string') {
+        // Add user as team captain
+        // TODO: Replace with actual backend endpoint URL
+        const teamMember = {
+          team_id: team.id,
+          user_id: user.id,
+          role: "captain",
+        };
+        const addMemberRes = await fetch("/api/team_members", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(teamMember),
+        })
+        if (!addMemberRes.ok) {
+          const err = await addMemberRes.json()
+          throw new Error(err.message || "Failed to add user as team captain")
+        }
+
+        // Create initial team stats
+        const teamStats = {
+          team_id: team.id,
+          wins: 0,
+          losses: 0,
+          points_per_game: 0,
+          assists_per_game: 0,
+          rebounds_per_game: 0,
+          steals_per_game: 0,
+          blocks_per_game: 0,
+        }
+        // TODO: Replace with actual backend endpoint URL
+        const statsRes = await fetch("/api/team_stats", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(teamStats),
+        })
+        if (!statsRes.ok) {
+          setError("Failed to create team stats")
+          // Continue anyway as this is not critical
+        }
+
+        // Redirect to team management page
+        router.push("/teams/manage");
+      } else {
+        setError("Team created but no team ID returned. Please check API response.");
       }
-
-      const { error: createTeamError } = await supabase.from("teams").insert([newTeam])
-
-      if (createTeamError) throw createTeamError
-
-      // Add user as team captain
-      const teamMember = {
-        user_id: user.id,
-        team_id: teamId,
-        role: "captain",
-        status: "active",
-        joined_at: new Date().toISOString(),
-      }
-
-      const { error: addMemberError } = await supabase.from("team_members").insert([teamMember])
-
-      if (addMemberError) throw addMemberError
-
-      // Create initial team stats
-      const teamStats = {
-        team_id: teamId,
-        wins: 0,
-        losses: 0,
-        points_per_game: 0,
-        assists_per_game: 0,
-        rebounds_per_game: 0,
-        steals_per_game: 0,
-        blocks_per_game: 0,
-      }
-
-      const { error: statsError } = await supabase.from("team_stats").insert([teamStats])
-
-      if (statsError) {
-        setError("Failed to create team stats")
-        // Continue anyway as this is not critical
-      }
-
-      // Redirect to team management page
-      router.push("/teams/manage")
     } catch (err: any) {
-      setError("Failed to create team")
-      setError(err.message || "Failed to create team")
+      setError("Failed to create team");
+      setError(err.message || "Failed to create team");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 

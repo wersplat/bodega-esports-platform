@@ -3,9 +3,6 @@ import { useRouter } from "next/router";
 import { PlasmicComponent, PlasmicRootProvider } from "@plasmicapp/loader-nextjs";
 import { PLASMIC } from "@/plasmic-init";
 import SidebarLayoutWrapper from "@/components/SidebarLayoutWrapper";
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '');
 
 export default function AdminPage() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -16,10 +13,9 @@ export default function AdminPage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
+        const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
         if (!token) throw new Error('No access token');
-        const res = await fetch("https://api.bodegacatsgc.gg/auth/me", {
+        const res = await fetch("/auth-service/auth/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

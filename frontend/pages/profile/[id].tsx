@@ -11,7 +11,7 @@ import { AvatarUpload } from '@/components/auth/avatar-upload';
 import { RecentMatches } from '@/components/team/recent-matches';
 import { Achievements } from '@/components/achievements';
 import { PerformanceChart } from '@/components/performance-chart';
-import { supabase } from '@/lib/supabase';
+// TODO: Replace Supabase logic with backend API calls
 import type { UserProfile, Team } from '@/types/api';
 
 type ProfilePageProps = {
@@ -23,27 +23,21 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async (c
   const { id } = context.params as { id: string };
   
   try {
+    // TODO: Replace with actual backend endpoint URLs
     // Fetch profile data
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (profileError || !profile) {
+    const profileRes = await fetch(`${process.env.API_BASE_URL || ''}/api/profiles/${id}`)
+    if (!profileRes.ok) {
       return { notFound: true };
     }
+    const profile = await profileRes.json();
 
     // Fetch team data if user has a team
     let team = null;
     if (profile.team_id) {
-      const { data: teamData } = await supabase
-        .from('teams')
-        .select('*')
-        .eq('id', profile.team_id)
-        .single();
-      
-      team = teamData;
+      const teamRes = await fetch(`${process.env.API_BASE_URL || ''}/api/teams/${profile.team_id}`)
+      if (teamRes.ok) {
+        team = await teamRes.json();
+      }
     }
 
     return {
@@ -103,15 +97,14 @@ const UserProfilePage: NextPage<ProfilePageProps> = ({
 
   const handleAvatarChange = async (url: string | null) => {
     if (!profile) return;
-
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ avatar_url: url })
-        .eq("id", profile.id);
-
-      if (error) throw error;
-
+      // TODO: Replace with actual backend endpoint URL
+      const res = await fetch(`/api/profiles/${profile.id}/avatar`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatar_url: url }),
+      })
+      if (!res.ok) throw new Error("Failed to update avatar");
       setProfile({ ...profile, avatar_url: url });
     } catch (err) {
       console.error("Error updating avatar:", err);
@@ -121,10 +114,8 @@ const UserProfilePage: NextPage<ProfilePageProps> = ({
 
   const handleSaveProfile = async () => {
     if (!profile) return;
-
     try {
       setIsLoading(true);
-
       const updates = {
         username: formData.username,
         full_name: formData.full_name,
@@ -133,14 +124,13 @@ const UserProfilePage: NextPage<ProfilePageProps> = ({
         jersey_number: formData.jersey_number ? Number(formData.jersey_number) : null,
         updated_at: new Date().toISOString(),
       };
-
-      const { error } = await supabase
-        .from("profiles")
-        .update(updates)
-        .eq("id", profile.id);
-
-      if (error) throw error;
-
+      // TODO: Replace with actual backend endpoint URL
+      const res = await fetch(`/api/profiles/${profile.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      })
+      if (!res.ok) throw new Error("Failed to update profile");
       setProfile({ ...profile, ...updates });
       setIsEditing(false);
     } catch (err: any) {

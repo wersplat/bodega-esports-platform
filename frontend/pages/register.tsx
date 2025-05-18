@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabase';
+// TODO: Replace Supabase logic with backend API/auth-service calls
 import React from 'react';
 
 export default function Register() {
@@ -26,24 +26,26 @@ export default function Register() {
     }
     setIsLoading(true);
     try {
-      const { error: signUpError, data } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            full_name: `${firstName} ${lastName}`,
-          },
+      // TODO: Replace with actual backend registration endpoint URL
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          first_name: firstName,
+          last_name: lastName,
+          full_name: `${firstName} ${lastName}`,
           emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-      if (signUpError) throw signUpError;
-      if (data.user && !data.session) {
+        }),
+      })
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.message || "Registration failed")
+      if (result.requiresVerification) {
         router.push('/public/verify-email');
         return;
       }
-      router.push('/');
+      router.push('/')
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -59,8 +61,9 @@ export default function Register() {
     setIsLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider: 'discord' });
-      if (error) throw error;
+      // TODO: Replace with actual backend Discord OAuth endpoint URL
+      window.location.href = `/api/auth/discord/login`;
+      // The backend should handle the OAuth flow and redirect back to the frontend after login.
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from "recharts"
-import { supabase } from "@/lib/supabase"
+// TODO: Replace Supabase logic with backend API calls
 // Type for chart data
 interface ChartPerformanceData {
   game: string;
@@ -29,38 +29,24 @@ export function PerformanceChart({ userId }: PerformanceChartProps) {
         setIsLoading(true)
         setError(null)
 
-        const { data: stats, error } = await supabase
-          .from("player_match_stats")
-          .select(`
-            matches(date, home_team, away_team),
-            points,
-            assists,
-            rebounds
-          `)
-          .eq("player_id", userId)
-          .order("created_at", { ascending: true })
-          .limit(10)
-
-        if (error) {
-          throw error
-        }
-
-        if (stats) {
+        // TODO: Replace with actual backend endpoint to fetch performance data
+        const response = await fetch(`/api/player/performance?userId=${userId}&limit=10`)
+        const result = await response.json()
+        if (!response.ok) throw new Error(result.message || "Failed to fetch performance data")
+        if (result.data) {
           // Transform the data for the chart
-          const chartData = stats.map((item: any, index: number) => {
-            const match = item.matches;
-            const opponent = match.home_team === "Team Alpha" ? match.away_team : match.home_team;
-
+          const chartData = result.data.map((item: any, index: number) => {
+            const match = item.match
+            const opponent = match.home_team === "Team Alpha" ? match.away_team : match.home_team
             return {
               game: `Game ${index + 1}`,
               gameLabel: `vs ${opponent}`,
               points: item.points,
               assists: item.assists,
               rebounds: item.rebounds,
-            };
-          });
-
-          setStats(chartData);
+            }
+          })
+          setStats(chartData)
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch performance data")

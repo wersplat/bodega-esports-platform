@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { supabase } from "@/lib/supabase"
+// TODO: Replace Supabase logic with backend API calls
 import { useAuth } from "@/components/auth/auth-provider"
 import type { Team, TeamMember, TeamStats, TeamInvite } from "@/types/team"
 import type { TeamApiResponse, TeamMembersApiResponse, TeamStatsApiResponse } from "@/types/api"
@@ -215,9 +215,11 @@ export function useTeam(teamId?: string) {
       if (memberToRemove?.role === "captain") {
         return { success: false, message: "Cannot remove the team captain" }
       }
-      const { error } = await supabase.from("team_members").delete().eq("id", memberId)
-      if (error) {
-        throw error
+      // TODO: Replace with actual backend endpoint to remove a team member
+      const config = useRuntimeConfig()
+      const response = await axios.delete(`${config.apiBase}/api/${config.apiVersion}/teams/${team.id}/members/${memberId}`)
+      if (response.data.error) {
+        throw new Error(response.data.error.message)
       }
       // Remove the member from local state
       setMembers((prev: TeamMember[]) => prev.filter((member: TeamMember) => member.id !== memberId))
@@ -235,10 +237,11 @@ export function useTeam(teamId?: string) {
     }
 
     try {
-      const { error } = await supabase.from("teams").update(updates).eq("id", team.id)
-
-      if (error) {
-        throw error
+      // TODO: Replace with actual backend endpoint to update team
+      const config = useRuntimeConfig()
+      const response = await axios.put(`${config.apiBase}/api/${config.apiVersion}/teams/${team.id}`, updates)
+      if (response.data.error) {
+        throw new Error(response.data.error.message)
       }
 
       // Update the team in local state
@@ -271,9 +274,11 @@ export function useTeam(teamId?: string) {
       return { success: false, message: "Team is not initialized" }
     }
     try {
-      const { error } = await supabase.from("team_invitations").delete().eq("id", inviteId)
-      if (error) {
-        throw error
+      // TODO: Replace with actual backend endpoint to cancel invitation
+      const config = useRuntimeConfig()
+      const response = await axios.delete(`${config.apiBase}/api/${config.apiVersion}/teams/${team.id}/invites/${inviteId}`)
+      if (response.data.error) {
+        throw new Error(response.data.error.message)
       }
       setMembers((prev: TeamMember[]) => prev.filter((member) => member.id !== inviteId)) // If you want to update members, adjust as needed
       return { success: true, message: "Invitation cancelled successfully" }
