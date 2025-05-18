@@ -6,3 +6,6 @@ authlib
 python-jose[cryptography]
 python-dotenv
 httpx
+asyncpg
+pydantic[email]
+sentry-sdk
