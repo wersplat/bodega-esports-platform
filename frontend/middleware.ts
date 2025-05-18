@@ -1,80 +1,80 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 
-// Define public paths that don't require authentication
+// If you get “Not implemented: request.cookies” you can switch to nodejs:
+// export const runtime = 'nodejs'
+
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+}
+
 const publicPaths = [
+  '/',                        // your “front face”
   '/auth/login',
   '/auth/register',
   '/auth/reset-password',
-  '/sentry-example-page',      // <— allow the Sentry demo page
-];
-
-// Define admin paths that require admin privileges
-const adminPaths = ['/admin'];
+  '/sentry-example-page',
+]
+const adminPaths = ['/admin']
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname } = request.nextUrl
 
-  // Skip middleware for API routes and static files
+  // always skip _next, images, static files, api routes
   if (
     pathname.startsWith('/api/') ||
     pathname.startsWith('/_next/') ||
     pathname.includes('.')
   ) {
-    return NextResponse.next();
+    return NextResponse.next()
   }
 
-  // Quick pass for any of the publicPaths
-  if (publicPaths.some(path => pathname.startsWith(path))) {
-    return NextResponse.next();
+  // if it’s a public path, just let it through
+  if (publicPaths.some(p => pathname === p || pathname.startsWith(p + '/'))) {
+    return NextResponse.next()
   }
 
-  // Create a response object that we can modify
-  const response = NextResponse.next();
+  // wrap in try/catch so any supabase error ≠ crash your site
+  try {
+    const response = NextResponse.next()
 
-  // Create a Supabase client bound to this request/response
-  const supabase = createMiddlewareClient({ req: request, res: response });
+    // pass cookies so getSession() actually works
+    const supabase = createMiddlewareClient({
+      req: request,
+      res: response,
+      cookies: request.cookies,
+    })
 
-  // Get the current user's session
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
 
-  // Redirect to login if not authenticated and on a protected route
-  if (!session) {
-    const redirectUrl = new URL('/auth/login', request.url);
-    redirectUrl.searchParams.set('redirectedFrom', pathname);
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  // If this is an admin-only path, check the is_admin flag
-  if (adminPaths.some(path => pathname.startsWith(path))) {
-    const { data: userData } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', session.user.id)
-      .single();
-
-    const isAdmin = userData?.is_admin || false;
-    if (!isAdmin) {
-      return NextResponse.redirect(new URL('/', request.url));
+    if (!session) {
+      const loginUrl = request.nextUrl.clone()
+      loginUrl.pathname = '/auth/login'
+      loginUrl.searchParams.set('redirectedFrom', pathname)
+      return NextResponse.redirect(loginUrl)
     }
+
+    if (adminPaths.some(p => pathname.startsWith(p))) {
+      const { data: userData } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', session.user.id)
+        .single()
+
+      if (!userData?.is_admin) {
+        return NextResponse.redirect(new URL('/', request.url))
+      }
+    }
+
+    return response
+  } catch (err) {
+    console.error('🛑 Middleware caught error:', err)
+    // fail open so your frontend still loads
+    return NextResponse.next()
   }
-
-  return response;
 }
-
-// Configure which paths the middleware should run on
-export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for:
-     * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - favicon.ico
-     * - any image/font asset
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
-};
