@@ -11,6 +11,61 @@ class ApiClient {
   private baseUrl: string;
   private defaultHeaders: Record<string, string>;
 
+  async uploadAvatar(userId: string, file: File): Promise<ApiResponse<{ url: string; message?: string }>> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(`${this.baseUrl}/users/${userId}/avatar`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        return { error: toApiError({ ...data, status: response.status }) };
+      }
+      
+      return { data };
+    } catch (error) {
+      return { error: toApiError(error) };
+    }
+  }
+
+  async deleteAvatar(userId: string, avatarUrl: string): Promise<ApiResponse<{ success: boolean; message?: string }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/users/${userId}/avatar`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          ...this.defaultHeaders,
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({ avatarUrl }),
+      });
+
+      // Handle 204 No Content response
+      if (response.status === 204) {
+        return { data: { success: true } };
+      }
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        return { error: toApiError({ ...data, status: response.status }) };
+      }
+      
+      return { data };
+    } catch (error) {
+      return { error: toApiError(error) };
+    }
+  }
+
   constructor(baseUrl: string, defaultHeaders: Record<string, string> = {}) {
     this.baseUrl = baseUrl.replace(/\/+$/, '');
     this.defaultHeaders = { ...DEFAULT_HEADERS, ...defaultHeaders };
