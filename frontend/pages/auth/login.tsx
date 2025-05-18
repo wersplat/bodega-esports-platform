@@ -9,7 +9,6 @@ import { useAuth } from "@/components/auth/auth-provider";
 export function Login() {
   const { signInWithDiscord, isLoading, user } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   React.useEffect(() => {
     // Redirect if user is already logged in

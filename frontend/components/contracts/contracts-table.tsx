@@ -10,8 +10,8 @@ import type { Contract } from "@/types/contract"
 
 interface ContractsTableProps {
   contracts: Contract[]
-  onEditContract?: (contract: Contract) => void
-  onDeleteContract?: (contractId: string) => void
+  onEditContract?: (_contract: Contract) => void
+  onDeleteContract?: (_contractId: string) => void
   isContractAdmin?: boolean
 }
 

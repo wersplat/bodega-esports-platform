@@ -10,7 +10,7 @@ import { Camera, Loader2 } from "lucide-react"
 interface TeamLogoUploadProps {
   teamId: string
   logoUrl: string | null
-  onLogoChange: (url: string | null) => void
+  onLogoChange: (_url: string | null) => void
 }
 
 export function TeamLogoUpload({ teamId, logoUrl, onLogoChange }: TeamLogoUploadProps) {

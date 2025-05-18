@@ -17,7 +17,7 @@ import type { TeamInvite } from "@/types/team"
 interface TeamSettingsProps {
   team: Team
   isAdmin: boolean
-  onUpdateTeam: (updates: Partial<Team>) => Promise<{ success: boolean; message: string }>
+  onUpdateTeam: (_updates: Partial<Team>) => Promise<{ success: boolean; message: string }>
 }
 
 export function TeamSettings({ team, isAdmin, onUpdateTeam }: TeamSettingsProps) {

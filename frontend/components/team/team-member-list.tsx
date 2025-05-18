@@ -29,10 +29,10 @@ interface TeamMemberListProps {
     jersey_number?: number
   }) => Promise<{ success: boolean; message: string }>
   onUpdateMember?: (
-    memberId: string,
-    updates: Partial<TeamMember>
+    _memberId: string,
+    _updates: Partial<TeamMember>
   ) => Promise<{ success: boolean; message: string }>
-  onRemoveMember: (memberId: string) => Promise<{ success: boolean; message: string }>
+  onRemoveMember: (_memberId: string) => Promise<{ success: boolean; message: string }>
 }
 
 export function TeamMemberList({ members, isAdmin, onAddMember, onUpdateMember, onRemoveMember }: TeamMemberListProps) {

@@ -8,7 +8,7 @@ import { Camera, Loader2 } from "lucide-react"
 
 interface AvatarUploadProps {
   avatarUrl: string | null
-  onAvatarChange: (url: string | null) => void
+  onAvatarChange: (_url: string | null) => void
 }
 
 export function AvatarUpload({ avatarUrl, onAvatarChange }: AvatarUploadProps) {

@@ -14,7 +14,7 @@ interface ContractModalProps {
   isOpen: boolean
   onClose: () => void
   contract?: Contract | null
-  onSave: (contractData: Partial<Contract>) => Promise<any>
+  onSave: (_contractData: Partial<Contract>) => Promise<any>
   isContractAdmin?: boolean
 }
 
