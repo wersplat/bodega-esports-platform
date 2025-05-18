@@ -34,9 +34,9 @@ export function useUserProfile() {
           // TODO: Replace with actual backend endpoint to create user profile
           const newProfile = {
             id: user.id,
-            username: user.name || user.email?.split("@")?.[0] || "",
-            full_name: user.name || "",
-            avatar_url: user.avatar_url || null,
+            username: user.email?.split("@")?.[0] || "",
+            full_name: user.email?.split("@")?.[0] || "",
+            avatar_url: ("avatarUrl" in user ? (user as any).avatarUrl : null),
             bio: null,
             position: null,
             team_id: null,

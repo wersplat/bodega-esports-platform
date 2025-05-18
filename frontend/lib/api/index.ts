@@ -33,10 +33,17 @@ class ApiClient {
     this.baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   }
 
+  async get<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'GET',
+    });
+  }
+
   private async request<T = any>(
     endpoint: string,
     options: RequestInit = {}
-  ): Promise<T> {
+  ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`;
     const headers = new Headers(options.headers || {});
 
@@ -112,29 +119,28 @@ class ApiClient {
     division: string;
     homeCourt?: string;
     description?: string;
-  }): Promise<{ id: string; [key: string]: any }> {
-    return this.request('/api/v2/teams', {
+  }): Promise<ApiResponse<{ id: string; [key: string]: any }>> {
+    return this.request<{ id: string; [key: string]: any }>(`/api/v2/teams`, {
       method: 'POST',
       body: JSON.stringify(teamData),
     });
   }
 
   // ---- Avatar endpoints ----
-  async uploadAvatar(userId: string, file: File): Promise<{ url: string; message?: string }> {
+  async uploadAvatar(userId: string, file: File): Promise<ApiResponse<{ url: string; message?: string }>> {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('userId', userId);
-    return this.request('/api/v2/avatar/upload', {
+    return this.request<{ url: string; message?: string }>(`/api/v2/users/${userId}/avatar`, {
       method: 'POST',
       body: formData,
     });
   }
 
-  async deleteAvatar(userId: string, avatarUrl: string): Promise<{ success: boolean; message?: string }> {
-    return this.request('/api/v2/avatar/delete', {
-      method: 'POST',
+  async deleteAvatar(userId: string, avatarUrl: string): Promise<ApiResponse<{ success: boolean; message?: string }>> {
+    return this.request<{ success: boolean; message?: string }>(`/api/v2/users/${userId}/avatar`, {
+      method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: userId, avatar_url: avatarUrl }),
+      body: JSON.stringify({ avatar_url: avatarUrl }),
     });
   }
 
@@ -159,13 +165,13 @@ export const useApi = () => api;
 
 // Auth API
 export const login = async (email: string, password: string): Promise<{ user: any; session: any }> => {
-  const response = await api.post('/auth/login', { email, password });
-  if (!response || !response.data) throw new Error('No response data from login');
+  const response = await api.login(email, password);
+  if (!response || !response.data) throw new Error('Login failed');
   return response.data;
 };
 
 export const logout = async (): Promise<void> => {
-  await api.post('/auth/logout');
+  await api.logout();
 };
 
 // Player API

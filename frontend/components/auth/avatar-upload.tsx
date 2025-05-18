@@ -3,7 +3,6 @@
 import React, { useState } from "react"
 import Image from "next/image"
 import { useAuth } from "@/components/auth/auth-provider"
-import { api } from "@/lib/api"
 import { Camera, Loader2 } from "lucide-react"
 
 interface AvatarUploadProps {
@@ -38,19 +37,32 @@ export function AvatarUpload({ avatarUrl, onAvatarChange }: AvatarUploadProps) {
       setIsUploading(true);
       setError(null);
 
-      // Delete existing avatar if there is one
-      if (avatarUrl) {
-        try {
-          await api.deleteAvatar(user.id, avatarUrl);
-        } catch {
-          // Ignore error, proceed to upload
+      // Upload new avatar using the authApi
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      try {
+        const uploadResponse = await fetch('/api/upload/avatar', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload avatar');
         }
+        
+        const result = await uploadResponse.json();
+        if (result.url) {
+          onAvatarChange(result.url);
+        } else {
+          throw new Error('Failed to get image URL');
+        }
+      } catch (err) {
+        throw new Error(err instanceof Error ? err.message : 'Failed to upload avatar');
       }
-
-      // Upload new avatar
-      const result = await api.uploadAvatar(user.id, file);
-      if (!result.data?.url) throw new Error(result.data?.message || result.error?.message || "Failed to upload image");
-      onAvatarChange(result.data.url);
     } catch (err: any) {
       setError(err.message || "Failed to upload image");
     } finally {
