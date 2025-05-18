@@ -45,7 +45,6 @@ export async function middleware(request: NextRequest) {
     const supabase = createMiddlewareClient({
       req: request,
       res: response,
-      cookies: request.cookies,
     })
 
     const {
