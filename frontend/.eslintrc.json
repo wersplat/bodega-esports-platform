@@ -1,7 +1,7 @@
 
 {
   "extends": ["next", "next/core-web-vitals"],
-  "plugins": ["react", "next"],
+  "plugins": ["react"],
   "rules": {
     "react/jsx-key": "warn",
     "@next/next/no-img-element": "off",
