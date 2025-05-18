@@ -20,7 +20,7 @@ const Custom404: NextPage = () => {
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <p className="text-muted-foreground">
-              Sorry, we couldn't find the page you're looking for.
+              Sorry, we couldn&#39;t find the page you&#39;re looking for.
             </p>
             <Button asChild>
               <Link href="/" className="inline-flex items-center gap-2">

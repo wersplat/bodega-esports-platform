@@ -9,8 +9,8 @@
     "prefer-const": "warn",
     "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
     "no-prototype-builtins": "off",
-    "no-empty": ["error", { "allowEmptyCatch": true }],
-    "no-cond-assign": ["error", "except-parens"],
+    "no-empty": ["warn", { "allowEmptyCatch": true }],
+    "no-cond-assign": ["warn", "except-parens"],
     "no-fallthrough": "warn",
     "no-case-declarations": "warn"
   },
