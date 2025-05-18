@@ -1,56 +1,58 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState } from "react"
-import Link from "next/link"
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card } from "@/components/ui/card"
-import { useAuth } from "@/components/auth/auth-provider"
-import { supabase } from "@/lib/supabase"
+import React, { useEffect, useState } from "react";
+import * as Sentry from "@sentry/nextjs";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { useAuth } from "@/components/auth/auth-provider";
+import { supabase } from "@/lib/supabase";
 
 export function Login() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const { signInWithDiscord, user } = useAuth()
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { signInWithDiscord, user } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     // Redirect if user is already logged in
     if (user) {
-      router.push("/")
+      router.push("/");
     }
 
     // Check for error in URL
-    const errorMsg = searchParams?.get("error")
+    const errorMsg = searchParams?.get("error");
     if (errorMsg) {
-      setError(errorMsg)
+      setError(errorMsg);
     }
-  }, [user, router, searchParams])
+  }, [user, router, searchParams]);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setIsLoading(true)
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
-      })
+      });
 
-      if (error) throw error
+      if (error) throw error;
 
-      router.push("/")
-    } catch (error: any) {
-      setError(error.message || "An error occurred during sign in")
+      router.push("/");
+    } catch (err: any) {
+      setError(err.message || "An error occurred during sign in");
+      Sentry.captureException(err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -120,14 +122,14 @@ export function Login() {
         <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[#0f172a]"></div>
+              <div className="w-full border-t border-[#0f172a]" />
             </div>
             <div className="relative flex justify-center text-xs">
               <span className="bg-[#1e293b] px-2 text-[#94a3b8]">Or continue with</span>
             </div>
           </div>
 
-          <div className="mt-6">
+          <div className="mt-6 space-y-4">
             <Button
               variant="outline"
               className="w-full flex items-center justify-center gap-2"
@@ -142,6 +144,17 @@ export function Login() {
               </svg>
               <span>Discord</span>
             </Button>
+
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                // This uncaught error will be captured by Sentry
+                throw new Error("🔴 Sentry test error from Login page");
+              }}
+            >
+              Test Sentry
+            </Button>
           </div>
         </div>
 
@@ -153,7 +166,7 @@ export function Login() {
         </p>
       </Card>
     </div>
-  )
+  );
 }
 
 export default Login;
