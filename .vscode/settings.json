@@ -6,10 +6,16 @@
             "packageManager": "ms-python.python:pip"
         }
     ],
-    "python.analysis.userFileIndexingLimit": 5000
-}
-
-{
-  "python.defaultInterpreterPath": ".venv\\Scripts\\python.exe",
-  "python.terminal.activateEnvironment": true
+    "python.analysis.userFileIndexingLimit": 5000,
+    "python.defaultInterpreterPath": ".venv\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "connectString": "postgresql://postgres:qlDXulNVuVOHHxcKYHIYGtCPUWSJLMkz@switchback.proxy.rlwy.net:30173/railway",
+            "name": "Railway"
+        }
+    ]
 }
