@@ -1,11 +1,17 @@
 // @ts-check
 
 /** @type {import('eslint').Linter.Config} */
-const config = /** @type {const} */ ({
-  // Type assertion to ensure proper plugin typing
+const config = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'import', 'react', 'react-hooks', 'jsx-a11y'],
+  plugins: [
+    '@typescript-eslint',
+    'import',
+    'react',
+    'react-hooks',
+    'jsx-a11y',
+    'prettier'
+  ],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
@@ -23,7 +29,7 @@ const config = /** @type {const} */ ({
     node: true,
   },
   parserOptions: {
-    ecmaVersion: 2021,
+    ecmaVersion: 'latest',
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
@@ -46,13 +52,24 @@ const config = /** @type {const} */ ({
   rules: {
     // General
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-    'no-console': ['warn', { allow: ['warn', 'error'] }],
-    'prefer-const': 'warn',
     'no-var': 'error',
     'object-shorthand': 'warn',
+    'prefer-const': 'warn',
+    'no-prototype-builtins': 'off',
+    'no-empty': ['error', { allowEmptyCatch: true }],
+    'no-cond-assign': ['error', 'except-parens'],
+    'no-fallthrough': 'warn',
+    'no-case-declarations': 'warn',
     
     // TypeScript
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true 
+      }
+    ],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
@@ -71,15 +88,27 @@ const config = /** @type {const} */ ({
     'import/order': [
       'warn',
       {
-        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
         'newlines-between': 'always',
         alphabetize: { order: 'asc', caseInsensitive: true },
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+          'index',
+          'object',
+          'type',
+        ],
       },
     ],
     'import/no-unresolved': 'error',
     'import/first': 'error',
     'import/newline-after-import': 'error',
     'import/no-duplicates': 'error',
+    
+    // Console & Debugging
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
     
     // Prettier
     'prettier/prettier': 'warn',
@@ -107,7 +136,7 @@ const config = /** @type {const} */ ({
     'public',
     '*.d.ts',
   ],
-});
+};
 
 // Use CommonJS export for ESLint compatibility
 module.exports = config;

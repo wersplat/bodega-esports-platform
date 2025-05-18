@@ -7,6 +7,13 @@ import { useRouter } from "next/navigation"
 export type User = {
   id: string;
   role: string;
+  email?: string;
+  user_metadata?: {
+    full_name?: string;
+    first_name?: string;
+    last_name?: string;
+    [key: string]: any;
+  };
 };
 
 function getToken() {
