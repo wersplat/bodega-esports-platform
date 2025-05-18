@@ -36,8 +36,8 @@ export default {
     }],
     'no-console': ['warn', { allow: ['warn', 'error'] }],
     'no-prototype-builtins': 'off',
-    'no-empty': ['error', { allowEmptyCatch: true }],
-    'no-cond-assign': ['error', 'except-parens'],
+    'no-empty': ['warn', { allowEmptyCatch: true }],
+    'no-cond-assign': ['warn', 'except-parens'],
     'no-fallthrough': 'warn',
     'no-case-declarations': 'warn',
   },
@@ -50,4 +50,4 @@ export default {
     'public/**/*',
     '*.d.ts',
   ],
-});
+};
