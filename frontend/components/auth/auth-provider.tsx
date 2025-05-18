@@ -2,112 +2,132 @@
 
 import React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
-import type { Session, User } from "@supabase/supabase-js"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
+
+export type User = {
+  id: string;
+  role: string;
+};
+
+function getToken() {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("auth_token");
+  }
+  return null;
+}
+
+function setToken(token: string) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("auth_token", token);
+  }
+}
+
+function removeToken() {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("auth_token");
+  }
+}
 
 type AuthContextType = {
-  user: User | null
-  session: Session | null
-  isLoading: boolean
-  signInWithDiscord: () => Promise<void>
-  signOut: () => Promise<void>
-}
+  user: User | null;
+  isLoading: boolean;
+  signInWithDiscord: () => Promise<void>;
+  handleAuthCallback: (code: string) => Promise<void>;
+  signOut: () => Promise<void>;
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+
+  const fetchUser = async () => {
+    setIsLoading(true);
+    try {
+      const token = getToken();
+      if (!token) {
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+      const res = await fetch("/auth-service/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+      } else {
+        setUser(null);
+        removeToken();
+      }
+    } catch (error) {
+      setUser(null);
+      removeToken();
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchSession = async () => {
-      try {
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession()
-
-        if (error) {
-          // console.error("Error fetching session:", error)
-          setIsLoading(false)
-          return
-        }
-
-        setSession(session)
-        setUser(session?.user ?? null)
-      } catch (error) {
-        // console.error("Error in auth provider:", error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchSession()
-
-    try {
-      // Set up auth listener
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
-        setSession(session)
-        setUser(session?.user ?? null)
-        setIsLoading(false)
-      })
-
-      return () => {
-        subscription.unsubscribe()
-      }
-    } catch (error) {
-      // console.error("Error setting up auth listener:", error)
-      setIsLoading(false)
-      return () => {}
-    }
-  }, [])
+    fetchUser();
+  }, []);
 
   const signInWithDiscord = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true)
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "discord",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-      if (error) throw error
+      const res = await fetch("/auth-service/auth/login/discord");
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
     } catch (error) {
-      // console.error("Error logging in with Discord", error)
+      // handle error
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
+
+  const handleAuthCallback = async (code: string) => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/auth-service/auth/callback/discord?code=${encodeURIComponent(code)}`);
+      const data = await res.json();
+      if (data.token) {
+        setToken(data.token);
+        await fetchUser();
+        router.push("/"); // redirect to home or dashboard
+      }
+    } catch (error) {
+      // handle error
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const signOut = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true)
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
-      router.push("/auth/login")
-    } catch (error) {
-      // console.error("Error signing out", error)
+      removeToken();
+      setUser(null);
+      router.push("/auth/login");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <AuthContext.Provider value={{ user, session, isLoading, signInWithDiscord, signOut }}>
+    <AuthContext.Provider value={{ user, isLoading, signInWithDiscord, handleAuthCallback, signOut }}>
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider")
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
-} 
+  return context;
+};

@@ -1,27 +1,52 @@
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from starlette.concurrency import run_in_threadpool
-from app.database import get_db, supabase_client
+from jose import JWTError, jwt
+from app.database import get_db
 from app.models import Profile
 from datetime import datetime
 import uuid
 
 router = APIRouter()
 
-# Dependency: Supabase token header
-async def get_current_user(authorization: str = Header(...)):
-    if not supabase_client:
-        raise HTTPException(status_code=500, detail="Supabase not configured")
+# Dependency: Auth-service JWT token header
+from fastapi import HTTPException, status
+import os
+
+SECRET_KEY = os.getenv("AUTH_SERVICE_JWT_SECRET", "your_auth_service_secret")
+ALGORITHM = "HS256"
+
+async def get_current_user(authorization: str = Header(...), db: AsyncSession = Depends(get_db)):
 
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Invalid auth header")
 
     token = authorization.split(" ")[1]
-    user_response = await run_in_threadpool(supabase_client.auth.get_user, token)
-
-    if not user_response or not user_response.user:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("user_id")
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        stmt = select(Profile).where(Profile.id == user_id)
+        result = await db.execute(stmt)
+        user = result.scalars().first()
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return user
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     return user_response.user
 

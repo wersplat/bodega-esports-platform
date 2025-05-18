@@ -108,11 +108,3 @@ async def get_analytics_db():
     async with AnalyticsSessionLocal() as session:
         yield session
 
-# Supabase client setup
-from supabase import create_client
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-if SUPABASE_URL and SUPABASE_KEY:
-    supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
-else:
-    supabase_client = None

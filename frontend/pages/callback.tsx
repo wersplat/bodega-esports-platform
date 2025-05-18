@@ -2,29 +2,28 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
+import { useAuth } from "@/components/auth/auth-provider"
 
 export default function AuthCallbackPage() {
-  const router = useRouter()
+  const router = useRouter();
+  const { handleAuthCallback } = useAuth();
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
-      const { searchParams } = new URL(window.location.href)
-      const code = searchParams.get("code")
-
+    const run = async () => {
+      const { searchParams } = new URL(window.location.href);
+      const code = searchParams.get("code");
       if (code) {
         try {
-          await supabase.auth.exchangeCodeForSession(code)
-          router.push("/")
-        } catch (error: any) {
-          console.error("Error exchanging code for session:", error)
-          router.push("/auth/login?error=Unable to sign in")
+          await handleAuthCallback(code);
+        } catch (error) {
+          router.push("/auth/login?error=Unable to sign in");
         }
+      } else {
+        router.push("/auth/login?error=No code provided");
       }
-    }
-
-    handleAuthCallback()
-  }, [router])
+    };
+    run();
+  }, [handleAuthCallback, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -33,5 +32,5 @@ export default function AuthCallbackPage() {
         <div className="w-16 h-16 border-4 border-t-[#e11d48] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin mx-auto" />
       </div>
     </div>
-  )
+  );
 }
