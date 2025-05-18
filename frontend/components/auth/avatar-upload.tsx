@@ -49,8 +49,8 @@ export function AvatarUpload({ avatarUrl, onAvatarChange }: AvatarUploadProps) {
 
       // Upload new avatar
       const result = await api.uploadAvatar(user.id, file);
-      if (!result.url) throw new Error(result.message || "Failed to upload image");
-      onAvatarChange(result.url);
+      if (!result.data?.url) throw new Error(result.data?.message || result.error?.message || "Failed to upload image");
+      onAvatarChange(result.data.url);
     } catch (err: any) {
       setError(err.message || "Failed to upload image");
     } finally {

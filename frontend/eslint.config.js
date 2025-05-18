@@ -1,0 +1,46 @@
+module.exports = {
+  root: true,
+  extends: [
+    'next/core-web-vitals',
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'prettier',
+  ],
+  parser: '@typescript-eslint/parser',
+  plugins: ['react', '@typescript-eslint', 'react-hooks'],
+  rules: {
+    'react/react-in-jsx-scope': 'off',
+    'react/prop-types': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
+    'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
+    'no-prototype-builtins': 'off',
+    'no-empty': ['error', { allowEmptyCatch: true }],
+    'no-cond-assign': ['error', 'except-parens'],
+    'no-fallthrough': 'warn',
+    'no-case-declarations': 'warn',
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
+  ignorePatterns: [
+    '.next/**/*',
+    'node_modules/**/*',
+    'out/**/*',
+    'dist/**/*',
+    'build/**/*',
+    'public/**/*',
+    '*.d.ts',
+  ],
+  env: {
+    browser: true,
+    es2021: true,
+    node: true,
+  },
+};

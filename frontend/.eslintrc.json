@@ -5,11 +5,22 @@
     "react/jsx-key": "warn",
     "@next/next/no-img-element": "off",
     "no-console": "warn",
-    "prefer-const": "warn"
+    "prefer-const": "warn",
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-prototype-builtins": "off",
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-cond-assign": ["error", "except-parens"],
+    "no-fallthrough": "warn",
+    "no-case-declarations": "warn"
   },
   "env": {
     "browser": true,
     "es2021": true,
     "node": true
-  }
+  },
+  "ignorePatterns": [
+    ".next/**/*",
+    "node_modules/**/*",
+    "out/**/*"
+  ]
 }
