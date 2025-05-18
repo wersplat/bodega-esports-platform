@@ -1,6 +1,5 @@
-import { defineConfig } from '@eslint/config';
+export default {
 
-export default defineConfig({
   root: true,
   extends: [
     'next/core-web-vitals',
