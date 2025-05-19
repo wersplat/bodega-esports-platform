@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi import APIRouter
 
 from app.database import get_db
-from app.models.models import Profile
+from app.models.models import User as Profile
 from app.schemas.profile import ProfileCreate, ProfileRead, ProfileUpdate
 
 # Ensure the router is properly defined

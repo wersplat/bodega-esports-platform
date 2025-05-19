@@ -7,7 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 
 # Project imports
-from app.models import Team, Match, Profile, PlayerStat
+from app.models import Team, Match, PlayerStat
+from app.models.models import User as Profile
 from app.api.v2.base import not_found_error
 from app.database import get_db
 

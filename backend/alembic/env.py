@@ -76,12 +76,14 @@ def run_migrations_online() -> None:
 
     In this scenario we need to create an Engine
     and associate a connection with the context.
-
     """
-    # Get the database URL from environment variables
-    database_url = os.getenv('DATABASE_URL')
+    # Get the database URL from alembic.ini
+    database_url = config.get_main_option("sqlalchemy.url")
     if not database_url:
-        raise ValueError("DATABASE_URL environment variable is not set")
+        raise ValueError("No database URL found in alembic.ini")
+    
+    # Ensure we're using the synchronous driver
+    database_url = database_url.replace("postgresql+asyncpg://", "postgresql://")
 
     # Create a synchronous engine for Alembic
     connectable = create_engine(database_url.replace("postgresql+asyncpg://", "postgresql://"))

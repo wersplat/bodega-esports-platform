@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select, and_, or_
 
 # Project imports
-from app.models import Profile
+from app.models.models import User as Profile
 from app.api.v2.base import not_found_error, conflict_error
 from app.api.v2.responses import ListResponse, SingleResponse
 from app.database import get_db
@@ -18,21 +18,18 @@ from datetime import datetime
 from enum import Enum
 
 router = APIRouter(
-    prefix="/api/v2",
-    tags=["Profiles"],
+    prefix="/api/v2/profiles",
+    tags=["Users"],
     responses={
-        404: {"description": "Profile not found"},
+        404: {"description": "User not found"},
         400: {"description": "Invalid parameters"},
-        409: {"description": "Profile conflict"}
+        409: {"description": "User conflict"}
     }
 )
 
 
-class ProfileStatus(str, Enum):
-    ACTIVE = "active"
-    INACTIVE = "inactive"
-    SUSPENDED = "suspended"
-    DELETED = "deleted"
+# Re-export the ProfileStatus from models
+from app.models.models import ProfileStatus
 
 
 class ProfileBase(BaseModel):
@@ -44,6 +41,7 @@ class ProfileBase(BaseModel):
     email: Optional[str] = None
     status: ProfileStatus = ProfileStatus.ACTIVE
     discord_id: Optional[str] = None
+    is_admin: bool = False
 
 
 class ProfileCreate(ProfileBase):
@@ -72,7 +70,6 @@ class RoleInfo(BaseModel):
 
 class ProfileResponse(ProfileBase):
     id: str
-    is_admin: bool
     created_at: datetime
     updated_at: datetime
     roles: List[RoleInfo] = []

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.models import Profile
+from app.models.models import User as Profile
 from app.api.v2.responses import SingleResponse
 import os
 from uuid import uuid4

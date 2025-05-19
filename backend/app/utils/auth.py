@@ -6,7 +6,7 @@ from app.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 # Removed unused import
-from app.models.models import Profile
+from app.models.models import User as Profile
 
 import os
 SECRET_KEY = os.getenv("AUTH_SERVICE_JWT_SECRET", "your_auth_service_secret")
@@ -68,5 +68,5 @@ def admin_required(get_current_user):
 
 
 @router.get("/me")
-def read_current_user(current_user: Profile = Depends(get_current_user)):
+async def read_current_user(current_user: Profile = Depends(get_current_user)):
     return current_user

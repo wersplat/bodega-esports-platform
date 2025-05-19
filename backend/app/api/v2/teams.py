@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select
 
 # Project imports
-from app.models import Team, TeamMember, Profile, Season
-from app.models.models import TeamInvitation
+from app.models import Team, TeamMember, Season
+from app.models.models import TeamInvitation, User as Profile
 from app.models.models import PlayerStat as PlayerStats
 from app.api.v2.base import raise_error, not_found_error, conflict_error
 from app.api.v2.responses import ListResponse, SingleResponse

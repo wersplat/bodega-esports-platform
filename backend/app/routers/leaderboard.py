@@ -9,7 +9,7 @@ from sqlalchemy import or_
 from starlette.concurrency import run_in_threadpool
 
 from app.database import get_db
-from app.models.models import PlayerStat, Profile, Match
+from app.models.models import PlayerStat, User as Profile, Match
 from app.utils.sheets import append_leaderboard_to_sheet  # You’ll implement this
 
 router = APIRouter(prefix="/api/leaderboard", tags=["Leaderboard"])
@@ -22,7 +22,7 @@ async def get_leaderboard(
     division_id: int = None,
     db: AsyncSession = Depends(get_db),
 ):
-    stmt = select(PlayerStat, Profile.username).join(Profile, PlayerStat.profile_id == Profile.id)
+    stmt = select(PlayerStat, Profile.username).join(Profile, PlayerStat.user_id == Profile.id)
     stmt = stmt.where(PlayerStat.season_id == season_id)
     if team_id:
         stmt = stmt.where(PlayerStat.team_id == team_id)

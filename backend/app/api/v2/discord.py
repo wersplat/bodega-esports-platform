@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 # Project imports
-from app.models import Profile, Team
+from app.models import Team
+from app.models.models import User as Profile
 from app.api.v2.base import raise_error, not_found_error, conflict_error
 from app.api.v2.responses import SingleResponse
 from app.database import get_db

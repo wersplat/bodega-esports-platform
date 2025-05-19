@@ -70,8 +70,8 @@ class League(Base):
     def __repr__(self) -> str:
         return f"<League id={self.id} name={self.name} status={self.status}>"
 
-class Profile(Base):  # = users
-    __tablename__ = 'profiles'
+class User(Base):
+    __tablename__ = 'users'  # Changed from 'profiles'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     username = Column(String, nullable=True)
     display_name = Column(String, nullable=True)
@@ -86,12 +86,12 @@ class Profile(Base):  # = users
     discord_id = Column(String, nullable=True)
 
     # relationships
-    rosters: Mapped[List['Roster']] = relationship("Roster", back_populates="profile", lazy="selectin")
-    roles: Mapped[List['UserRole']] = relationship("UserRole", back_populates="profile", lazy="selectin")
-    player_stats: Mapped[List['PlayerStat']] = relationship("PlayerStat", back_populates="profile", lazy="selectin")
+    rosters: Mapped[List['Roster']] = relationship("Roster", back_populates="user", lazy="selectin")
+    roles: Mapped[List['UserRole']] = relationship("UserRole", back_populates="user", lazy="selectin")
+    player_stats: Mapped[List['PlayerStat']] = relationship("PlayerStat", back_populates="user", lazy="selectin")
 
     def __repr__(self) -> str:
-        return f"<Profile id={self.id} username={self.username} status={self.status}>"
+        return f"<User id={self.id} username={self.username} status={self.status}>"
 
 class Role(Base):
     __tablename__ = 'roles'
@@ -109,17 +109,17 @@ class Role(Base):
 class UserRole(Base):
     __tablename__ = 'user_roles'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    profile_id = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='CASCADE'), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     role_id = Column(UUID(as_uuid=True), ForeignKey('roles.id', ondelete='CASCADE'), nullable=False)
     context = Column(String, nullable=True)  # optional: season, team, etc.
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    profile: Mapped['Profile'] = relationship("Profile", back_populates="roles", lazy="selectin")
+    user: Mapped['User'] = relationship("User", back_populates="roles", lazy="selectin")
     role: Mapped['Role'] = relationship("Role", back_populates="users", lazy="selectin")
 
     def __repr__(self) -> str:
-        return f"<UserRole id={self.id} profile_id={self.profile_id} role_id={self.role_id}>"
+        return f"<UserRole id={self.id} user_id={self.user_id} role_id={self.role_id}>"
 
 class Season(Base):
     __tablename__ = 'seasons'
@@ -148,7 +148,7 @@ class Team(Base):
     description = Column(Text, nullable=True)
     season_id = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
     logo_url = Column(String, nullable=True)
-    created_by = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='SET NULL'), nullable=True)
+    created_by = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     status = Column(String, default=TeamStatus.ACTIVE.value, nullable=False)
@@ -156,7 +156,7 @@ class Team(Base):
     # relationships
     season: Mapped['Season'] = relationship("Season", back_populates="teams", lazy="selectin")
     members: Mapped[List['Roster']] = relationship("Roster", back_populates="team", lazy="selectin")
-    created_by_profile: Mapped[Optional['Profile']] = relationship("Profile", foreign_keys=[created_by], lazy="selectin")
+    created_by_user: Mapped[Optional['User']] = relationship("User", foreign_keys=[created_by], lazy="selectin")
     match_submissions: Mapped[List['MatchSubmission']] = relationship("MatchSubmission", back_populates="team", lazy="selectin")
     home_matches: Mapped[List['Match']] = relationship("Match", foreign_keys=['Match.team1_id'], back_populates="team1", lazy="selectin")
     away_matches: Mapped[List['Match']] = relationship("Match", foreign_keys=['Match.team2_id'], back_populates="team2", lazy="selectin")
@@ -168,7 +168,7 @@ class Team(Base):
 class Roster(Base):
     __tablename__ = 'rosters'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    profile_id = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='CASCADE'), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     team_id = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
     season_id = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
     is_captain = Column(Boolean, nullable=False, default=False)
@@ -177,7 +177,7 @@ class Roster(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    profile: Mapped['Profile'] = relationship("Profile", back_populates="rosters", lazy="selectin")
+    user: Mapped['User'] = relationship("User", back_populates="rosters", lazy="selectin")
     team: Mapped['Team'] = relationship("Team", back_populates="members", lazy="selectin")
     season: Mapped['Season'] = relationship("Season", back_populates="rosters", lazy="selectin")
 
@@ -227,13 +227,13 @@ class MatchSubmission(Base):
     status = Column(String, default=MatchSubmissionStatus.PENDING.value, nullable=False)
     submitted_at = Column(DateTime(timezone=True), server_default=func.now())
     reviewed_at = Column(DateTime(timezone=True), nullable=True)
-    reviewed_by = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='SET NULL'), nullable=True)
+    reviewed_by = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     match: Mapped['Match'] = relationship("Match", back_populates="submissions", lazy="selectin")
     team: Mapped['Team'] = relationship("Team", back_populates="match_submissions", lazy="selectin")
-    reviewer: Mapped[Optional['Profile']] = relationship("Profile", foreign_keys=[reviewed_by], lazy="selectin")
+    reviewer: Mapped[Optional['User']] = relationship("User", foreign_keys=[reviewed_by], lazy="selectin")
 
     def __repr__(self) -> str:
         return f"<MatchSubmission id={self.id} match_id={self.match_id} team_id={self.team_id} status={self.status}>"
@@ -241,14 +241,14 @@ class MatchSubmission(Base):
 class PlayerStat(Base):
     __tablename__ = 'player_stats'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    profile_id = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='CASCADE'), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     match_id = Column(UUID(as_uuid=True), ForeignKey('matches.id', ondelete='CASCADE'), nullable=False)
     stat_type = Column(String, nullable=False)
     value = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    profile: Mapped['Profile'] = relationship("Profile", back_populates="player_stats", lazy="selectin")
+    user: Mapped['User'] = relationship("User", back_populates="player_stats", lazy="selectin")
     match: Mapped['Match'] = relationship("Match", back_populates="player_stats", lazy="selectin")
 
     def __repr__(self) -> str:
@@ -323,7 +323,7 @@ class LeagueSettings(Base):
 class TeamMember(Base):
     __tablename__ = 'team_members'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    profile_id = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='CASCADE'), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     team_id = Column(UUID(as_uuid=True), ForeignKey('teams.id', ondelete='CASCADE'), nullable=False)
     season_id = Column(UUID(as_uuid=True), ForeignKey('seasons.id', ondelete='CASCADE'), nullable=False)
     is_captain = Column(Boolean, nullable=False, default=False)
@@ -332,7 +332,7 @@ class TeamMember(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    profile: Mapped['Profile'] = relationship("Profile", lazy="selectin")
+    user: Mapped['User'] = relationship("User", lazy="selectin")
     team: Mapped['Team'] = relationship("Team", lazy="selectin")
     season: Mapped['Season'] = relationship("Season", lazy="selectin")
 
@@ -352,7 +352,7 @@ class TeamInvitation(Base):
     status = Column(String, default="pending")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     accepted_at = Column(DateTime(timezone=True), nullable=True)
-    user_id = Column(UUID(as_uuid=True), ForeignKey('profiles.id', ondelete='SET NULL'), nullable=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
 
     def __repr__(self) -> str:
         return f"<TeamInvitation id={self.id} email={self.email} role={self.role} status={self.status}>"
@@ -368,4 +368,3 @@ class Player(Base):
 
     def __repr__(self) -> str:
         return f"<Player id={self.id} name={self.name} position={self.position} jersey_number={self.jersey_number}>"
-

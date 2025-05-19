@@ -109,7 +109,8 @@ app_instance.include_router(leaderboard_router, prefix="/api/leaderboard", tags=
 app_instance.include_router(match_submissions_router, prefix="/api/match_submissions", tags=["match_submissions"])
 app_instance.include_router(meta_router, prefix="/api/meta", tags=["meta"])
 app_instance.include_router(player_stats_router, prefix="/api/player_stats", tags=["player_stats"])
-app_instance.include_router(profiles_router, prefix="/api/users", tags=["users"])
+# Profiles router is now mounted at /api/v2/profiles in the router itself
+app_instance.include_router(profiles_router)
 from app.api.v2.media import router as media_router
 app_instance.include_router(media_router, prefix="/api/v2", tags=["Media"])
 # app_instance.include_router(stats_router, prefix="/api/stats", tags=["stats"])  # REMOVE: stats_router does not exist

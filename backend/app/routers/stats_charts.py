@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.models.models import PlayerStat, Match, Team, Profile
+from app.models.models import PlayerStat, Match, Team, User as Profile
 from sqlalchemy import func, select
 
 router = APIRouter(prefix="/api/stats", tags=["Stats Charts"])
@@ -10,20 +10,20 @@ router = APIRouter(prefix="/api/stats", tags=["Stats Charts"])
 @router.get("/top-scorers")
 async def top_scorers(season_id: int, db: AsyncSession = Depends(get_db)):
     stmt = select(
-        PlayerStat.profile_id,
+        PlayerStat.user_id,
         func.avg(PlayerStat.points).label("avg_points"),
         Profile.id,
         Profile.username
-    ).join(Profile, PlayerStat.profile_id == Profile.id)
+    ).join(Profile, PlayerStat.user_id == Profile.id)
     stmt = stmt.where(PlayerStat.season_id == season_id)
-    stmt = stmt.group_by(PlayerStat.profile_id, Profile.id, Profile.username)
+    stmt = stmt.group_by(PlayerStat.user_id, Profile.id, Profile.username)
     stmt = stmt.order_by(func.avg(PlayerStat.points).desc())
     stmt = stmt.limit(10)
     result = await db.execute(stmt)
     results = result.all()
     return [
         {
-            "profile_id": r.profile_id,
+            "profile_id": r.user_id,
             "username": r.username,
             "avg_points": round(r.avg_points, 2),
         }

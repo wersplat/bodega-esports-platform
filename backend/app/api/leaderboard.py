@@ -6,7 +6,7 @@ from io import StringIO
 import csv
 
 from app.database import get_db
-from app.models.models import PlayerStat, Profile, Match
+from app.models.models import PlayerStat, Match, User as Profile
 from app.utils.sheets import append_leaderboard_to_sheet
 
 router = APIRouter()
@@ -19,7 +19,7 @@ async def leaderboard(
     division_id: int = None,
     db: AsyncSession = Depends(get_db),
 ):
-    stmt = select(PlayerStat, Profile.username).join(Profile, PlayerStat.player_id == Profile.id).join(Match, PlayerStat.match_id == Match.id).where(PlayerStat.season_id == season_id)
+    stmt = select(PlayerStat, Profile.username).join(Profile, PlayerStat.user_id == Profile.id).join(Match, PlayerStat.match_id == Match.id).where(PlayerStat.season_id == season_id)
     if team_id:
         stmt = stmt.where(PlayerStat.team_id == team_id)
     if division_id:

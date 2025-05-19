@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.models.models import Profile
+from app.models.models import User as Profile
 from app.schemas.profile import ProfileCreate, ProfileRead, ProfileUpdate
 
-router = APIRouter(prefix="/api/profiles", tags=["Profiles"])
+router = APIRouter(prefix="/api/users", tags=["Users"])
 
 from sqlalchemy.future import select
 
