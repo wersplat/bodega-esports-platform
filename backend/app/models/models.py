@@ -73,7 +73,9 @@ class League(Base):
 class User(Base):
     __tablename__ = 'users'  # Changed from 'profiles'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    username = Column(String, nullable=True)
+    username = Column(String, unique=True, nullable=True)
+    email = Column(String, unique=True, nullable=True)
+    hashed_password = Column(String, nullable=True)
     display_name = Column(String, nullable=True)
     platform = Column(String, nullable=True)
     gamer_tag = Column(String, nullable=True)
@@ -82,7 +84,6 @@ class User(Base):
     status = Column(String, default=ProfileStatus.ACTIVE.value, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    email = Column(String, unique=True, nullable=True)
     discord_id = Column(String, nullable=True)
 
     # relationships

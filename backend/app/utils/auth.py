@@ -1,72 +1,78 @@
-from functools import wraps
-from fastapi import Depends, HTTPException, status, APIRouter, Request
-from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
-from app.database import get_db
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-# Removed unused import
-from app.models.models import User as Profile
+from fastapi import HTTPException, status, Depends, Request
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import jwt, JWTError
+import httpx
+from app.config import settings
+from typing import Optional, Dict, Any
 
-import os
-SECRET_KEY = os.getenv("AUTH_SERVICE_JWT_SECRET", "your_auth_service_secret")
-ALGORITHM = "HS256"
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
-
-router = APIRouter(prefix="/auth", tags=["Auth"])
-
-# AUTH HELPERS
+# Security scheme for Bearer token
+token_auth_scheme = HTTPBearer()
 
 async def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: AsyncSession = Depends(get_db)
-):
+    request: Request,
+    credentials: HTTPAuthorizationCredentials = Depends(token_auth_scheme)
+) -> Dict[str, Any]:
+    """
+    Validate the JWT token with the auth-service.
+    This should be used as a dependency in your route handlers.
+    """
+    token = credentials.credentials
+    
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("user_id")
-        if user_id is None:
+        # First, verify the token locally (fast, but less secure)
+        # This is optional but can reduce auth-service load
+        try:
+            # This just validates the token format, not the signature
+            # Real validation happens with the auth-service
+            _ = jwt.get_unverified_claims(token)
+        except JWTError:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid authentication credentials",
+                detail="Invalid token format",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        stmt = select(Profile).where(Profile.id == user_id)
-        result = await db.execute(stmt)
-        user = result.scalars().first()
-        if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User not found",
-                headers={"WWW-Authenticate": "Bearer"},
+        
+        # Then validate with the auth-service
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{settings.AUTH_SERVICE_URL}/api/me",
+                headers={"Authorization": f"Bearer {token}"}
             )
-        return user
-    except JWTError:
+            
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid or expired token",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+            
+            user_data = response.json()
+            # Attach user data to the request for use in route handlers
+            request.state.user = user_data
+            return user_data
+            
+    except httpx.RequestError as e:
+        # Handle connection errors to the auth-service
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Authentication service unavailable",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-
-def admin_required(get_current_user):
-    def decorator(func):
-        @wraps(func)
-        async def wrapper(*args, **kwargs):
-            user = await get_current_user()
-            if not user.is_admin:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Not authorized",
-                )
-            return await func(*args, **kwargs)
-        return wrapper
-    return decorator
-
-
-# ROUTES
-
-
-@router.get("/me")
-async def read_current_user(current_user: Profile = Depends(get_current_user)):
-    return current_user
+# Optional: Role-based access control
+def require_role(required_role: str):
+    """
+    Dependency to require a specific role for a route.
+    Usage: @router.get("/admin", dependencies=[Depends(require_role("admin"))])
+    """
+    async def role_checker(
+        user: Dict[str, Any] = Depends(get_current_user)
+    ) -> bool:
+        if user.get("role") != required_role:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Insufficient permissions. Required role: {required_role}",
+            )
+        return True
+    
+    return role_checker

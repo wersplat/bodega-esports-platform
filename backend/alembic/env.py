@@ -1,24 +1,17 @@
+import asyncio
 import os
 import sys
-
-# Add backend/ (project root) to sys.path so `app` is importable
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from dotenv import load_dotenv
-load_dotenv(".env")
-
-import os
-import sys
-
-# Add backend/ (project root) to sys.path so `app` is importable
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from dotenv import load_dotenv
-load_dotenv(".env")
-
-from sqlalchemy import create_engine
-
 from logging.config import fileConfig
+
+# Add backend/ (project root) to sys.path so `app` is importable
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from dotenv import load_dotenv
+from sqlalchemy.engine import Connection
+from sqlalchemy.ext.asyncio import create_async_engine
+
+# Load environment variables
+load_dotenv(".env")
 
 from alembic import context
 
@@ -31,15 +24,15 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-
 # Import Base directly from models/base.py
 from app.models.base import Base
 
 target_metadata = Base.metadata
+
+# other values from the config, defined by the needs of env.py,
+# can be acquired:
+# my_important_option = config.get_main_option("my_important_option")
+# ... etc.
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -71,41 +64,32 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
-def run_migrations_online() -> None:
+def do_run_migrations(connection):
+    """Run migrations in the current transaction."""
+    context.configure(connection=connection, target_metadata=target_metadata)
+    with context.begin_transaction():
+        context.run_migrations()
+
+async def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
     and associate a connection with the context.
     """
-    # Get the database URL from alembic.ini
-    database_url = config.get_main_option("sqlalchemy.url")
-    if not database_url:
-        raise ValueError("No database URL found in alembic.ini")
-    
-    # Ensure we're using the synchronous driver
-    database_url = database_url.replace("postgresql+asyncpg://", "postgresql://")
+    connectable = create_async_engine(
+        config.get_main_option("sqlalchemy.url"),
+        future=True,
+    )
 
-    # Create a synchronous engine for Alembic
-    connectable = create_engine(database_url.replace("postgresql+asyncpg://", "postgresql://"))
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
 
-    with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
-
-        with context.begin_transaction():
-            context.run_migrations()
-
-    with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
-
-        with context.begin_transaction():
-            context.run_migrations()
+    # For a direct async call, you can use:
+    # await connectable.dispose()
 
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online()
+    import asyncio
+    asyncio.run(run_migrations_online())

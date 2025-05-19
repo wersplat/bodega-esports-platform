@@ -1,3 +1,0 @@
-
-
-// Deprecated: This file is no longer used. Supabase logic has been replaced by custom backend APIs.
