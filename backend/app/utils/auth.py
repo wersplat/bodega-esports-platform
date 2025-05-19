@@ -4,7 +4,7 @@ from jose import jwt, JWTError
 import httpx
 from app.config import settings
 from typing import Optional, Dict, Any
-
+from fastapi import APIRouter
 # Security scheme for Bearer token
 token_auth_scheme = HTTPBearer()
 
