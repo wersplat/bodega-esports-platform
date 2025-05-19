@@ -31,7 +31,7 @@ from app.api.v2.webhooks import router as webhooks_router
 from app.api.v2.stats_charts import router as stats_charts_router
 from app.api.v2.forms import router as forms_router
 from app.api.v2.wp_sync import router as wp_sync_router
-from app.utils.auth import router as auth_router
+from app.utils.auth import auth_router
 # Remove: from app.api.v2.rosters import router as rosters_router
 # Remove: from app.api.v2.stats import router as stats_router
 
