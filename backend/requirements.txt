@@ -14,8 +14,9 @@ oauth2client
 google-api-python-client
 python-multipart
 pymysql
-supabase
 asyncpg
 pydantic[email]
 sentry-sdk
 alembic
+fastapi.security
+httpx
