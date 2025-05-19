@@ -73,6 +73,7 @@ class League(Base):
 class User(Base):
     __tablename__ = 'users'  # Changed from 'profiles'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    auth_service_id = Column(String, unique=True, nullable=False)
     username = Column(String, unique=True, nullable=True)
     email = Column(String, unique=True, nullable=True)
     hashed_password = Column(String, nullable=True)

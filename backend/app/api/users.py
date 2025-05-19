@@ -42,26 +42,35 @@ async def get_current_user(
     token = authorization.split(" ")[1]
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub") or payload.get("user_id")
-        
-        if not user_id:
+        # Use 'sub' from JWT as the unique auth_service_id
+        auth_service_id: str = payload.get("sub") or payload.get("user_id")
+        username = payload.get("username")
+        email = payload.get("email")
+
+        if not auth_service_id:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token: No user identifier found",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-            
-        # Get user from database
-        stmt = select(User).where(User.id == user_id)
+
+        # Try to find user by auth_service_id
+        stmt = select(User).where(User.auth_service_id == auth_service_id)
         result = await db.execute(stmt)
         user = result.scalars().first()
-        
+
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found",
+            # Create a new user if not found
+            user = User(
+                auth_service_id=auth_service_id,
+                username=username,
+                email=email,
+                status="active"
             )
-            
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+
         return user
         
     except JWTError as e:
