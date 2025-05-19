@@ -18,3 +18,4 @@ supabase
 asyncpg
 pydantic[email]
 sentry-sdk
+alembic
