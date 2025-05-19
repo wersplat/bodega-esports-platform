@@ -2,7 +2,7 @@ from fastapi import HTTPException, status, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
 import httpx
-from app.models.models import settings
+from app.config import settings
 from typing import Optional, Dict, Any
 
 # Security scheme for Bearer token
