@@ -76,3 +76,10 @@ def require_role(required_role: str):
         return True
     
     return role_checker
+
+auth_router = APIRouter()
+
+# Example route (optional)
+@auth_router.get("/me")
+async def me(user=Depends(get_current_user)):
+    return user
