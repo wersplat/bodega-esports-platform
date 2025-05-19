@@ -9,3 +9,4 @@ httpx
 asyncpg
 pydantic[email]
 sentry-sdk
+fastapi.security
