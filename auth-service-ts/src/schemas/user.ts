@@ -1,0 +1,9 @@
+// Example Zod schema for user registration
+import { z } from 'zod';
+
+export const userRegisterSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+export type UserRegisterInput = z.infer<typeof userRegisterSchema>;
