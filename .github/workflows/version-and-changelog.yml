@@ -5,7 +5,7 @@ on:
 
 jobs:
   version-and-changelog:
-    runs-on: [self-hosted, linux, arm64, docker]  # Or ubuntu-latest if not using the Pi
+    runs-on: [self-hosted, self-host]  # Or ubuntu-latest if not using the Pi
 
     steps:
       - uses: actions/checkout@v4
