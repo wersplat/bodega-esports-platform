@@ -41,7 +41,9 @@ jobs:
         run: |
           git config --global user.email "bot@bodegacatsgc.gg"
           git config --global user.name "wersplat"
+          if [ -f docs/CHANGELOG.md ]; then
           git add docs/CHANGELOG.md
-          git commit -m "docs(CHANGELOG): update for v${{ steps.version.outputs.version }}"
+          git commit -m "docs(CHANGELOG): update for v${{ steps.version.outputs.version }}" || echo "Nothing to commit"
+          fi
           git tag v${{ steps.version.outputs.version }}
           git push origin react --tags
