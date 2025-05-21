@@ -15,8 +15,9 @@ jobs:
         uses: BobAnkh/auto-generate-changelog@v1.2.5
         with:
           REPO_NAME: ${{ github.repository }}
+          Branch: React
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PATH: 'docs/CHANGELOG.md'
+          PATH: 'CHANGELOG.md'
           COMMIT_MESSAGE: 'docs(CHANGELOG): update for v${{ steps.version.outputs.version }}'
           TYPE: 'feat:Features,fix:Bug Fixes,docs:Documentation,refactor:Refactors,perf:Performance Improvements, chore: chores'
           REGENERATE_COUNT: -1
@@ -41,7 +42,7 @@ jobs:
         run: |
           git config --global user.email "bot@bodegacatsgc.gg"
           git config --global user.name "wersplat"
-          git add docs/CHANGELOG.md
+          git add CHANGELOG.md
           git commit -m "docs(CHANGELOG): update for v${{ steps.version.outputs.version }}"
           git tag v${{ steps.version.outputs.version }}
-          git push origin main --tags
+          git push origin react --tags
