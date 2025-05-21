@@ -1,0 +1,10 @@
+# GitBook configuration for Bodega Esports Platform Backend
+root: ./README.md
+summary: ./SUMMARY.MD
+
+# Optional: Add metadata, plugins, or customizations below as needed
+# For example:
+# title: Bodega Esports Platform Backend Documentation
+# plugins:
+#   - search
+#   - highlight
