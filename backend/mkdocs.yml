@@ -1,8 +1,7 @@
 site_name: Backend Docs (internal)
-docs_dir: docs        # if you’ve put your markdown in backend/docs/
-# └─ OR, if your files are directly under backend/app/api/, use:
-# docs_dir: app/api
+docs_dir: docs
 
 nav:
-  - Read Me: Backend-README.md
-  - Changelog: Backend-CHANGELOG.md
+  - Read Me: README.md
+  - Changelog: CHANGELOG.md
+  - Summary: SUMMARY.md
